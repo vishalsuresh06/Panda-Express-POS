@@ -4,14 +4,14 @@ import Test from './Test.jsx';
 import './index.css'
 
 function App() {
-  return (
-    <>
-      <Routes>
-      <Route path="/" element={<Home />} />
-        <Route path="/helloworld" element={<Test />} />
-      </Routes>
-    </>
-  )
+  	return (
+   		<>
+      		<Routes>
+      			<Route path="/" element={<Home />} />
+        		<Route path="/helloworld" element={<Test />} />
+     		</Routes>
+    	</>
+  	)
 }
 
 export default App

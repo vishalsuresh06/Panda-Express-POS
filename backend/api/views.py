@@ -3,14 +3,21 @@ from rest_framework.response import Response
 
 from django.http import JsonResponse
 from django.core import serializers
-from .models import Employee
+from .serializers import OrderSerializer, OrderItemSerializer, FoodItemSerializer, OrderItemTypeSerializer
+from .models import *
 
 @api_view(['GET'])
 def helloworld(request):
     return Response("Hello, World!")
 
 @api_view(['GET'])
-def getEmployee(request):
-    rawData = Employee.objects.all(id=0)
+def getEmployees(request):
+    rawData = Employee.objects.all()
     serializedData = serializers.serialize('json', rawData)
     return JsonResponse(serializedData, safe=False)
+
+@api_view(['GET'])
+def getOrders(request):
+    rawData = Order.objects.all()
+    serializer = OrderSerializer(rawData, many=True);
+    return JsonResponse(serializer.data, safe=False);
