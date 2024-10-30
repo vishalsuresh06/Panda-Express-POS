@@ -1,30 +1,88 @@
-import { useState } from 'react';
-import './manager.css'
+import { useState, useEffect } from 'react';
+import { apiURL } from '../../config.js';
+import './manager.css';
 
 function EmployeeManager() {
-    const [employees, setEmployees] = useState([
-        { id: 1, name: 'Bob China', isManager: false, wage: 12.00 },
-        { id: 2, name: 'Jeff America', isManager: false, wage: 11.00 },
-        { id: 3, name: 'Jose Canada', isManager: true, wage: 15.00 },
-    ]);
-
+    const [employees, setEmployees] = useState([]);
     const [isEditing, setIsEditing] = useState(null);
+
+    useEffect(() => {
+        async function fetchEmployees() {
+            try {
+                let response = await fetch(`${apiURL}/api/employees`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    setEmployees(data);
+                } else {
+                    setEmployees([]);
+                }
+            } catch (error) {
+                setEmployees([]);
+                console.log(error);
+            }
+        }
+
+        fetchEmployees();
+    }, [])
+
+    async function modifyEmployees(data, action) {
+        let reqBody = { action: null, data: null }
+        if (action == "delete") {
+            reqBody.action = "delete"
+            reqBody.data = data
+
+        } else if (action == "add") {
+            reqBody.action = "add"
+            reqBody.data = data
+
+        } else {
+            reqBody.action = "modify"
+            reqBody.data = data
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/employees/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+
+            if (response.ok) {
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
 
     const handleAdd = () => {
         const nextID = employees.length > 0 ? employees.at(-1).id + 1 : 0;
-        const newEmployee = { id: nextID, name: 'Enter Name', isManager: false, wage: 7.00 };
-        setEmployees([...employees, newEmployee]);
+        const newEmployee = { id: nextID, name: 'Enter Name', is_manager: false, wage: 7.00 };
+
+        if (modifyEmployees(newEmployee, "add")) {
+            setEmployees([...employees, newEmployee]);
+        }
     }
 
     const handleRemove = (index) => {
-        let copy = [...employees];
-        copy.splice(index, 1);
-        setEmployees(copy);
+        if (modifyEmployees(employees.at(index).id, "delete")) {
+            let copy = [...employees];
+            copy.splice(index, 1);
+            setEmployees(copy);
+        }
     };
 
     const handleEditSave = (index, element) => {
         const rows = element.closest('tr').children;
-        console.log(rows)
+
         if (isEditing == index) {
             setIsEditing(null);
 
@@ -35,14 +93,24 @@ function EmployeeManager() {
                 value.contentEditable = false;
             }
 
-            entry.name = rows[1].innerText;
-            entry.isManager = Boolean(rows[2].innerText);
-            entry.wage = rows[3].innerText;
+
+            let modifyRequest = structuredClone(entry)
+            modifyRequest.name = rows[1].innerText;
+            modifyRequest.is_manager = Boolean(rows[2].innerText);
+            modifyRequest.wage = rows[3].innerText;
+            if (modifyEmployees(modifyRequest, "modify")) {
+
+                entry.name = rows[1].innerText;
+                entry.is_manager = +Boolean(rows[2].innerText);
+                entry.wage = rows[3].innerText;
+            }
         } else {
             setIsEditing(index);
 
             for (let [key, value] of Object.entries(rows)) {
-                value.contentEditable = true;
+                if (value.innerText != "ID") {
+                    value.contentEditable = true;
+                }
             }
         }
     }
@@ -65,7 +133,7 @@ function EmployeeManager() {
                         <tr key={index}>
                             <td>{employee.id}</td>
                             <td>{employee.name}</td>
-                            <td>{+employee.isManager}</td>
+                            <td>{+employee.is_manager}</td>
                             <td>{employee.wage}</td>
                             <td>
                                 <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>

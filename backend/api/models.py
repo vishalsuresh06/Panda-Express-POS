@@ -32,7 +32,7 @@ class Employee(models.Model):
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     is_manager = models.BooleanField()
-    pay = models.DecimalField(decimal_places=2, max_digits=10)
+    wage = models.DecimalField(decimal_places=2, max_digits=10)
 
     def __str__(self):
         return self.name

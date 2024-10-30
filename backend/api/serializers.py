@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from .models import *
 
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['id', 'name', 'is_manager', 'wage']
 
 class OrderItemTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,9 +23,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['id', 'order_item_type', 'food_items']
-
-
-
 
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True, read_only=True)
