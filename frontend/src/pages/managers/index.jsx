@@ -81,61 +81,147 @@ function EmployeeManager() {
 }
 
 function MenuManager() {
+    const [menuItems, setMenuItems] = useState([
+        { id: 1, name: 'Orange Chicken' },
+        { id: 2, name: 'Beijing Beef', },
+        { id: 3, name: 'Honey Walnut Shrimp' },
+    ]);
+
+    const [isEditing, setIsEditing] = useState(null);
+
+    const handleAdd = () => {
+        const nextID = menuItems.length > 0 ? menuItems.at(-1).id + 1 : 0;
+        const newMenuItem = { id: nextID, name: 'Enter Name' };
+        setMenuItems([...menuItems, newMenuItem]);
+    }
+
+    const handleRemove = (index) => {
+        let copy = [...menuItems];
+        copy.splice(index, 1);
+        setMenuItems(copy);
+    };
+
+    const handleEditSave = (index, element) => {
+        const rows = element.closest('tr').children;
+        console.log(rows)
+        if (isEditing == index) {
+            setIsEditing(null);
+
+            let copy = [...menuItems];
+            let entry = copy.at(index);
+
+            for (let [key, value] of Object.entries(rows)) {
+                value.contentEditable = false;
+            }
+
+            entry.name = rows[1].innerText;
+        } else {
+            setIsEditing(index);
+
+            for (let [key, value] of Object.entries(rows)) {
+                value.contentEditable = true;
+            }
+        }
+    }
+
     return (
         <section>
-            <h2>Manage Menu</h2>
+            <h2>Manage Menu Items</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Employee ID</th>
+                        <th>ID</th>
                         <th>Name</th>
-                        <th>Position</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>Chef</td>
-                        <td>
-                            <button>Edit</button>
-                            <button>Delete</button>
-                        </td>
-                    </tr>
+                    {menuItems.map((menuItem, index) => (
+                        <tr key={index}>
+                            <td>{menuItem.id}</td>
+                            <td>{menuItem.name}</td>
+                            <td>
+                                <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
+                                <button onClick={() => handleRemove(index)}>Delete</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-            <button>Add Employee</button>
+            <button onClick={handleAdd}>Add Menu Item</button>
         </section>
     )
 }
 
 function InventoryManager() {
+    const [inventoryItems, setInventoryItems] = useState([
+        { id: 1, name: 'Breaded Chicken' },
+        { id: 2, name: 'Sliced Beef', },
+        { id: 3, name: 'Shrimp' },
+    ]);
+
+    const [isEditing, setIsEditing] = useState(null);
+
+    const handleAdd = () => {
+        const nextID = inventoryItems.length > 0 ? inventoryItems.at(-1).id + 1 : 0;
+        const newMenuItem = { id: nextID, name: 'Enter Name' };
+        setInventoryItems([...inventoryItems, newMenuItem]);
+    }
+
+    const handleRemove = (index) => {
+        let copy = [...inventoryItems];
+        copy.splice(index, 1);
+        setInventoryItems(copy);
+    };
+
+    const handleEditSave = (index, element) => {
+        const rows = element.closest('tr').children;
+        console.log(rows)
+        if (isEditing == index) {
+            setIsEditing(null);
+
+            let copy = [...inventoryItems];
+            let entry = copy.at(index);
+
+            for (let [key, value] of Object.entries(rows)) {
+                value.contentEditable = false;
+            }
+
+            entry.name = rows[1].innerText;
+        } else {
+            setIsEditing(index);
+
+            for (let [key, value] of Object.entries(rows)) {
+                value.contentEditable = true;
+            }
+        }
+    }
+
     return (
         <section>
-            <h2>Manage Inventory</h2>
+            <h2>Manage Inventory Items</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Employee ID</th>
+                        <th>ID</th>
                         <th>Name</th>
-                        <th>Position</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>Chef</td>
-                        <td>
-                            <button>Edit</button>
-                            <button>Delete</button>
-                        </td>
-                    </tr>
+                    {inventoryItems.map((inventoryItem, index) => (
+                        <tr key={index}>
+                            <td>{inventoryItem.id}</td>
+                            <td>{inventoryItem.name}</td>
+                            <td>
+                                <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
+                                <button onClick={() => handleRemove(index)}>Delete</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-            <button>Add Employee</button>
+            <button onClick={handleAdd}>Add Inventory Item</button>
         </section>
     )
 }
