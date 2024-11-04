@@ -1,12 +1,24 @@
 from django.db import models
 
 class Order(models.Model):
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+    STATUS_CHOICES = {
+        PENDING: "Pending",
+        IN_PROGRESS: "In Progress",
+        COMPLETED: "Completed",
+        CANCELLED: "Cancelled",
+    }
+
+    customer_name = models.CharField(max_length=100)
+    employee = models.ForeignKey('api.Employee', on_delete=models.RESTRICT)
     date = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=100)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
-
-    employee = models.ForeignKey('api.Employee', on_delete=models.RESTRICT)
-    customer_name = models.CharField(max_length=100)
 
     def get_order_items(self):
         return self.orderitem_set.all()
@@ -20,7 +32,7 @@ class Employee(models.Model):
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     is_manager = models.BooleanField()
-    pay = models.DecimalField(decimal_places=2, max_digits=10)
+    wage = models.DecimalField(decimal_places=2, max_digits=10)
 
     def __str__(self):
         return self.name
