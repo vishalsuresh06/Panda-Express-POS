@@ -14,7 +14,7 @@ class OrderItemTypeSerializer(serializers.ModelSerializer):
 class FoodItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodItem
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'type', 'alt_price', 'upcharge', 'on_menu']
 
 class OrderItemSerializer(serializers.ModelSerializer):
     order_item_type = OrderItemTypeSerializer(many=False, read_only=True)
