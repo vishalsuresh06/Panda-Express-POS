@@ -30,7 +30,7 @@
     margin-bottom: 40px;
 }
 
-.size-card {
+.menu-size-card {
     text-align: center;
     padding: 15px;
     border: 1px solid #ddd;
@@ -39,13 +39,13 @@
     background-color: #f9f9f9;
 }
 
-.size-name {
+.menu-size-name {
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.size-description, .size-calories {
+.menu-size-description, .menu-size-calories {
     font-size: 0.9rem;
     color: #666;
 }
@@ -92,7 +92,7 @@
     margin-top: 10px;
 }
 
-.tag {
+.menu-tag {
     display: inline-block;
     padding: 5px 10px;
     font-size: 0.8rem;
