@@ -1,5 +1,9 @@
 from django.core.management.base import BaseCommand
-from backend.api.models import Employee, FoodItem, InventoryItem, Order
+from backend.api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem
+from django.utils import timezone
+from datetime import timedelta
+import random
+
 
 class Command(BaseCommand):
     help = 'Seed the database with initial data'
@@ -18,13 +22,13 @@ class Command(BaseCommand):
         FoodItem.objects.create(name = 'Egg Roll', type="Appetizer", on_menu = True, alt_price = 2.00, upcharge = 0.00).save()
         FoodItem.objects.create(name = 'Kung Pao Chicken', type="Entree", on_menu = True, alt_price = 6.00, upcharge = 0.00).save()
         FoodItem.objects.create(name = 'Honey Walnut Shrimp', type="Entree", on_menu = True, alt_price = 6.00, upcharge = 1.50).save()
-        FoodItem.objects.create(name = 'Fried Rice', type="Side", on_menu = True, alt_price = NULL, upcharge = NULL).save()
-        FoodItem.objects.create(name = 'Chow Mein', type="Side", on_menu = True, alt_price = NULL, upcharge = NULL).save()
+        FoodItem.objects.create(name = 'Fried Rice', type="Side", on_menu = True, alt_price = None, upcharge = None).save()
+        FoodItem.objects.create(name = 'Chow Mein', type="Side", on_menu = True, alt_price = None, upcharge = None).save()
         FoodItem.objects.create(name = 'Teriyaki Chicken', type="Entree", on_menu = True, alt_price = 6.00, upcharge = 0.00).save()
         FoodItem.objects.create(name = 'Broccoli Beef', type="Entree", on_menu = True, alt_price = 6.00, upcharge = 0.00).save()
-        FoodItem.objects.create(name = 'Super Greens', type="Side", on_menu = True, alt_price = NULL, upcharge = NULL).save()
+        FoodItem.objects.create(name = 'Super Greens', type="Side", on_menu = True, alt_price = None, upcharge = None).save()
         FoodItem.objects.create(name = 'Rangoons', type="Appetizer", on_menu = True, alt_price = 2.00, upcharge = 0.00).save()
-        FoodItem.objects.create(name = 'Fountain Drink', type="Drink", on_menu = True, alt_price = NULL, upcharge = NULL).save()
+        FoodItem.objects.create(name = 'Fountain Drink', type="Drink", on_menu = True, alt_price = None, upcharge = None).save()
         FoodItem.objects.create(name = 'Bottled Water', type="Drink", on_menu = True, alt_price = 1.50, upcharge = 0.00).save()
         FoodItem.objects.create(name = 'Gatorade', type="Drink", on_menu = True, alt_price = 3.00, upcharge = 0.00).save()
         FoodItem.objects.create(name = 'Apple Pie Roll', type="Appetizer", on_menu = True, alt_price = 2.00, upcharge = 0.00).save()
