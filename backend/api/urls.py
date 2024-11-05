@@ -1,9 +1,7 @@
 from django.urls import path, include
-from . import views
+from backend.api.views import cashier_views, kiosk_views, kitchen_views, manager_views, menu_views
 
 urlpatterns = [
-    path('helloworld/', views.helloworld),
-    path("employees/", views.EmployeeView.as_view(), name="employees"),
-    path("menu/", views.MenuView.as_view(), name="menu"),
-    path('orders/', views.getOrders),
+    path("employees/",  manager_views.EmployeeView.as_view(), name="employees"),
+    path("menu/",       manager_views.MenuView.as_view(), name="menu"),
 ]
