@@ -58,10 +58,10 @@ function Menu() {
       <h2 className="menu-section-title">Meal Sizes</h2>
       <div className="menu-sizes">
         {sizes.map((size, index) => (
-          <div key={index} className="size-card">
-            <h3 className="size-name">{size.name}</h3>
-            <p className="size-description">{size.description}</p>
-            <p className="size-calories">{size.calories} calories</p>
+          <div key={index} className="menu-size-card">
+            <h3 className="menu-size-name">{size.name}</h3>
+            <p className="menu-size-description">{size.description}</p>
+            <p className="menu-size-calories">{size.calories} calories</p>
           </div>
         ))}
       </div>
@@ -75,8 +75,8 @@ function Menu() {
             <h3 className="menu-card-name">{item.name}</h3>
             <p className="menu-card-calories">{item.calories} calories</p>
             <div className="menu-card-tags">
-              {item.isSpicy && <span className="tag spicy">Spicy 🌶️</span>}
-              {item.isGlutenFree && <span className="tag gluten-free">Gluten-Free 🌾</span>}
+              {item.isSpicy && <span className="menu-tag spicy">Spicy 🌶️</span>}
+              {item.isGlutenFree && <span className="menu-tag gluten-free">Gluten-Free 🌾</span>}
             </div>
           </div>
         ))}
@@ -126,8 +126,8 @@ function Menu() {
             <h3 className="menu-card-name">{item.name}</h3>
             <p className="menu-card-calories">{item.calories} calories</p>
             <div className="menu-card-tags">
-              {item.isSpicy && <span className="tag gluten-free">Gluten-Free 🌾</span>}
-              {item.isGlutenFree && <span className="tag gluten-free">Gluten-Free 🌾</span>}
+              {item.isSpicy && <span className="menu-tag gluten-free">Gluten-Free 🌾</span>}
+              {item.isGlutenFree && <span className="menu-tag gluten-free">Gluten-Free 🌾</span>}
             </div>
           </div>
         ))}
