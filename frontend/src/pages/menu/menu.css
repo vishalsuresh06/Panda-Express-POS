@@ -1,5 +1,3 @@
-/* src/pages/menu/menu.css */
-
 /* Main container */
 .menu-container {
     width: 90%;
@@ -21,12 +19,22 @@
     margin-bottom: 10px;
 }
 
-/* Sizes section */
+/* Section Titles */
+.menu-section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 20px 0 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+/* Sizes Section */
 .menu-sizes {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 40px;
 }
 
@@ -42,44 +50,47 @@
 .menu-size-name {
     font-size: 1.2rem;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-top: 10px;
 }
 
-.menu-size-description, .menu-size-calories {
+.menu-size-description,
+.menu-size-calories {
     font-size: 0.9rem;
     color: #666;
 }
 
 /* Grid layout for menu items */
 .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 20px;
-    padding-bottom: 20px;
+    margin-bottom: 40px;
 }
 
-/* Card for each menu item */
 .menu-card {
-    text-align: center;
-    padding: 15px;
+    display: flex;
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #fff;
+    overflow: hidden;
 }
 
 .menu-card-image {
-    width: 300px;
-    height: 200px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px 0 0 8px;
 }
 
-
+.menu-card-content {
+    padding: 15px;
+    flex: 1;
+}
 
 .menu-card-name {
     font-size: 1.2rem;
     font-weight: bold;
-    margin-top: 10px;
+    margin-bottom: 5px;
 }
 
 .menu-card-calories {
@@ -87,7 +98,6 @@
     color: #666;
 }
 
-/* Tags for special items */
 .menu-card-tags {
     margin-top: 10px;
 }
@@ -108,4 +118,48 @@
 .gluten-free {
     background-color: #e0f4e9;
     color: #5cb85c;
+}
+
+.premium {
+    background-color: #fff5e6;
+    color: #f0ad4e;
+}
+
+/* Additional sections (sides, drinks, appetizers) styling */
+.menu-drinks,
+.menu-appetizers,
+.menu-sides {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.menu-drink-card,
+.menu-appetizer-card,
+.menu-side-card {
+    width: calc(33% - 20px);
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 15px;
+}
+
+.menu-drink-card img,
+.menu-appetizer-card img,
+.menu-side-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.menu-drink-card h3,
+.menu-appetizer-card h3,
+.menu-side-card h3 {
+    font-size: 1.1rem;
+    margin: 10px 0;
 }
