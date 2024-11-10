@@ -1,10 +1,10 @@
+import 'dotenv/config'
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import reactPlugin from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
   outDir: 'staticfiles',
-  plugins: [react()],
+  plugins: [reactPlugin()],
   assetsInclude: ['**/*.PNG', '**/*.jpg', '**/*.jpeg', '**/*.svg'],
-  
 })
