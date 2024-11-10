@@ -2,7 +2,7 @@ import random
 from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand
 from django.db import models 
-from backend.api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity
+from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity
 
 
 class Command(BaseCommand):

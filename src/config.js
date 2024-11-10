@@ -1,0 +1,3 @@
+const apiURL = '';
+
+export { apiURL };
