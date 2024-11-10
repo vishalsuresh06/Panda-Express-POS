@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from backend.api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem
+from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem
 from django.utils import timezone
 from datetime import timedelta
 import random
