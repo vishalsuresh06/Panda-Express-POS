@@ -35,12 +35,12 @@ import pandaImg from './panda.jpg';
 
 // Data for each section
 const sizes = [
-  { name: 'Cub Meal', description: '1 Jr. entrée, 1 Jr. side', calories: '330-1000', image: cubImg },
-  { name: 'Bowl', description: '1 entrée & 1 side', calories: '394 - 1,105', image: bowlImg },
-  { name: 'Plate', description: '2 entrées & 1 side', calories: '544 - 1,595', image: plateImg },
-  { name: 'Bigger Plate', description: '3 entrées & 1 side', calories: '694 - 2,085', image: biggerImg },
+  { name: 'Cub Meal', description: '$6.60+ • 1 Jr. entrée, 1 Jr. side', calories: '330-1000', image: cubImg },
+  { name: 'Bowl', description: '$8.30 • 1 entrée & 1 side', calories: '394 - 1,105', image: bowlImg },
+  { name: 'Plate', description: '$9.80+ • 2 entrées & 1 side', calories: '544 - 1,595', image: plateImg },
+  { name: 'Bigger Plate', description: '$11.30 • 3 entrées & 1 side', calories: '694 - 2,085', image: biggerImg },
   { name: 'Catering', description: 'Large portions for events', calories: 'Varies', image: cateringImg },
-  { name: 'A La Carte', description: '1 entrée', calories: 'Varies', image: aLaCarteImg },
+  { name: 'A La Carte', description: '$4.40+ • 1 entrée', calories: 'Varies', image: aLaCarteImg },
 ];
 
 const entrees = [
@@ -66,16 +66,16 @@ const sides = [
 ];
 
 const drinks = [
-  { name: 'Fountain Drink', calories: 'Varies', image: fountainDrinkImg },
-  { name: 'Water', calories: 0, image: waterImg },
-  { name: 'Gatorade', calories: 140, image: gatoradeImg },
+  { name: 'Fountain Drink', price: '$3.00', calories: 'Varies', image: fountainDrinkImg },
+  { name: 'Water', price: '$1.50', calories: 0, image: waterImg },
+  { name: 'Gatorade', price: '$3.00', calories: 140, image: gatoradeImg },
 ];
 
 const appetizers = [
-  { name: 'Veggie Spring Roll', calories: 190, image: veggieSpringRollImg },
-  { name: 'Chicken Egg Roll', calories: 200, image: chickenEggRollImg },
-  { name: 'Cream Cheese Rangoon', calories: 190, image: creamCheeseRangoonImg },
-  { name: 'Apple Pie Roll', calories: 300, image: applePieRollImg },
+  { name: 'Veggie Spring Roll', price: '$2.00', calories: 190, image: veggieSpringRollImg },
+  { name: 'Chicken Egg Roll', price: '$2.00', calories: 200, image: chickenEggRollImg },
+  { name: 'Cream Cheese Rangoon', price: '$2.00', calories: 190, image: creamCheeseRangoonImg },
+  { name: 'Apple Pie Roll', price: '$2.00', calories: 300, image: applePieRollImg },
 ];
 
 const featuredItems = [
@@ -145,6 +145,7 @@ function Menu() {
           <div key={index} className="menu-drink-card">
             <img src={drink.image} alt={drink.name} />
             <h3>{drink.name}</h3>
+            <p>{drink.price}</p>
             <p>{drink.calories} calories</p>
           </div>
         ))}
@@ -157,6 +158,7 @@ function Menu() {
           <div key={index} className="menu-appetizer-card">
             <img src={item.image} alt={item.name} />
             <h3>{item.name}</h3>
+            <p>{item.price}</p>
             <p>{item.calories} calories</p>
           </div>
         ))}
