@@ -4,12 +4,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import *
-from .models import *
+from api.serializers import *
+from api.models import *
 
-@api_view(['GET'])
-def helloworld(request):
-    return Response("Hello, World!")
 
 class EmployeeView(APIView):
     def get(self, request):
@@ -45,6 +42,8 @@ class EmployeeView(APIView):
 
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+
+
 class MenuView(APIView):
     def get(self, request):
         rawData = FoodItem.objects.all()
@@ -79,8 +78,3 @@ class MenuView(APIView):
 
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
-@api_view(['GET'])
-def getOrders(request):
-    rawData = Order.objects.all()
-    serializer = OrderSerializer(rawData, many=True)
-    return JsonResponse(serializer.data, safe=False)
