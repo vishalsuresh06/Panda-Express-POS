@@ -26,8 +26,6 @@ class OrderView(APIView):
             "togo": togoSerializer.data
         }
         return JsonResponse(response, safe=False)
-    
-
 
     # Allows kitchen to cancel or complete a target order
     def post(self, request):
@@ -40,19 +38,11 @@ class OrderView(APIView):
         except Order.DoesNotExist:
             return JsonResponse({"success": True}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
-        # Confirm the target order
-        if action == "confirm":
-            targetOrder.status = "completed"
+        # IF passed a valid action, perform that action on the target order
+        if action == "confirm" or action == "cancel":
+            targetOrder.status = action
             targetOrder.save()
             return JsonResponse({"success": False}, status=status.HTTP_200_OK)
-
-        # Cancel the target order
-        elif action == "cancel":
-            targetOrder.status = "canceled"
-            targetOrder.save()
-            return JsonResponse({"success": False}, status=status.HTTP_200_OK)
-
-        # Invalid action, return bad status
         else:
             return JsonResponse({"success": True}, status=status.HTTP_406_NOT_ACCEPTABLE)
         
