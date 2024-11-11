@@ -65,20 +65,21 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
 
     return (
         <section>
-            <h2>Edit {title}</h2>
-            <table>
+            <h2 className='mngr-font'>Edit {title}</h2>
+            <table className='mngr-table'>
                 <thead>
                     <tr>
                         {items.length > 0 && Object.keys(items[0]).map((key, index) => (
-                            <td key={index}>{key}</td>
+                            <td className='mngr-font' key={index}>{key}</td>
                         ))}
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     {items.map((menuItem, index) => (
                         <tr key={index}>
                             {Object.values(items[index]).map((entry, index2) => (
-                                <td key={index2}>{entry.toString()}</td>
+                                <td className='mngr-font' key={index2}>{entry.toString()}</td>
                             ))}
                             <td>
                                 <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
@@ -88,7 +89,7 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
                     ))}
                 </tbody>
             </table>
-            <button onClick={() => handleAdd()}>Create {title}</button>
+            <button className="mngr-createbutton" onClick={() => handleAdd()}>Create {title}</button>
         </section>
     )
 }
@@ -249,10 +250,10 @@ function Manager() {
     return (
         <>
             <div>
-                <h1 className='mngr-title'>Restaurant Manager Dashboard</h1>
+                <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
-                    <Link to="/manager/employees">Employees</Link>
-                    <Link to="/manager/menu">Menu</Link>
+                    <Link to="/manager/employees" className='mngr-btn'>Employees</Link>
+                    <Link to="/manager/menu" className='mngr-btn'>Menu</Link>
                 </div>
                 <Outlet />
             </div>
