@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { apiURL } from '../../config.js';
 import './kitchen.css';
+
+//TODO Add a timer that regularly checks for newly entered order
+
 
 function OrderItemCard({orderItem}) {
 		
 	return (<>
-		<h5> {orderItem.type} </h5>
+		<h5> {orderItem.order_item_type.name} </h5>
 		<ul> {
 			
 			orderItem.food_items.map((food_item, index) => (
-				<li key={index}> {food_item} </li>
+				<li key={index}> {food_item.name} </li>
 			))
 
 		} </ul>
@@ -21,7 +26,7 @@ function OrderCard({order, cardIndex, onConfirm}) {
 	
 	// TOS - Time Since Order
 	function getTOS() {
-		return Math.floor((Date.now()-order.date)/1000);
+		return Math.floor((Date.now()-Date.parse(order.date))/1000);
 	}
 
 	// Set the timeSinceOrder field to be updated every second
@@ -38,7 +43,7 @@ function OrderCard({order, cardIndex, onConfirm}) {
 	
 
 	return (
-		<div className="orderCard">
+		<div className="kt-orderCard">
 			<h3> Order #{order.id} for {order.customer_name} </h3>
 			<h4> Time Since Order: {timeSinceOrder}s </h4>
 			<ul> {
@@ -49,7 +54,7 @@ function OrderCard({order, cardIndex, onConfirm}) {
 
 			} </ul>
 
-			<button onClick={() => onConfirm(cardIndex, order.type)}> Confirm </button>
+			<button onClick={() => onConfirm(order.id, "confirm")}> Confirm </button>
 		</div>
 	)
 }
@@ -57,68 +62,79 @@ function OrderCard({order, cardIndex, onConfirm}) {
 
 
 function Kitchen() {
-	const [ordersHere, setOrdersHere] = useState([
-		{"id": 1, "type": "Here", "date": Date.parse("2024-10-30T12:00:00Z"), "customer_name": "Ryan", "order_items":
-			[
-				{"type": "Bowl", "food_items": ["Orange Chicken", "Chow Mein"]},
-				{"type": "Bowl", "food_items": ["Beijing Beef", "Chow Mein"]}
-			]
-		},
-		{"id": 2, "type": "Here", "date": Date.parse("2024-10-30T12:30:00Z"), "customer_name": "Duncan", "order_items":
-			[
-				{"type": "Plate", "food_items": ["Orange Chicken","Honey Walnut Shrimp", "Fried Rice"]},
-				{"type": "Bowl", "food_items": ["Beijing Beef", "Chow Mein"]}
-			]
-		},
-		{"id": 3, "type": "Here", "date": Date.parse("2024-10-30T13:00:00Z"), "customer_name": "Gideon", "order_items":
-			[
-				{"type": "Bowl", "food_items": ["Orange Chicken", "Chow Mein"]}
-			]
-		}
-	]);
+	const [ordersHere, setOrdersHere] = useState([]);
+	const [ordersTogo, setOrdersTogo] = useState([]);
 
+	async function fetchOrders() {
+		try {
+			let response = await fetch(`${apiURL}/api/orders`);
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log(data)
+				setOrdersHere(data.here);
+				setOrdersTogo(data.togo);
+
+			} else {
+				setOrdersHere([]);
+				setOrdersTogo([]);
+			}
+		} catch (error) {
+			setOrdersHere([]);
+			setOrdersTogo([]);
+			console.log(error);
+		}
+	}
+
+	useEffect(() => {
+        fetchOrders();
+	}, []);	
 	
-	const [ordersTogo, setOrdersTogo] = useState([
-		{"id": 10, "type": "Togo", "date": Date.parse("2024-10-30T14:00:00Z"), "customer_name": "Alex", "order_items":
-			[
-				{"type": "Bowl", "food_items": ["Egg Roll", "Egg Roll", "Egg Roll", "Egg Roll", "Egg Roll"]},
-			]
-		}
-	]);
 
+	const removeOrder = async (id, action) => {
+		let reqBody = { action: action, orderID: id }
 
-	
-	const removeOrderAt = (index, orderType) => {
-		if (orderType == "Here") {
-			let copy = [...ordersHere];
-			copy.splice(index, 1);
-			setOrdersHere(copy);
-		} else {
-			let copy = [...ordersTogo];
-			copy.splice(index, 1);
-			setOrdersTogo(copy);
-		}
-    };
+        try {
+            let response = await fetch(`${apiURL}/api/orders/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+			
+            if (response.ok) {
+				fetchOrders();
+			}
+			return response.ok;
+			
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+
+	}
 
 
 
 	return (<>	
-		<div className="columnContainer">
+		<div className="kt-columnContainer">
 
-			<div className="column">
+			<div className="kt-column">
 				<h1> HERE </h1>
 				<ul>
 					{ordersHere.map((order, index) => (
-						<li key={index}> <OrderCard order={order} cardIndex={index} onConfirm={removeOrderAt}/> </li>
+						<li key={index}> <OrderCard order={order} onConfirm={removeOrder}/> </li>
 					))}
 				</ul>
 			</div>
 
-			<div className="column">
+			<div className="kt-column">
 				<h1> TOGO </h1>
 				<ul>
 					{ordersTogo.map((order, index) => (
-						<li key={index}> <OrderCard order={order} cardIndex={index} onConfirm={removeOrderAt}/> </li>
+						<li key={index}> <OrderCard order={order} onConfirm={removeOrder}/> </li>
 					))}
 				</ul>
 			</div>

@@ -1,5 +1,8 @@
 from django.db import models
 
+#TODO edit order item model to allow for duplicate food items in the same order item
+#TODO edit the order type to have a fixed set of choices (here/togo/catering)
+
 class Order(models.Model):
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
@@ -15,7 +18,7 @@ class Order(models.Model):
 
     customer_name = models.CharField(max_length=100)
     employee = models.ForeignKey('api.Employee', on_delete=models.RESTRICT)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField()
     type = models.CharField(max_length=100)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
