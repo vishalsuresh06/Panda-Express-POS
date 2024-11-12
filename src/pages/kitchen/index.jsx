@@ -3,9 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import './kitchen.css';
 
-//TODO Add a timer that regularly checks for newly entered order
-//TODO Have order card timer be displayed in HH:MM:SS
-
+const ORDER_REFRESH_MS = 5000;
 
 function OrderItemCard({orderItem}) {
 		
@@ -21,19 +19,18 @@ function OrderItemCard({orderItem}) {
 	</div>)
 }
 
-
-
 function OrderCard({order, cardIndex, onRemove}) {
 	// "Time since order"
 	const [TOS, setTOS] = useState(calcTOS())
 	function calcTOS() {
-		return Math.floor((Date.now()-Date.parse(order.date))/1000);
+		let seconds = Math.floor((Date.now()-Date.parse(order.date))/1000);
+		return `${String(Math.floor(seconds/60)).padStart(2, '0')}:${String(seconds%60).padStart(2, '0')}`
 	}
 
 	// 1s timer to update the TOS on every card
 	useEffect(() => {
 		const intervalID = setInterval(() => {
-			setTOS(getTOS());
+			setTOS(calcTOS());
 		}, 1000);
 		
 		return () => clearInterval(intervalID);
@@ -42,7 +39,7 @@ function OrderCard({order, cardIndex, onRemove}) {
 	
 	return (<div className="kt-orderCard">
 		<h3> Order #{order.id} for {order.customer_name} </h3>
-		<h4> Time Since Order: {timeSinceOrder}s </h4>
+		<h4> Time Since Order: {TOS} </h4>
 		<ul> {
 			
 			order.order_items.map((orderItem, index) => (
@@ -55,7 +52,6 @@ function OrderCard({order, cardIndex, onRemove}) {
 		<button onClick={() => onRemove(order.id, "cancel")}> Cancel </button>
 	</div>)
 }
-
 
 function OrderColumn({title, orders, onRemove}) {
 	return (<div className="kt-column">
@@ -79,7 +75,6 @@ function Kitchen() {
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data)
 				setOrdersHere(data.here);
 				setOrdersTogo(data.togo);
 
@@ -90,7 +85,6 @@ function Kitchen() {
 		} catch (error) {
 			setOrdersHere([]);
 			setOrdersTogo([]);
-			console.log(error);
 		}
 	}
 
@@ -114,7 +108,6 @@ function Kitchen() {
 			return response.ok;
 			
         } catch (error) {
-            console.log(error);
             return false
         }
 
@@ -123,6 +116,15 @@ function Kitchen() {
 	// On page load, fetch all pending orders
 	useEffect(() => {
         fetchOrders();
+	}, []);	
+
+	// Check for now orders periodically
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			fetchOrders();
+		}, ORDER_REFRESH_MS);
+		
+		return () => clearInterval(intervalID);
 	}, []);	
 
 	// Main component return

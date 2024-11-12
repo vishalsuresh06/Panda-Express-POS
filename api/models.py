@@ -1,7 +1,6 @@
 from django.db import models
 
-#TODO edit order item model to allow for duplicate food items in the same order item
-#TODO edit the order type to have a fixed set of choices (here/togo/catering)
+#TODO restrict food item types 
 
 class Order(models.Model):
     PENDING = "pending"
@@ -16,10 +15,17 @@ class Order(models.Model):
         CANCELLED: "Cancelled",
     }
 
+    HERE = "here"
+    TOGO = "togo"
+    TYPE_CHOICES = {
+        HERE: "Here",
+        TOGO: "Togo",
+    }
+
     customer_name = models.CharField(max_length=100)
     employee = models.ForeignKey('api.Employee', on_delete=models.RESTRICT)
     date = models.DateTimeField()
-    type = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES, default='here')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
 
@@ -51,14 +57,26 @@ class OrderItemType(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey('api.Order', on_delete=models.CASCADE, related_name="order_items") 
     order_item_type = models.ForeignKey('api.OrderItemType', models.RESTRICT)
-    food_items = models.ManyToManyField('api.FoodItem')
+    food_items = models.ManyToManyField('api.FoodItem', through="OrderFoodQuantity")
 
     def __str__(self):
         return f"OrderItem #{self.id} for Order #{self.order.id}"
 
 class FoodItem(models.Model):
+    ENTREE = "entree"
+    SIDE = "side"
+    APPETIZER = "appetizer"
+    DESSERT = "dessert"
+
+    TYPE_CHOICES = {
+        ENTREE : "Entree",
+        SIDE : "Side",
+        APPETIZER : "Appetizer",
+        DESSERT : "Dessert",
+    }
+
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES, default='entree')
     alt_price = models.DecimalField(decimal_places=2, max_digits=10)
     upcharge = models.DecimalField(decimal_places=2, max_digits=10)
     on_menu = models.BooleanField()
@@ -90,3 +108,11 @@ class FoodInventoryQuantity(models.Model):
     def __str__(self):
         return f"{self.food_item} --> {self.inventory_item} : {self.quantity}"
 
+
+class OrderFoodQuantity(models.Model):
+    order_item = models.ForeignKey('api.OrderItem', on_delete=models.CASCADE)
+    food_item = models.ForeignKey('api.FoodItem', on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    class Meta:
+        unique_together = ('order_item', 'food_item')
