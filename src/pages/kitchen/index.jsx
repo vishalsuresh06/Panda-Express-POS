@@ -8,11 +8,11 @@ const ORDER_REFRESH_MS = 5000;
 function OrderItemCard({orderItem}) {
 		
 	return (<div className="kt-orderItemCard">
-		<h5> {orderItem.order_item_type.name} </h5>
+		<h3> {orderItem.order_item_type.name} </h3>
 		<ul> {
 			
 			orderItem.food_items.map((food_item, index) => (
-				<li key={index}> {food_item.name} </li>
+				<li key={index}> {food_item.quantity} x {food_item.food_item} </li>
 			))
 
 		} </ul>
@@ -38,8 +38,10 @@ function OrderCard({order, cardIndex, onRemove}) {
 
 	
 	return (<div className="kt-orderCard">
-		<h3> Order #{order.id} for {order.customer_name} </h3>
-		<h4> Time Since Order: {TOS} </h4>
+		<div className="kt-orderCardHeaders">
+			<h3 className="kt-orderInfo"> Order #{order.id} for {order.customer_name} </h3>
+			<h3 className="kt-TOS"> {TOS} </h3>
+		</div>
 		<ul> {
 			
 			order.order_items.map((orderItem, index) => (
@@ -48,15 +50,17 @@ function OrderCard({order, cardIndex, onRemove}) {
 
 		} </ul>
 
-		<button onClick={() => onRemove(order.id, "confirm")}> Confirm </button>
-		<button onClick={() => onRemove(order.id, "cancel")}> Cancel </button>
+		<div className="kt-buttons">
+			<button className="kt-confirm" onClick={() => onRemove(order.id, "confirm")}> Confirm </button>
+			<button className="kt-cancel" onClick={() => onRemove(order.id, "cancel")}> Cancel </button>
+		</div>
 	</div>)
 }
 
 function OrderColumn({title, orders, onRemove}) {
 	return (<div className="kt-column">
 		<h1>{title}</h1>
-		<ul>
+		<ul className="kt-cardList">
 			{orders.map((order, index) => (
 				<li key={index}> <OrderCard order={order} onRemove={onRemove}/> </li>
 			))}

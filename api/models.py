@@ -67,12 +67,14 @@ class FoodItem(models.Model):
     SIDE = "side"
     APPETIZER = "appetizer"
     DESSERT = "dessert"
+    DRINK = "drink"
 
     TYPE_CHOICES = {
         ENTREE : "Entree",
         SIDE : "Side",
         APPETIZER : "Appetizer",
         DESSERT : "Dessert",
+        DRINK : "Drink",
     }
 
     name = models.CharField(max_length=100)
@@ -108,11 +110,10 @@ class FoodInventoryQuantity(models.Model):
     def __str__(self):
         return f"{self.food_item} --> {self.inventory_item} : {self.quantity}"
 
-
 class OrderFoodQuantity(models.Model):
     order_item = models.ForeignKey('api.OrderItem', on_delete=models.CASCADE)
     food_item = models.ForeignKey('api.FoodItem', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=1)
 
     class Meta:
         unique_together = ('order_item', 'food_item')

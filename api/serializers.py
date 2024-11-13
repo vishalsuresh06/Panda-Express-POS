@@ -16,9 +16,16 @@ class FoodItemSerializer(serializers.ModelSerializer):
         model = FoodItem
         fields = ['id', 'name', 'type', 'alt_price', 'upcharge', 'on_menu']
 
+class OrderFoodQuantitySerializer(serializers.ModelSerializer):
+    food_item = serializers.ReadOnlyField(source='food_item.name')
+
+    class Meta:
+        model = OrderFoodQuantity
+        fields = ['food_item', 'quantity']
+
 class OrderItemSerializer(serializers.ModelSerializer):
     order_item_type = OrderItemTypeSerializer(many=False, read_only=True)
-    food_items = FoodItemSerializer(many=True, read_only=True)
+    food_items = OrderFoodQuantitySerializer(many=True, read_only=True, source='orderfoodquantity_set')
 
     class Meta:
         model = OrderItem
