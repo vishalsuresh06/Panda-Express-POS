@@ -1,0 +1,31 @@
+.cshr_optionContainer {
+  position: relative;
+  top: 60px;
+  left: 400px;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(100px, 1fr)
+  ); /* responsive square-like layout */
+  gap: 10px;
+  width: calc(
+    100vw - 400px - 20px
+  ); /* allows the grid to expand to fill available space */
+  max-width: 600px; /* adjust to your desired maximum width */
+}
+
+.cshr_optionBtn {
+  aspect-ratio: 1 / 1; /* forces square shape */
+  font-size: 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cshr_optionBtn:hover {
+  background-color: #e0e0e0;
+}

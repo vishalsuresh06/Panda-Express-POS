@@ -1,0 +1,52 @@
+.cshr_itemContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cshr_itemContainer h1 {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #333;
+  margin: 5px 0;
+}
+
+.cshr_type {
+  font-weight: bold;
+}
+
+.cshr_price {
+  color: #007700;
+  font-weight: bold;
+}
+
+.cshr_e1,
+.cshr_e2,
+.cshr_e3 {
+  font-style: italic;
+  color: #555;
+}
+
+.cshr_removeButton {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  color: white;
+  background-color: #d9534f;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  align-self: flex-start;
+  transition: background-color 0.2s ease;
+}
+
+.cshr_removeButton:hover {
+  background-color: #c9302c;
+}
