@@ -4,105 +4,71 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 function ItemSelection() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { type } = location.state || {}; // Get `type` from state
+  const { state } = useLocation();
+  const orderType = state?.type || 0; // Get `type` from state, default to 0
 
-  const [menuItems, setMenuItems] = useState([]); // State for menu items
-  const [loading, setLoading] = useState(true); // Loading state
+  const [menuItems, setMenuItems] = useState([]); // Store fetched menu items
 
-  // Fetch menu items from the API when the component mounts
+  // Fetch menu items when component mounts
   useEffect(() => {
-    async function fetchMenu() {
+    async function fetchMenuItems() {
       try {
         const response = await fetch(`${apiURL}/api/menu`);
         if (response.ok) {
           const data = await response.json();
-          // Filter items to only include those on the menu
-          const availableItems = data.filter((item) => item.on_menu === true);
+          const availableItems = data.filter((item) => item.on_menu); // Only items on the menu
           setMenuItems(availableItems);
         } else {
-          setMenuItems([]);
+          console.error("Failed to fetch menu items");
         }
       } catch (error) {
-        console.error("Failed to fetch menu items:", error);
-        setMenuItems([]);
-      } finally {
-        setLoading(false); // Set loading to false after fetching
+        console.error("Error fetching menu items:", error);
       }
     }
 
-    fetchMenu();
+    fetchMenuItems();
   }, []);
 
-  const confirmClick = () => {
-    navigate("/cashier");
-  };
-
-  // Filter items based on the type (e.g., sides or entrees based on `type`)
+  // Filter items by type
   const sides = menuItems.filter((item) => item.type === "Side");
   const entrees = menuItems.filter((item) => item.type === "Entree");
 
-  if (loading) return <p>Loading menu...</p>;
+  const handleConfirmClick = () => {
+    navigate("/cashier");
+  };
+
+  if (loading) {
+    return <p>Loading menu...</p>;
+  }
 
   return (
     <div>
-      <h1>Pick Side</h1>
-      <div>
-        {sides.length > 0 ? (
-          sides.map((side) => (
-            <p key={side.id}>
-              {side.name} - ${side.alt_price}{" "}
-              {side.upcharge > 0 && `(+ $${side.upcharge} upcharge)`}
-            </p>
-          ))
-        ) : (
-          <p>No sides available</p>
-        )}
-      </div>
+      <ItemList title="Pick Side" items={sides} />
+      <ItemList title="Pick Entree 1" items={entrees} />
 
-      <h1>Pick Entree 1</h1>
-      <div>
-        {entrees.length > 0 ? (
-          entrees.map((entree) => (
-            <p key={entree.id}>
-              {entree.name} - ${entree.alt_price}{" "}
-              {entree.upcharge > 0 && `(+ $${entree.upcharge} upcharge)`}
-            </p>
-          ))
-        ) : (
-          <p>No entrees available</p>
-        )}
-      </div>
+      {orderType >= 1 && <ItemList title="Pick Entree 2" items={entrees} />}
+      {orderType === 2 && <ItemList title="Pick Entree 3" items={entrees} />}
 
-      {type >= 1 && (
-        <>
-          <h1>Pick Entree 2</h1>
-          <div>
-            {entrees.map((entree) => (
-              <p key={entree.id}>
-                {entree.name} - ${entree.alt_price}{" "}
-                {entree.upcharge > 0 && `(+ $${entree.upcharge} upcharge)`}
-              </p>
-            ))}
-          </div>
-        </>
+      <button onClick={handleConfirmClick}>Confirm</button>
+    </div>
+  );
+}
+
+// Helper Component to display items
+function ItemList({ title, items }) {
+  return (
+    <div>
+      <h1>{title}</h1>
+      {items.length > 0 ? (
+        items.map((item) => (
+          <p key={item.id}>
+            {item.name} - ${item.alt_price}{" "}
+            {item.upcharge > 0 && `(+ $${item.upcharge} upcharge)`}
+          </p>
+        ))
+      ) : (
+        <p>No items available</p>
       )}
-
-      {type === 2 && (
-        <>
-          <h1>Pick Entree 3</h1>
-          <div>
-            {entrees.map((entree) => (
-              <p key={entree.id}>
-                {entree.name} - ${entree.alt_price}{" "}
-                {entree.upcharge > 0 && `(+ $${entree.upcharge} upcharge)`}
-              </p>
-            ))}
-          </div>
-        </>
-      )}
-
-      <button onClick={confirmClick}>Confirm</button>
     </div>
   );
 }

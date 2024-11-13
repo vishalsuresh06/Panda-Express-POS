@@ -3,18 +3,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 function OrderView() {
-  const navigate = useNavigate("/cashier");
+  const navigate = useNavigate();
 
   const bowlBtnClick = () => {
-    navigate("/ItemSelection", { state: { type: 0 } });
+    navigate("/cashier/itemSelection", { state: { type: 0 } });
   };
 
   const plateBtnClick = () => {
-    navigate("/ItemSelection", { state: { type: 1 } });
+    navigate("/cashier/itemSelection", { state: { type: 1 } });
   };
 
   const bigPlateBtnClick = () => {
-    navigate("/ItemSelection", { state: { type: 2 } });
+    navigate("/cashier/itemSelection", { state: { type: 2 } });
   };
 
   return (
