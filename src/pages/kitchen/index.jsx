@@ -3,6 +3,19 @@ import { Link, Outlet } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import './kitchen.css';
 
+// TODO - 	Add a "working on" (or similar) button to move to the orders to "in_progress" status
+// 			so that different kitchen staff can avoid both making the same order.
+
+// TODO -	Collapase order cards after the first X cards (like in initial wireframe sketch)
+
+// TODO - 	Add the ability to look back at the latest "completed" or "canceled" orders 
+//			and give the ability to move them back to "pending" or "in_progress" if they want
+
+// TODO - 	Try reduce button latency on order buttons by not refetching everytime
+
+// TODO - 	Only render the top X orders to reduce latency. Add a ... if it goes over the limit parameter
+
+
 const ORDER_REFRESH_MS = 5000;
 
 function OrderItemCard({orderItem}) {
@@ -19,7 +32,7 @@ function OrderItemCard({orderItem}) {
 	</div>)
 }
 
-function OrderCard({order, cardIndex, onRemove}) {
+function OrderCard({order, cardIndex, onHandle}) {
 	// "Time since order"
 	const [TOS, setTOS] = useState(calcTOS())
 	function calcTOS() {
@@ -51,18 +64,18 @@ function OrderCard({order, cardIndex, onRemove}) {
 		} </ul>
 
 		<div className="kt-buttons">
-			<button className="kt-confirm" onClick={() => onRemove(order.id, "confirm")}> Confirm </button>
-			<button className="kt-cancel" onClick={() => onRemove(order.id, "cancel")}> Cancel </button>
+			<button className="kt-confirm" onClick={() => onHandle(order, "confirm")}> Confirm </button>
+			<button className="kt-cancel" onClick={() => onHandle(order, "cancel")}> Cancel </button>
 		</div>
 	</div>)
 }
 
-function OrderColumn({title, orders, onRemove}) {
+function OrderColumn({title, orders, onHandle}) {
 	return (<div className="kt-column">
-		<h1>{title}</h1>
+		<h1>{title} {orders.length}</h1>
 		<ul className="kt-cardList">
 			{orders.map((order, index) => (
-				<li key={index}> <OrderCard order={order} onRemove={onRemove}/> </li>
+				<li key={index}> <OrderCard order={order} onHandle={onHandle}/> </li>
 			))}
 		</ul>
 	</div>)
@@ -72,70 +85,77 @@ function Kitchen() {
 	const [ordersHere, setOrdersHere] = useState([]);
 	const [ordersTogo, setOrdersTogo] = useState([]);
 
+
 	// Fetches the pending orders from the database
 	async function fetchOrders() {
 		try {
-			let response = await fetch(`${apiURL}/api/orders`);
+			let response = await fetch(`${apiURL}/api/kitchen/pendingorders`);
 
 			if (response.ok) {
 				const data = await response.json();
-				setOrdersHere(data.here);
-				setOrdersTogo(data.togo);
+				sethooks(data.here, data.togo);
 
 			} else {
-				setOrdersHere([]);
-				setOrdersTogo([]);
+				sethooks([], []);
 			}
 		} catch (error) {
-			setOrdersHere([]);
-			setOrdersTogo([]);
+			sethooks([], []);
 		}
 	}
 
-	// Sends a POST request to API to either "confirm" or "cancel" a specific order (via order id)
-	const removeOrder = async (id, action) => {
-		let reqBody = { action: action, orderID: id }
+	// "confirm" or "cancel" the target order 
+	const handleOrder = async (order, action) => {
 
+		// Update database with POST request
+		let reqBody = { action: action, orderID: order.id }
         try {
-            let response = await fetch(`${apiURL}/api/orders/`, {
+            let response = await fetch(`${apiURL}/api/kitchen/pendingorders`, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });
-			
+            });	
+
+			// Removes the items locally w/o refetching to reduce latency
             if (response.ok) {
-				fetchOrders();
+				if (order.type == "here") {
+					setOrdersHere(ordersHere => ordersHere.filter(o => o !== order));
+				} else if (order.type == "togo") {
+					setOrdersTogo(ordersTogo => ordersTogo.filter(o => o !== order));
+				}
 			}
 			return response.ok;
 			
-        } catch (error) {
-            return false
-        }
+        } catch (error) { return false; }
 
 	}
 
-	// On page load, fetch all pending orders
-	useEffect(() => {
-        fetchOrders();
-	}, []);	
-
-	// Check for now orders periodically
+	// Request pending orders on page load & fresh periodically
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
 		}, ORDER_REFRESH_MS);
 		
+		fetchOrders();
 		return () => clearInterval(intervalID);
 	}, []);	
 
-	// Main component return
+
+	// HELPER METHODS
+	function sethooks(here, togo) {
+		setOrdersHere(here);
+		setOrdersTogo(togo);
+	}
+
+
+
+	// MAIN RETURN
 	return (<div className="kt-mainDiv">	
 		<div className="kt-columnContainer">
-			<OrderColumn title={"Here"} orders={ordersHere} onRemove={removeOrder} />
-			<OrderColumn title={"Togo"} orders={ordersTogo} onRemove={removeOrder} />
+			<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} />
+			<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} />
 		</div>
 	</div>)
 }

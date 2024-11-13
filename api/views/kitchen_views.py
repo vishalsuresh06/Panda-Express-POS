@@ -8,9 +8,25 @@ from api.serializers import *
 from api.models import *
 
 
+class OrderHistoryView(APIView):
+    
+    # Sends pending orders to the kitchen display
+    def get(self, request):
+        
+        hereOrderData = Order.objects.filter(status='pending', type='here').order_by('date')
+        togoOrderData = Order.objects.filter(status='pending', type='togo').order_by('date')
+        
+        hereSerializer = OrderSerializer(hereOrderData, many=True)
+        togoSerializer = OrderSerializer(togoOrderData, many=True)
+
+        response = {
+            "here": hereSerializer.data,
+            "togo": togoSerializer.data
+        }
+        return JsonResponse(response, safe=False)
 
 
-class OrderView(APIView):
+class PendingOrdersView(APIView):
     
     # Sends pending orders to the kitchen display
     def get(self, request):
