@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.core import serializers
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -26,13 +26,14 @@ class OrderHistoryView(APIView):
         return JsonResponse(response, safe=False)
 
 
-class PendingOrdersView(APIView):
+class KitchenOrders(APIView):
     
     # Sends pending orders to the kitchen display
     def get(self, request):
-        
-        hereOrderData = Order.objects.filter(status='pending', type='here').order_by('date')
-        togoOrderData = Order.objects.filter(status='pending', type='togo').order_by('date')
+        statusQuery = Q(status='pending') | Q(status='in_progress')
+
+        hereOrderData = Order.objects.filter(statusQuery, type='here').order_by('date')
+        togoOrderData = Order.objects.filter(statusQuery, type='togo').order_by('date')
         
         hereSerializer = OrderSerializer(hereOrderData, many=True)
         togoSerializer = OrderSerializer(togoOrderData, many=True)
@@ -57,6 +58,10 @@ class PendingOrdersView(APIView):
         # IF passed a valid action, perform that action on the target order
         if action == "confirm" or action == "cancel":
             targetOrder.status = action
+            targetOrder.save()
+            return JsonResponse({"success": False}, status=status.HTTP_200_OK)
+        elif action == "toggle":
+            targetOrder.status = "in_progress" if targetOrder.status == "pending" else "pending"
             targetOrder.save()
             return JsonResponse({"success": False}, status=status.HTTP_200_OK)
         else:

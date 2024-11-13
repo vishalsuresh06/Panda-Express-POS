@@ -60,12 +60,11 @@
 
 
 
-.kt-orderCard {
-  background-color: rgb(150, 150, 150);
-  border: 1px solid rgb(0, 0, 0);
-  padding: 0px;
-}
 
+.kt-orderCard {
+	border: 1px solid rgb(0, 0, 0);
+	padding: 0px;
+}
 
 .kt-mainDiv button {
 	display: block;
@@ -81,6 +80,14 @@
 	align-items: flex-end;
 }
 
-.kt-confirm:hover, .kt-cancel:hover {
+.kt-cancel:hover {
 	background-color: red;
+}
+
+.kt-confirm:hover {
+	background-color: green;
+}
+
+.kt-toggle:hover {
+	background-color: darkslategray;
 }

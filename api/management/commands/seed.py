@@ -107,7 +107,7 @@ class Command(BaseCommand):
                     employee=employee,
                     date=date,
                     type=random.choice(['here', 'togo']),
-                    status=random.choice([Order.PENDING, Order.IN_PROGRESS, Order.COMPLETED]),
+                    status=random.choices([Order.PENDING, Order.COMPLETED], [1, 10])[0],
                     total_price=order_total
                 )
                 
