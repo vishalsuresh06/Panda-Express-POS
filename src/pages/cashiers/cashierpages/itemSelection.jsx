@@ -56,7 +56,9 @@ function ItemSelection() {
 
   // Handle confirm button click
   const handleConfirmClick = () => {
-    navigate("/cashier", { state: { selectedSide, selectedEntrees } });
+    navigate("/cashier", {
+      state: { selectedEntrees, selectedSide },
+    });
   };
 
   return (
