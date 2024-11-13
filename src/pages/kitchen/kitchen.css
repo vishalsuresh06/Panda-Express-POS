@@ -91,3 +91,8 @@
 .kt-toggle:hover {
 	background-color: darkslategray;
 }
+
+
+.kt-navBar {
+	background-color: red;
+}

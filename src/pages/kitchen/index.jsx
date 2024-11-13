@@ -3,28 +3,26 @@ import { Link, Outlet } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import './kitchen.css';
 
+
+//* Design
 // TODO - 	Use a more "Panda Express" like color scheme
-
-// TODO - 	Add a "working on" (or similar) button to move to the orders to "in_progress" status
-// 			so that different kitchen staff can avoid both making the same order.
-
-// TODO - 	Add the ability to look back at the latest "completed" or "canceled" orders 
-//			and give the ability to move them back to "pending" or "in_progress" if they want
-
-// TODO - 	Allow manager to edit the render limit
-
-// TODO - 	Investigate possible desync on the toggle of order status if you do it too quickly...
-
-// TODO - 	B/c I only change the order status (and therefore the toggle button's text) after I receive an
-//			OK response from the backend, it causes a delay. I hesitate to do it before since if the request fails
-// 			the site may become out of sync...
-
-// TODO -	Speak with Vishal about how the Cashier page will handle creating new orders. Because it they are at any 
-//			point set to pending or in_progress, they will show up on the kitchen view. Is that what we want? It the
-//			cashier just supposed to send the order way away to the kitchen, or is the cashier just doing normal Panda
-//			style where they prepare the orders themselves and let the kitchen only handle the kiosk orders.
-
 // TODO -	Try and move buttons to the right side of the text instead of just on a new line, then right-aligned to save space
+// TODO - 	Possibly redesign layout of these cards since there is a lot of empty space only having two column.
+// TODO -	Custom scrollbar might look nice: https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp
+
+
+//* Features
+// TODO - 	Add the ability to look back at the latest "completed" or "canceled" orders & revive them
+// TODO - 	Allow manager to edit the render limit & other customizable parameters
+// TODO -	Maybe add the ability to mark specific order items on individual orders as completed. Would require altering models...
+
+
+//* Other
+// TODO - 	Investigate possible desync on the toggle of order status if you do it too quickly...
+// TODO - 	Delay in background color change on order start & stop (its waiting for the db)
+// TODO -	Speak with Vishal about how the Cashier page will handle creating new orders. Should they be sent to kitchen or handled there?
+// TODO - 	Ask group about navbar/landing page between all non-kiosk screens (or at least, customer shouldn't be able to nav away)
+
 
 const ORDER_REFRESH_MS = 5000;
 const FULL_ORDER_RENDER_LIMIT = 2;
@@ -43,7 +41,7 @@ function OrderItemCard({orderItem}) {
 	</div>)
 }
 
-function OrderCard({order, cardIndex, onHandle, displayFullCard}) {
+function OrderCard({order, onHandle, displayFullCard}) {
 	// "Time since order"
 	const [TOS, setTOS] = useState(calcTOS())
 	function calcTOS() {
@@ -102,6 +100,14 @@ function OrderColumn({title, orders, onHandle}) {
 	</div>)
 }
 
+function NavBar() {
+	return (<div className="kt-navBar">
+		<button>Back to Main</button>
+		<button>History</button>
+		<button>Customize</button>
+	</div>)
+}
+
 function Kitchen() {
 	const [ordersHere, setOrdersHere] = useState([]);
 	const [ordersTogo, setOrdersTogo] = useState([]);
@@ -154,6 +160,7 @@ function Kitchen() {
 	}
 
 	async function toggleOrder(order) {
+		
 		// Update database with POST request
 		let reqBody = { action: "toggle", orderID: order.id }
         try {
@@ -201,13 +208,14 @@ function Kitchen() {
         } catch (error) { return false; }
 	}
 
-
-
 	// MAIN RETURN
 	return (<div className="kt-mainDiv">	
 		<div className="kt-columnContainer">
+			<NavBar/>
+			
 			<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} />
 			<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} />
+			
 		</div>
 	</div>)
 }
