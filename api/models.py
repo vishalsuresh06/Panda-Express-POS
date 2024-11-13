@@ -56,10 +56,10 @@ class OrderItem(models.Model):
 class FoodItem(models.Model):
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
-    alt_price = models.DecimalField(decimal_places=2, max_digits=10)
-    upcharge = models.DecimalField(decimal_places=2, max_digits=10)
+    alt_price = models.DecimalField(decimal_places=2, max_digits=10, default=0.00)
+    upcharge = models.DecimalField(decimal_places=2, max_digits=10, default=0.00)
     on_menu = models.BooleanField()
-    
+
     inventory_items = models.ManyToManyField('api.InventoryItem', through='FoodInventoryQuantity')
 
     def __str__(self):
