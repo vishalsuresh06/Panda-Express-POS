@@ -16,6 +16,11 @@ class FoodItemSerializer(serializers.ModelSerializer):
         model = FoodItem
         fields = ['id', 'name', 'type', 'alt_price', 'upcharge', 'on_menu']
 
+class InventoryItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InventoryItem
+        fields = ['id', 'name', 'is_food', 'stock', 'restock_threshold', 'restock_amount']
+
 class OrderItemSerializer(serializers.ModelSerializer):
     order_item_type = OrderItemTypeSerializer(many=False, read_only=True)
     food_items = FoodItemSerializer(many=True, read_only=True)
