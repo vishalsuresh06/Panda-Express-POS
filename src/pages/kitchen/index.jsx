@@ -102,16 +102,17 @@ function OrderColumn({title, orders, onHandle}) {
 
 function NavBar() {
 	return (<div className="kt-navBar">
-		<button>Back to Main</button>
-		<button>History</button>
-		<button>Customize</button>
+		<ul>
+			<Link style={{ textDecoration: 'none' }} to="/kitchen/orders"><button>Orders</button></Link>
+			<Link style={{ textDecoration: 'none' }} to="/kitchen/customize"><button>Customize</button></Link>
+			<Link style={{ textDecoration: 'none' }} to="/kitchen/recentorders"><button>Recent Orders</button></Link>
+		</ul>
 	</div>)
 }
 
-function Kitchen() {
+function KitchenOrders() {
 	const [ordersHere, setOrdersHere] = useState([]);
 	const [ordersTogo, setOrdersTogo] = useState([]);
-
 
 	// Fetches the pending orders from the database
 	async function fetchOrders() {
@@ -148,9 +149,6 @@ function Kitchen() {
 		fetchOrders();
 		return () => clearInterval(intervalID);
 	}, []);	
-
-
-
 
 
 	// HELPER METHODS
@@ -208,16 +206,22 @@ function Kitchen() {
         } catch (error) { return false; }
 	}
 
+	return (<>
+		<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} />
+		<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} />
+	</>)
+}
+
+function Kitchen() {
+	
+
 	// MAIN RETURN
-	return (<div className="kt-mainDiv">	
+	return (<div className="kt-mainDiv">
 		<div className="kt-columnContainer">
 			<NavBar/>
-			
-			<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} />
-			<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} />
-			
+			<Outlet/>
 		</div>
 	</div>)
 }
 
-export default Kitchen
+export {Kitchen, KitchenOrders}

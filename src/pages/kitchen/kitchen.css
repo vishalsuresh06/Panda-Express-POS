@@ -1,6 +1,5 @@
 .kt-mainDiv {
 	font-family: Verdana, sans-serif;
-	border: 5px solid black;
 	height: 100vh;
 	box-sizing: border-box;
 }
@@ -19,7 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	padding:0px;
-	border: 5px solid #ccc;
+	
 }
 
 .kt-column ul {
@@ -80,6 +79,26 @@
 	align-items: flex-end;
 }
 
+.kt-navBar button {
+	padding: 0;
+	border: none;
+	background: none;
+}
+
+.kt-navBar ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0; 
+}
+
+.kt-navBar button:hover {
+	background-color: maroon;
+}
+
+.kt-navBar {
+	background-color: red;
+}
+
 .kt-cancel:hover {
 	background-color: red;
 }
@@ -93,6 +112,3 @@
 }
 
 
-.kt-navBar {
-	background-color: red;
-}
