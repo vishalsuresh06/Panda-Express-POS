@@ -1,74 +1,112 @@
-import React, { useState, useEffect } from "react";
 import { apiURL } from "../../../config.js";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import "../cashierstyles/itemSelection.css";
 
 function ItemSelection() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const orderType = state?.type || 0; // Get `type` from state, default to 0
+  const orderType = state?.type;
 
-  const [menuItems, setMenuItems] = useState([]); // Store fetched menu items
+  // Arrays that would be populated from the database
+  const sides = [
+    { name: "Fried Rice", type: "side", upCharge: 0 },
+    { name: "Steamed Rice", type: "side", upCharge: 0 },
+    { name: "Chow Mein", type: "side", upCharge: 0 },
+    { name: "Super Greens", type: "side", upCharge: 1.5 },
+  ];
 
-  // Fetch menu items when component mounts
-  useEffect(() => {
-    async function fetchMenuItems() {
-      try {
-        const response = await fetch(`${apiURL}/api/menu`);
-        if (response.ok) {
-          const data = await response.json();
-          const availableItems = data.filter((item) => item.on_menu); // Only items on the menu
-          setMenuItems(availableItems);
-        } else {
-          console.error("Failed to fetch menu items");
-        }
-      } catch (error) {
-        console.error("Error fetching menu items:", error);
-      }
-    }
+  const entrees = [
+    { name: "Orange Chicken", type: "entree", upCharge: 0 },
+    { name: "Beijing Beef", type: "entree", upCharge: 0 },
+    { name: "Kung Pao Chicken", type: "entree", upCharge: 0 },
+    { name: "SweetFire Chicken Breast", type: "entree", upCharge: 1.0 },
+    { name: "Broccoli Beef", type: "entree", upCharge: 0 },
+    { name: "Grilled Teriyaki Chicken", type: "entree", upCharge: 1.5 },
+  ];
 
-    fetchMenuItems();
-  }, []);
+  // State to keep track of selected items
+  const [selectedSide, setSelectedSide] = useState(null);
+  const [selectedEntrees, setSelectedEntrees] = useState(
+    Array(orderType === 0 ? 1 : orderType === 1 ? 2 : 3).fill(null)
+  );
 
-  // Filter items by type
-  const sides = menuItems.filter((item) => item.type === "Side");
-  const entrees = menuItems.filter((item) => item.type === "Entree");
+  const maxEntrees = selectedEntrees.length;
 
-  const handleConfirmClick = () => {
-    navigate("/cashier");
+  // Price mapping for different order types
+  const priceMapping = {
+    0: 8.3, // Bowl
+    1: 9.8, // Plate
+    2: 11.3, // Bigger Plate
   };
 
-  if (loading) {
-    return <p>Loading menu...</p>;
-  }
+  const orderPrice = priceMapping[orderType];
+
+  // Handle side selection
+  const handleSideSelect = (side) => {
+    setSelectedSide(side);
+  };
+
+  // Handle entree selection for each entree slot
+  const handleEntreeSelect = (entree, index) => {
+    const updatedEntrees = [...selectedEntrees];
+    updatedEntrees[index] = entree;
+    setSelectedEntrees(updatedEntrees);
+  };
+
+  // Handle confirm button click
+  const handleConfirmClick = () => {
+    navigate("/cashier", { state: { selectedSide, selectedEntrees } });
+  };
 
   return (
-    <div>
-      <ItemList title="Pick Side" items={sides} />
-      <ItemList title="Pick Entree 1" items={entrees} />
+    <div className="cshr_itemContainer">
+      <h1 className="cshr_orderType">
+        {orderType === 0 ? "Bowl" : orderType === 1 ? "Plate" : "Bigger Plate"}-
+        ${orderPrice.toFixed(2)}
+      </h1>
 
-      {orderType >= 1 && <ItemList title="Pick Entree 2" items={entrees} />}
-      {orderType === 2 && <ItemList title="Pick Entree 3" items={entrees} />}
+      <h2 className="cshr_sideSelect">Pick a Side</h2>
+      <div className="cshr_divBtnContainer">
+        {sides.map((side) => (
+          <button
+            className={`cshr_sideBtn ${
+              selectedSide === side ? "selected" : ""
+            }`}
+            key={side.name}
+            onClick={() => handleSideSelect(side)}
+          >
+            {side.name} {side.upCharge > 0 && `(+$${side.upCharge})`}
+          </button>
+        ))}
+      </div>
 
-      <button onClick={handleConfirmClick}>Confirm</button>
-    </div>
-  );
-}
+      <h2 className="cshr_entreeSelect">
+        Pick {maxEntrees} Entree{maxEntrees > 1 && "s"}
+      </h2>
+      {selectedEntrees.map((_, index) => (
+        <div className="cshr_divBtnContainer" key={index}>
+          <h3>Entree {index + 1}</h3>
+          {entrees.map((entree) => (
+            <button
+              className={`cshr_sideBtn ${
+                selectedEntrees[index] === entree ? "selected" : ""
+              }`}
+              key={entree.name + index}
+              onClick={() => handleEntreeSelect(entree, index)}
+            >
+              {entree.name} {entree.upCharge > 0 && `(+$${entree.upCharge})`}
+            </button>
+          ))}
+        </div>
+      ))}
 
-// Helper Component to display items
-function ItemList({ title, items }) {
-  return (
-    <div>
-      <h1>{title}</h1>
-      {items.length > 0 ? (
-        items.map((item) => (
-          <p key={item.id}>
-            {item.name} - ${item.alt_price}{" "}
-            {item.upcharge > 0 && `(+ $${item.upcharge} upcharge)`}
-          </p>
-        ))
-      ) : (
-        <p>No items available</p>
-      )}
+      <button
+        onClick={handleConfirmClick}
+        disabled={!selectedSide || selectedEntrees.includes(null)}
+      >
+        Confirm
+      </button>
     </div>
   );
 }

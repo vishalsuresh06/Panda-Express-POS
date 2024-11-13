@@ -1,21 +1,16 @@
 .cshr_optionContainer {
   position: relative;
-  top: 60px;
-  left: 400px;
+  top: 70px;
+  left: 430px;
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(100px, 1fr)
-  ); /* responsive square-like layout */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
-  width: calc(
-    100vw - 400px - 20px
-  ); /* allows the grid to expand to fill available space */
-  max-width: 600px; /* adjust to your desired maximum width */
+  width: calc(100vw - 400px - 20px);
+  max-width: 100%;
 }
 
 .cshr_optionBtn {
-  aspect-ratio: 1 / 1; /* forces square shape */
+  aspect-ratio: 1 / 1;
   font-size: 16px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
