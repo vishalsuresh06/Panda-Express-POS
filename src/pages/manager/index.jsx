@@ -65,20 +65,21 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
 
     return (
         <section>
-            <h2>Edit {title}</h2>
-            <table>
+            <h2 className='mngr-font'>Edit {title}</h2>
+            <table className='mngr-table'>
                 <thead>
                     <tr>
                         {items.length > 0 && Object.keys(items[0]).map((key, index) => (
-                            <td key={index}>{key}</td>
+                            <td className='mngr-font' key={index}>{key}</td>
                         ))}
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     {items.map((menuItem, index) => (
                         <tr key={index}>
                             {Object.values(items[index]).map((entry, index2) => (
-                                <td key={index2}>{entry.toString()}</td>
+                                <td className='mngr-font' key={index2}>{entry.toString()}</td>
                             ))}
                             <td>
                                 <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
@@ -88,7 +89,7 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
                     ))}
                 </tbody>
             </table>
-            <button onClick={() => handleAdd()}>Create {title}</button>
+            <button className="mngr-createbutton" onClick={() => handleAdd()}>Create {title}</button>
         </section>
     )
 }
@@ -237,11 +238,72 @@ function MenuEdit() {
 
 function InventoryEdit() {
     async function fetchInventory() {
-        return []
+        try {
+            let response = await fetch(`${apiURL}/api/inventory`);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.log(error)
+            return []
+        }
+    }
+
+    async function modifyInventorys(data, action) {
+        let reqBody = { action: null, data: null }
+        if (action == "delete") {
+            reqBody.action = "delete"
+            reqBody.data = data
+
+        } else if (action == "add") {
+            reqBody.action = "add"
+            reqBody.data = data
+
+        } else {
+            reqBody.action = "modify"
+            reqBody.data = data
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/inventory/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+
+            if (response.ok) {
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+
+    async function addInventory(data) {
+        const newMenu = { name: '? Item', is_food: true, stock: 0, restock_threshold: 100, restock_amount: 100 };
+        return modifyInventory(newMenu, "add");
+    }
+
+    async function removeInventory(id) {
+        return modifyInventory(id, "delete")
+    }
+
+    async function modifyInventory(modifiedInventory) {
+        return modifyInventorys(modifiedInventory, "modify")
     }
 
     return (
-        <DBEditorTable title="Edit Inventory" fetchData={fetchInventory} />
+        <DBEditorTable title="Inventory" fetchData={fetchInventory} addData={addInventory} removeData={removeInventory} modifyData={modifyInventory} />
     )
 }
 
@@ -249,10 +311,14 @@ function Manager() {
     return (
         <>
             <div>
-                <h1 className='mngr-title'>Restaurant Manager Dashboard</h1>
+                <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
-                    <Link to="/manager/employees">Employees</Link>
-                    <Link to="/manager/menu">Menu</Link>
+                    <Link to="/manager/employees" className='mngr-btn'>Employees</Link>
+                    <Link to="/manager/menu" className='mngr-btn'>Menu</Link>
+                    <Link to="/manager/inventory" className='mngr-btn'>Inventory</Link>
+                    <Link to="/manager/sales" className='mngr-btn'>Sales</Link>
+                    <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
+                    <Link to="/manager/zreport" className='mngr-btn'>Z Report</Link>
                 </div>
                 <Outlet />
             </div>

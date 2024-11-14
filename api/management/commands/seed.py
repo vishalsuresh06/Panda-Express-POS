@@ -119,7 +119,7 @@ class Command(BaseCommand):
 
                     order_item = OrderItem.objects.create(
                         order=order,
-                        order_item_type=item_type
+                        order_item_type = item_type
                     )
 
                     # Add food items to the ManyToManyField

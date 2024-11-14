@@ -82,7 +82,7 @@ class FoodItem(models.Model):
     alt_price = models.DecimalField(decimal_places=2, max_digits=10)
     upcharge = models.DecimalField(decimal_places=2, max_digits=10)
     on_menu = models.BooleanField()
-    
+
     inventory_items = models.ManyToManyField('api.InventoryItem', through='FoodInventoryQuantity')
 
     def __str__(self):
