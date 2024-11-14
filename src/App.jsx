@@ -5,8 +5,7 @@ import {
   MenuEdit,
   InventoryEdit,
 } from "./pages/manager";
-import Cashier from "./pages/cashiers/cashierpages";
-import ItemSelection from "./pages/cashiers/cashierpages/itemSelection";
+import Cashier from "./pages/cashier";
 import Customers from "./pages/customers";
 import Kitchen from "./pages/kitchen";
 import Menu from "./pages/menu";
@@ -17,16 +16,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="" element={<Cashier />} />
         {/* Manager and its subpages */}
         <Route path="manager" element={<Manager />}>
           <Route path="employees" element={<EmployeeEdit />} />
           <Route path="menu" element={<MenuEdit />} />
           <Route path="inventory" element={<InventoryEdit />} />
         </Route>
-
-        {/* Cashier page and its subpage for Item Selection */}
-        <Route path="cashier" element={<Cashier />} />
-        <Route path="cashier/itemSelection" element={<ItemSelection />} />
 
         {/* Other main routes */}
         <Route path="/customer" element={<Customers />} />

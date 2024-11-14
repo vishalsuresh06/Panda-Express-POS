@@ -1,0 +1,63 @@
+.cshr_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.cshr_navBar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 80px;
+}
+
+.cshr_navBar > * {
+  flex-grow: 1;
+  text-align: center;
+  margin: 0;
+  color: #f1f1f1;
+}
+
+.cshr_employeeLbl,
+.cshr_timeLbl {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.cshr_logoutBtn,
+.cshr_managerBtn,
+.cshr_cateringBtn,
+.cshr_inventoryBtn {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  height: 100%;
+}
+
+.cshr_navBar button + button {
+  margin-left: -1px;
+}
+
+.cshr_logoutBtn:hover,
+.cshr_managerBtn:hover,
+.cshr_cateringBtn:hover,
+.cshr_inventoryBtn:hover {
+  background-color: #777;
+}
