@@ -21,7 +21,7 @@ class Command(BaseCommand):
         FoodItem.objects.create(name='Egg Roll', type="Appetizer", on_menu=True, alt_price=2.00, upcharge=0.00)
         FoodItem.objects.create(name='Kung Pao Chicken', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
         FoodItem.objects.create(name='Honey Walnut Shrimp', type="Entree", on_menu=True, alt_price=6.00, upcharge=1.50)
-        FoodItem.objects.create(name='Fried Rice', type="Side", on_menu=True, upcharge=0.00)
+        FoodItem.objects.create(name='Fried Rice', type="Side", on_menu=True, alt_price=0.00, upcharge=0.00)
         FoodItem.objects.create(name='Chow Mein', type="Side", on_menu=True, alt_price=0.00, upcharge=0.00)
         FoodItem.objects.create(name='Teriyaki Chicken', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
         FoodItem.objects.create(name='Super Greens', type="Side", on_menu=True, alt_price=0.00, upcharge=0.00)
@@ -106,8 +106,8 @@ class Command(BaseCommand):
                     customer_name=f'Customer {order_id}',
                     employee=employee,
                     date=date,
-                    type=random.choice(['Dine-in', 'Takeaway']),
-                    status=random.choice([Order.PENDING, Order.IN_PROGRESS, Order.COMPLETED]),
+                    type=random.choice(['here', 'togo']),
+                    status=random.choices([Order.PENDING, Order.COMPLETED], [1, 10])[0],
                     total_price=order_total
                 )
                 
