@@ -1,11 +1,11 @@
 # project-3-14-sugar-free-chicken
 
 Deployed Pages (currently no navigation so listed here are the main pages)
-https://panda-pos-14e912cde825.herokuapp.com/manager
-https://panda-pos-14e912cde825.herokuapp.com/kitchen/orders
-https://panda-pos-14e912cde825.herokuapp.com/menu
-https://panda-pos-14e912cde825.herokuapp.com/cashier
-https://panda-pos-14e912cde825.herokuapp.com/customer
+- https://panda-pos-14e912cde825.herokuapp.com/manager
+- https://panda-pos-14e912cde825.herokuapp.com/kitchen/orders
+- https://panda-pos-14e912cde825.herokuapp.com/menu
+- https://panda-pos-14e912cde825.herokuapp.com/cashier
+- https://panda-pos-14e912cde825.herokuapp.com/customer
 
 
 # SCRUM Meeting Minutes
