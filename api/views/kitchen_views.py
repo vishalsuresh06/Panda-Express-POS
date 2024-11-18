@@ -16,7 +16,7 @@ class RecentOrdersView(APIView):
 
         # Django querysets are lazy so the list comprehension doesn't actually query for the entire database first
         count = int(request.query_params.get("count"));
-        orderData = Order.objects.filter(Q(status='completed') | Q(status='cancelled')).order_by('-date')[:count]
+        orderData = Order.objects.filter(Q(status='completed') | Q(status='cancelled')).order_by('-date_processed')[:count]
         serializer = OrderSerializer(orderData, many=True)
         return JsonResponse(serializer.data, safe=False)
     
@@ -38,8 +38,8 @@ class KitchenOrders(APIView):
     def get(self, request):
         statusQuery = Q(status='pending') | Q(status='in_progress')
 
-        hereOrderData = Order.objects.filter(statusQuery, type='here').order_by('date')
-        togoOrderData = Order.objects.filter(statusQuery, type='togo').order_by('date')
+        hereOrderData = Order.objects.filter(statusQuery, type='here').order_by('date_created')
+        togoOrderData = Order.objects.filter(statusQuery, type='togo').order_by('date_created')
         
         hereSerializer = OrderSerializer(hereOrderData, many=True)
         togoSerializer = OrderSerializer(togoOrderData, many=True)
@@ -64,6 +64,7 @@ class KitchenOrders(APIView):
         # IF passed a valid action, perform that action on the target order
         if action == "complete" or action == "cancel":
             targetOrder.status = "completed" if action == "complete" else "cancelled"
+            targetOrder.date_processed = datetime.datetime.now()
             targetOrder.save()
             return JsonResponse({"success": False}, status=status.HTTP_200_OK)
         

@@ -90,7 +90,7 @@ class Command(BaseCommand):
 
         # Set peak days and sales targets
         peak_days = random.sample(dates, 2)
-        total_sales_target = 1_000_000
+        total_sales_target = 100_000
         uniform_sales = total_sales_target / total_days
         peak_sales = uniform_sales * 10
 
@@ -115,7 +115,8 @@ class Command(BaseCommand):
                 order = Order.objects.create(
                     customer_name=f'Customer {order_id}',
                     employee=employee,
-                    date=noisy_date,
+                    date_created=noisy_date,
+                    date_processed=noisy_date,  # For now, all seeded orders process instantly
                     type=random.choice(['here', 'togo']),
                     status=(Order.PENDING if noisy_date >= critical_date else Order.COMPLETED),
                     total_price=order_total

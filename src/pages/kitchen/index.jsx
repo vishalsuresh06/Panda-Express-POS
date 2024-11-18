@@ -26,9 +26,9 @@ const FULL_ORDER_RENDER_LIMIT = 2; // How many order cards in each column will b
 const DEFAULT_RECENT_ORDER_CNT = 10; // Default number of the most recent orders shown in the recent orders screen
 const CARD_STATUS_COLORS = {
 	"pending": 		"rgb(150, 150, 150)",
-	"in_progress": 	"rgb(29, 186, 113)",
+	"in_progress": 	"rgb(255, 255, 100)",
 	"completed": 	"rgb(29, 200, 113)",
-	"canceled": 	"rgb(180, 100, 113)",
+	"cancelled": 	"rgb(180, 100, 113)",
 }
 
 //! HELPER COMPONENTS
@@ -50,7 +50,7 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 	// "Time since order"
 	const [TOS, setTOS] = useState(calcTOS())
 	function calcTOS() {
-		let seconds = Math.floor((Date.now()-Date.parse(order.date))/1000);
+		let seconds = Math.floor((Date.now()-Date.parse(order.date_created))/1000);
 		return `${String(Math.floor(seconds/60)).padStart(2, '0')}:${String(seconds%60).padStart(2, '0')}`
 	}
 
