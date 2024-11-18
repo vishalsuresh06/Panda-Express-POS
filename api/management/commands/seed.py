@@ -3,6 +3,7 @@ from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, 
 from django.utils import timezone
 import datetime
 import random
+import pytz
 
 
 class Command(BaseCommand):
@@ -78,11 +79,14 @@ class Command(BaseCommand):
         for name, base_price in order_item_types:
             item_type = OrderItemType.objects.create(name=name, base_price=base_price)
 
-         # Generate Dates
-        start_date = datetime.datetime(2023, 1, 1)
-        end_date = datetime.datetime(2023, 12, 31)
+        # Generate Dates
+        timezone = pytz.timezone('America/Chicago')
+        start_date = timezone.localize(datetime.datetime(2023, 1, 1))
+        end_date = timezone.localize(datetime.datetime(2023, 12, 31))
         total_days = (end_date - start_date).days + 1
         dates = [start_date + datetime.timedelta(days=i) for i in range(total_days)]
+        critical_date = dates[-1] # Orders before this date have been completed, otherwise pending
+        print(critical_date)
 
         # Set peak days and sales targets
         peak_days = random.sample(dates, 2)
@@ -92,22 +96,28 @@ class Command(BaseCommand):
 
         # Generate Orders
         order_id = 0
-        current_sales = 0
 
         def create_order(date, sales_limit):
-            nonlocal order_id, current_sales
+            print(date, sales_limit)
+
+            nonlocal order_id
+
+            current_sales = 0;
             while current_sales < sales_limit:
                 employee = random.choice([employee1, employee2])
                 order_total = round(random.uniform(10, 100), 2)
                 current_sales += order_total
 
                 # Create order
+                noisy_date = date + datetime.timedelta(hours=random.randint(0, 23),
+                                                        minutes=random.randint(0,59),
+                                                        seconds=random.randint(0,59))
                 order = Order.objects.create(
                     customer_name=f'Customer {order_id}',
                     employee=employee,
-                    date=date,
+                    date=noisy_date,
                     type=random.choice(['here', 'togo']),
-                    status=random.choices([Order.PENDING, Order.COMPLETED], [1, 10])[0],
+                    status=(Order.PENDING if noisy_date >= critical_date else Order.COMPLETED),
                     total_price=order_total
                 )
                 

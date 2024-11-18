@@ -1,6 +1,6 @@
 .kt-mainDiv {
 	font-family: Verdana, sans-serif;
-	height: 100vh;
+	height: 90vh;
 	box-sizing: border-box;
 }
 .kt-mainDiv h1 {
@@ -18,6 +18,7 @@
 	display: flex;
 	flex-direction: column;
 	padding:0px;
+	width: 50vw;
 	
 }
 
@@ -57,8 +58,9 @@
 	border: 2px solid black;
 }
 
-
-
+.kt-orderCardBody {
+	display: flex;
+}
 
 .kt-orderCard {
 	border: 1px solid rgb(0, 0, 0);
@@ -73,37 +75,14 @@
 }
 
 .kt-buttons {
-	display: flex;
-	justify-content: flex-end;
-	flex-direction: column;
-	align-items: flex-end;
-}
-
-.kt-navBar button {
-	padding: 0;
-	border: none;
-	background: none;
-}
-
-.kt-navBar ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0; 
-}
-
-.kt-navBar button:hover {
-	background-color: maroon;
-}
-
-.kt-navBar {
-	background-color: red;
+	margin-left: auto;
 }
 
 .kt-cancel:hover {
 	background-color: red;
 }
 
-.kt-confirm:hover {
+.kt-complete:hover {
 	background-color: green;
 }
 
@@ -112,3 +91,33 @@
 }
 
 
+
+/** NAV BAR STYLING*/
+.kt-navBar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+
+.kt-navBar button:hover {
+    background-color: #a04545;
+}
+
+.kt-navBtn:-webkit-any-link {
+    display: inline-block;
+    background-color: #f44336;
+    color: #FFFFFF;
+    padding: 14px 25px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.kt-navBtn:hover {
+    color: white;
+    background-color: red;
+    opacity: 1;
+}

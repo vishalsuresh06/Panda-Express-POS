@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Manager, EmployeeEdit, MenuEdit, InventoryEdit } from './pages/manager';
 import Cashiers from './pages/cashiers';
 import Customers from './pages/customers';
-import {Kitchen, KitchenOrders} from './pages/kitchen';
+import {Kitchen, KitchenOrders, RecentOrders, KitchenCustomizer} from './pages/kitchen';
 import Menu from './pages/menu';
 import NotFound from './pages/notfound';
 import './index.css'
@@ -22,8 +22,8 @@ function App() {
 
         <Route path="/kitchen" element={<Kitchen />}>
           <Route path="orders" element={<KitchenOrders />} />
-          <Route path="customize" element={<MenuEdit />} />
-          <Route path="recentorders" element={<InventoryEdit />} />
+          <Route path="customize" element={<KitchenCustomizer />} />
+          <Route path="recentorders" element={<RecentOrders />} />
         </Route>
 
         <Route path="/menu" element={<Menu />} />
