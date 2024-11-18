@@ -16,9 +16,20 @@ class FoodItemSerializer(serializers.ModelSerializer):
         model = FoodItem
         fields = ['id', 'name', 'type', 'alt_price', 'upcharge', 'on_menu']
 
+class OrderFoodQuantitySerializer(serializers.ModelSerializer):
+    food_item = serializers.ReadOnlyField(source='food_item.name')
+
+    class Meta:
+        model = OrderFoodQuantity
+        fields = ['food_item', 'quantity']
+class InventoryItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InventoryItem
+        fields = ['id', 'name', 'is_food', 'stock', 'restock_threshold', 'restock_amount']
+
 class OrderItemSerializer(serializers.ModelSerializer):
     order_item_type = OrderItemTypeSerializer(many=False, read_only=True)
-    food_items = FoodItemSerializer(many=True, read_only=True)
+    food_items = OrderFoodQuantitySerializer(many=True, read_only=True, source='orderfoodquantity_set')
 
     class Meta:
         model = OrderItem
@@ -29,7 +40,7 @@ class OrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ['id', 'date', 'type', 'total_price', 'employee', 'customer_name', 'order_items']
+        fields = ['id', 'date', 'type', 'total_price', 'employee', 'customer_name', 'order_items', 'status']
 
 
 

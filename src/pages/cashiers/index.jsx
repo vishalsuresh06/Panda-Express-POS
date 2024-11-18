@@ -1,9 +1,15 @@
-function Cashiers() {
-    return (
-        <>
-            <h1>Hello Cashier</h1>
-        </>
-    )
+import NavBar from "./cashierpages/NavBar";
+import CheckoutView from "./cashierpages/checkout";
+import OrderView from "./cashierpages/OrderView";
+
+function Cashier() {
+  return (
+    <div>
+      <NavBar />
+      <CheckoutView />
+      <OrderView />
+    </div>
+  );
 }
 
-export default Cashiers
+export default Cashier;

@@ -22,3 +22,55 @@
 .mngr-nav button:hover {
     background-color: #a04545;
 }
+
+.mngr-table {
+    border-collapse: collapse;
+    font-size: 1em;
+    font-family: sans-serif;
+    width: 100%;
+    text-align: center;
+}
+
+.mngr-table thead tr {
+    background-color: #dd4545;
+    color: #ffffff;
+    text-align: center;
+}
+
+.mngr-table th,
+.mngr-table td {
+    padding: 7px 7px;
+}
+
+.mngr-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.mngr-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.mngr-createbutton {
+    margin: 15px;
+}
+
+.mngr-font {
+    font-family: Verdana, sans-serif;
+}
+
+.mngr-btn {
+    display: inline-block;
+    background-color: #f44336;
+    color: #FFFFFF;
+    padding: 14px 25px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.mngr-btn:hover {
+    color: white;
+    background-color: red;
+    opacity: 1;
+}
