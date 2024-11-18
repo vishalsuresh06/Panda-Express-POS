@@ -3,41 +3,45 @@ import React from 'react';
 
 export default function Customers() {
     const [ItemList, setItems] = useState([
-        {id : 2, name : "chicken"},
+        {id : 9, price : 9.00, name : "chicken"},
         {id : 1, name : "ghost"}
     ]);
 
+    const remove_item = (id_to_remove)=>{
+        setItems(items => 
+                items.filter(item => item.id !== id_to_remove)
+            );
+    }
+
     return (
         <>
-            {CheckoutView(ItemList, removeItem)}
+            <CheckoutView ItemList = {ItemList} set = {setItems} remove_Item = {remove_item}/>
         </>
     );
 }
 
-function removeItem({items, mod}, id_to_change) {
-    mod(items => 
-        items.filter(item => item.id !== id_to_change)
-    );
-}
 
 
-function OrderItems(ItemList) {
+function OrderItems({ItemList, set, remove_Item}) {
     return(
         <ul>
         {ItemList.map((item, index) => (
-            <li key={index}>{item.name}
-                
+            <li key={item.id}>
+                {item.name}
+                <div className="Cust_killOrderButton">
+                <button onClick={() => remove_Item(item.id)}> exit</button>
+                </div>
             </li>
         ))}
         </ul>
     );
 }
 
-function CheckoutView(ItemList, removeItem) {
+function CheckoutView({ItemList, set, remove_Item}) {
 return (
     <div className="cshr_checkoutContainer">
     <div className="cshr_itemListContainer">
-        {OrderItems(ItemList, removeItem)}
+        <OrderItems ItemList = {ItemList} set = {set}  remove_Item = {remove_Item}/>
     </div>
     <div className="cshr_totalContainer">
         <h1 className="cshr_taxAmt">Tax: {getTax(ItemList)}</h1>
