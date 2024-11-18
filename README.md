@@ -1,14 +1,18 @@
 # project-3-14-sugar-free-chicken
 
+Deployed Pages (currently no navigation so listed here are the main pages)
+https://panda-pos-14e912cde825.herokuapp.com/manager
+https://panda-pos-14e912cde825.herokuapp.com/kitchen/orders
+https://panda-pos-14e912cde825.herokuapp.com/menu
+https://panda-pos-14e912cde825.herokuapp.com/cashier
+https://panda-pos-14e912cde825.herokuapp.com/customer
 
-# SCRUM meetings
-11/4/24
+
+# SCRUM Meeting Minutes
+11/6/24
 - general check in
 - connect Neil and Luis for data loading
 - Liam learn react more
-
-
-#todo (Ryan do we have another meeting when I was out dead last week?)
 
 11/11/24
 - crunch time check in
