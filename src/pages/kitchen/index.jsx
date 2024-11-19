@@ -7,22 +7,32 @@ import './kitchen.css';
 //* Features
 // TODO - 	Allow manager to customize kitchen page
 // TODO -	Maybe add the ability to mark specific order items on individual orders as completed. Would require altering models...
+// TODO - 	Rather than RECENT_ORDER_COUNT, have a "show more" button which loads another ten or so
+// TODO -	Ability to expand some of the nonfull display order cards
+// TODO - 	Added settings to the models so that we can save this shit to the database :)
 
 //* Other
+// TODO - 	Fix inconsistent button hits (sometime they don't seem to register a click)
 // TODO - 	Delay in background color change on order start & stop (its waiting for the db)
 // TODO -	Speak with Vishal about how the Cashier page will handle creating new orders. Should they be sent to kitchen or handled there?
 // TODO - 	Ask group about navbar/landing page between all non-kiosk screens (or at least, customer shouldn't be able to nav away)
 
+//! GLOBAL CONTEXTS
+const SettingsContext = createContext(null);
+const DEFAULT_SETTINGS = {
+	ORDER_REFRESH_S: 5,
+	ORDER_RENDER_LIMIT: 2,
+	RECENT_ORDER_COUNT: 10,
+	HERE_ORDERS_LEFT: true,
+	CARD_COLORS: {
+		"pending": 		"rgb(150, 150, 150)",
+		"in_progress": 	"rgb(255, 255, 100)",
+		"completed": 	"rgb(29, 200, 113)",
+		"cancelled": 	"rgb(180, 100, 113)",
+	}
+}
 
-const ORDER_REFRESH_MS = createContext(5000); // How often the screen will update with new orders from the database
-const FULL_ORDER_RENDER_LIMIT = createContext(2); // How many order cards in each column will be fully displayed before collapsing
-const RECENT_ORDER_CNT = createContext(10); // Default number of the most recent orders shown in the recent orders screen
-const CARD_STATUS_COLORS = createContext({
-	"pending": 		"rgb(150, 150, 150)",
-	"in_progress": 	"rgb(255, 255, 100)",
-	"completed": 	"rgb(29, 200, 113)",
-	"cancelled": 	"rgb(180, 100, 113)",
-})
+
 
 //! HELPER COMPONENTS
 function OrderItemCard({orderItem}) {
@@ -40,6 +50,8 @@ function OrderItemCard({orderItem}) {
 }
 
 function OrderCard({order, onHandle, displayFullCard, inProgress}) {
+	const { settings, setSettings } = useContext(SettingsContext);
+
 	// "Time since order"
 	const [TOS, setTOS] = useState(calcTOS())
 	function calcTOS() {
@@ -71,15 +83,14 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 		return () => clearInterval(intervalID);
 	}, []);	
 
-	const colorDict = useContext(CARD_STATUS_COLORS);
 	const style = {
-		backgroundColor: colorDict[order.status]
+		backgroundColor: settings.CARD_COLORS[order.status]
 	};
 
 	return (<div style={style} className="kt-orderCard">
 		<div className="kt-orderCardHeaders">
 			<h3 className="kt-orderInfo"> Order #{order.id} for {order.customer_name} </h3>
-			<h3 className="kt-TOS"> {TOS} </h3>
+			<h3 className="kt-TOS"> {inProgress && TOS} </h3>
 		</div>
 
 		<div>
@@ -102,24 +113,23 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 }
 
 function OrderColumn({title, orders, onHandle, current}) {
-	const renderLimit = useContext(FULL_ORDER_RENDER_LIMIT);
+	const { settings, setSettings } = useContext(SettingsContext);
 
 	return (<div className="kt-column">
-		<h1>{title} {orders.length}</h1>
+		<h1>{title} - {orders.length}</h1>
 
 		<ul className="kt-cardList">
 			{orders.map((order, index) => (
 				<li key={index}> 
 						<OrderCard  order={order} 
 									onHandle={onHandle} 
-									displayFullCard={!current || index<renderLimit} 
+									displayFullCard={!current || index<settings.ORDER_RENDER_LIMIT} 
 									inProgress={current}/> 
 				</li>
 			))}
 		</ul>
 	</div>)
 }
-
 
 
 
@@ -135,7 +145,7 @@ function NavBar() {
 function KitchenOrders() {
 	const [ordersHere, setOrdersHere] = useState([]);
 	const [ordersTogo, setOrdersTogo] = useState([]);
-	const refreshRate = useContext(ORDER_REFRESH_MS);
+	const { settings, setSettings } = useContext(SettingsContext);
 
 	// Fetches the pending orders from the database
 	async function fetchOrders() {
@@ -167,7 +177,7 @@ function KitchenOrders() {
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
-		}, refreshRate);
+		}, settings.ORDER_REFRESH_S*1000);
 		
 		fetchOrders();
 		return () => clearInterval(intervalID);
@@ -229,26 +239,34 @@ function KitchenOrders() {
         } catch (error) { return false; }
 	}
 
-	return (<>
-		<div className="kt-columnContainer">
-			<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} current={true}/>
-			<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} current={true}/>	
-		</div>
-	</>)
+	if (settings.HERE_ORDERS_LEFT) {
+		return (<>
+			<div className="kt-columnContainer">
+				<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} current={true}/>
+				<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} current={true}/>	
+			</div>
+		</>)
+	} else {
+		return (<>
+			<div className="kt-columnContainer">
+				<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} current={true}/>	
+				<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} current={true}/>
+			</div>
+		</>)
+	}
+	
 }
 
 function RecentOrders() {
 	const [recentOrders, setRecentOrders] = useState([]);
-	const orderCount = useContext(RECENT_ORDER_CNT);
-	const refreshRate = useContext(ORDER_REFRESH_MS);
+	const { settings, setSettings } = useContext(SettingsContext);
 
 	async function fetchOrders() {
 		try {
-			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${orderCount}`);
+			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${settings.RECENT_ORDER_COUNT}`);
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data);
 				setRecentOrders(data);
 
 			} else {
@@ -288,7 +306,7 @@ function RecentOrders() {
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
-		}, refreshRate);
+		}, settings.ORDER_REFRESH_S*1000);
 		
 		fetchOrders();
 		return () => clearInterval(intervalID);
@@ -300,20 +318,85 @@ function RecentOrders() {
 }
 
 function KitchenCustomizer() {
-	return (<>
+	const { settings, setSettings } = useContext(SettingsContext);
+	/*
+		Order refresh rate 
+		Card color dictionary
+		How many order cards are full by default
+		Default step size for showing recent orders (starting & how many "show more" will display)
+		How many here & togo columns (would have to split the orders evenly)
+		Here vs. Togo orders on the left or right
+	*/
+	const inputFieldChange = (field) => (event) => {
+		const settingsCopy = {...settings};
+		settingsCopy[field] = Number(event.target.value);
+		setSettings(settingsCopy);
+	};
+
+	const checkboxChange = (field) => (event) => {
+		const settingsCopy = {...settings};
+		settingsCopy[field] = event.target.checked;
+		setSettings(settingsCopy);
+	}
+
+	const restoreDefault = () => {
+		setSettings(DEFAULT_SETTINGS);
+	}
+	
+
+
+	return (<div className="kt-customizerInputs">
 		<h1>KITCHEN CUSTOMIZER</h1>
-	</>)
+		<table className="kt-inputsTable">
+			<tbody>
+				<tr>
+					<th>Setting</th>
+					<th>Description</th>
+					<th>Value</th>
+				</tr>
+				<tr>
+					<td>Order Refresh Rate (s)</td>
+					<td>How often the "Orders" and "Recent Order" pages will refresh with newly entered orders.</td>
+					<td><input type="text" defaultValue={settings.ORDER_REFRESH_S} onChange={inputFieldChange("ORDER_REFRESH_S")}/></td>
+				</tr>
+				<tr>
+					<td>Full Order Render Count</td>
+					<td>How many order cards are automatically expanded in the "here" and "togo" columns.</td>
+					<td><input type="text" defaultValue={settings.ORDER_RENDER_LIMIT} onChange={inputFieldChange("ORDER_RENDER_LIMIT")}/></td>
+				</tr>
+				<tr>
+					<td>Recent Order Count</td>
+					<td>How many of the most recent orders will be displayed in "Recent Orders".</td>
+					<td><input type="text" defaultValue={settings.RECENT_ORDER_COUNT} onChange={inputFieldChange("RECENT_ORDER_COUNT")}/></td>
+				</tr>
+				<tr>
+					<td>Here Orders Left</td>
+					<td>Alters which of the two order columns is displayed first on the "Orders" page.</td>
+					<td><input type="checkbox" defaultChecked={settings.HERE_ORDERS_LEFT} onChange={checkboxChange("HERE_ORDERS_LEFT")}/></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div className="kt-dftContainer">
+			<button className="kt-dftButton" onClick={restoreDefault}>Restore Default</button>
+		</div>
+	</div>)
 }
 
 
 
 //! PARENT COMPONENT
 function Kitchen() {
-	// MAIN RETURN
-	return (<div className="kt-mainDiv">
-		<NavBar/>
-		<Outlet/>
-	</div>)
+	const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+
+	return (
+		<SettingsContext.Provider value={{settings, setSettings}}>
+			<div className="kt-mainDiv">
+				<NavBar/>
+				<Outlet/>
+			</div>
+		</SettingsContext.Provider>
+	)
 }
 
 export {Kitchen, KitchenOrders, RecentOrders, KitchenCustomizer}

@@ -6,6 +6,8 @@
 .kt-mainDiv h1 {
 	text-align: center;
 	margin: 0px;
+	background-color: #f44336;
+	opacity: 0.9;
 }
 
 .kt-columnContainer {
@@ -19,7 +21,6 @@
 	flex-direction: column;
 	padding:0px;
 	width: 50vw;
-	
 }
 
 .kt-column ul {
@@ -54,10 +55,6 @@
 	margin-right:10px;
 }
 
-.kt-column h1 {
-	border: 2px solid black;
-}
-
 .kt-orderCardBody {
 	display: flex;
 }
@@ -90,7 +87,47 @@
 	background-color: darkslategray;
 }
 
+.kt-inputsTable {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 40%;
+	margin-top:10px;
+	margin-left: auto;
+	margin-right: auto;
+}
 
+.kt-inputsTable td, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+
+
+.kt-dftContainer {
+    display: flex;
+    justify-content: center;
+	margin-top: 50px;
+}
+
+.kt-dftButton {
+    display: inline-block;
+	border:none;
+    background-color: #f44336;
+    color: #FFFFFF;
+    text-align: center;
+    opacity: 0.9;
+}
+
+.kt-dftButton:hover {
+    color: white;
+    background-color: red;
+    opacity: 1;
+}
 
 /** NAV BAR STYLING*/
 .kt-navBar {
@@ -100,10 +137,6 @@
     padding: 10px;
 }
 
-
-.kt-navBar button:hover {
-    background-color: #a04545;
-}
 
 .kt-navBtn:-webkit-any-link {
     display: inline-block;
