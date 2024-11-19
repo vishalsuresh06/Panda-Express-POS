@@ -1,35 +1,28 @@
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import './kitchen.css';
 
 
-//* Design
-// TODO - 	Use a more "Panda Express" like color scheme
-// TODO - 	Possibly redesign layout of these cards since there is a lot of empty space only having two column.
-// TODO -	Custom scrollbar might look nice: https://www.w3schools.com/howto/howto_css_custom_scrollbar.asp
-
 //* Features
-// TODO - 	Add the ability to look back at the latest "completed" or "canceled" orders & revive them
-// TODO - 	Allow manager to edit the render limit & other customizable parameters
+// TODO - 	Allow manager to customize kitchen page
 // TODO -	Maybe add the ability to mark specific order items on individual orders as completed. Would require altering models...
 
 //* Other
-// TODO - 	Investigate possible desync on the toggle of order status if you do it too quickly...
 // TODO - 	Delay in background color change on order start & stop (its waiting for the db)
 // TODO -	Speak with Vishal about how the Cashier page will handle creating new orders. Should they be sent to kitchen or handled there?
 // TODO - 	Ask group about navbar/landing page between all non-kiosk screens (or at least, customer shouldn't be able to nav away)
 
 
-const ORDER_REFRESH_MS = 5000; // How often the screen will update with new orders from the database
-const FULL_ORDER_RENDER_LIMIT = 2; // How many order cards in each column will be fully displayed before collapsing
-const DEFAULT_RECENT_ORDER_CNT = 10; // Default number of the most recent orders shown in the recent orders screen
-const CARD_STATUS_COLORS = {
+const ORDER_REFRESH_MS = createContext(5000); // How often the screen will update with new orders from the database
+const FULL_ORDER_RENDER_LIMIT = createContext(2); // How many order cards in each column will be fully displayed before collapsing
+const RECENT_ORDER_CNT = createContext(10); // Default number of the most recent orders shown in the recent orders screen
+const CARD_STATUS_COLORS = createContext({
 	"pending": 		"rgb(150, 150, 150)",
 	"in_progress": 	"rgb(255, 255, 100)",
 	"completed": 	"rgb(29, 200, 113)",
 	"cancelled": 	"rgb(180, 100, 113)",
-}
+})
 
 //! HELPER COMPONENTS
 function OrderItemCard({orderItem}) {
@@ -78,10 +71,9 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 		return () => clearInterval(intervalID);
 	}, []);	
 
-	
-	
+	const colorDict = useContext(CARD_STATUS_COLORS);
 	const style = {
-		backgroundColor: CARD_STATUS_COLORS[order.status]
+		backgroundColor: colorDict[order.status]
 	};
 
 	return (<div style={style} className="kt-orderCard">
@@ -110,6 +102,8 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 }
 
 function OrderColumn({title, orders, onHandle, current}) {
+	const renderLimit = useContext(FULL_ORDER_RENDER_LIMIT);
+
 	return (<div className="kt-column">
 		<h1>{title} {orders.length}</h1>
 
@@ -118,7 +112,7 @@ function OrderColumn({title, orders, onHandle, current}) {
 				<li key={index}> 
 						<OrderCard  order={order} 
 									onHandle={onHandle} 
-									displayFullCard={!current || index<FULL_ORDER_RENDER_LIMIT} 
+									displayFullCard={!current || index<renderLimit} 
 									inProgress={current}/> 
 				</li>
 			))}
@@ -141,6 +135,7 @@ function NavBar() {
 function KitchenOrders() {
 	const [ordersHere, setOrdersHere] = useState([]);
 	const [ordersTogo, setOrdersTogo] = useState([]);
+	const refreshRate = useContext(ORDER_REFRESH_MS);
 
 	// Fetches the pending orders from the database
 	async function fetchOrders() {
@@ -172,7 +167,7 @@ function KitchenOrders() {
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
-		}, ORDER_REFRESH_MS);
+		}, refreshRate);
 		
 		fetchOrders();
 		return () => clearInterval(intervalID);
@@ -244,10 +239,12 @@ function KitchenOrders() {
 
 function RecentOrders() {
 	const [recentOrders, setRecentOrders] = useState([]);
+	const orderCount = useContext(RECENT_ORDER_CNT);
+	const refreshRate = useContext(ORDER_REFRESH_MS);
 
 	async function fetchOrders() {
 		try {
-			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${DEFAULT_RECENT_ORDER_CNT}`);
+			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${orderCount}`);
 
 			if (response.ok) {
 				const data = await response.json();
@@ -291,7 +288,7 @@ function RecentOrders() {
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
-		}, ORDER_REFRESH_MS);
+		}, refreshRate);
 		
 		fetchOrders();
 		return () => clearInterval(intervalID);
