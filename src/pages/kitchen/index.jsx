@@ -1,23 +1,23 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { Compact } from '@uiw/react-color';
 import { Link, Outlet } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import './kitchen.css';
 
 
 //* Features
-// TODO - 	Allow manager to customize kitchen page
 // TODO -	Maybe add the ability to mark specific order items on individual orders as completed. Would require altering models...
-// TODO - 	Rather than RECENT_ORDER_COUNT, have a "show more" button which loads another ten or so
+// TODO - 	Maybe have a "show more" button which loads another ten or so
 // TODO -	Ability to expand some of the nonfull display order cards
 // TODO - 	Added settings to the models so that we can save this shit to the database :)
 
 //* Other
 // TODO - 	Fix inconsistent button hits (sometime they don't seem to register a click)
 // TODO - 	Delay in background color change on order start & stop (its waiting for the db)
-// TODO -	Speak with Vishal about how the Cashier page will handle creating new orders. Should they be sent to kitchen or handled there?
 // TODO - 	Ask group about navbar/landing page between all non-kiosk screens (or at least, customer shouldn't be able to nav away)
 
-//! GLOBAL CONTEXTS
+
+//! PAGE SETTINGS
 const SettingsContext = createContext(null);
 const DEFAULT_SETTINGS = {
 	ORDER_REFRESH_S: 5,
@@ -25,14 +25,12 @@ const DEFAULT_SETTINGS = {
 	RECENT_ORDER_COUNT: 10,
 	HERE_ORDERS_LEFT: true,
 	CARD_COLORS: {
-		"pending": 		"rgb(150, 150, 150)",
-		"in_progress": 	"rgb(255, 255, 100)",
-		"completed": 	"rgb(29, 200, 113)",
-		"cancelled": 	"rgb(180, 100, 113)",
+		"pending": 		"#969696",
+		"in_progress": 	"#ffff64",
+		"completed": 	"#1dc871",
+		"cancelled": 	"#b46471",
 	}
 }
-
-
 
 //! HELPER COMPONENTS
 function OrderItemCard({orderItem}) {
@@ -131,6 +129,42 @@ function OrderColumn({title, orders, onHandle, current}) {
 	</div>)
 }
 
+function SettingsInput({name, desc, field, type}) {
+	const { settings, setSettings } = useContext(SettingsContext);
+	const [color, setColor] = useState(type == "color" ? settings.CARD_COLORS[field] : "");
+	
+	const changeSettings = (event) => {
+		const settingsCopy = {...settings};
+		if (type == "text") {
+			settingsCopy[field] = Number(event.target.value); 
+		} else if (type == "checkbox") {
+			settingsCopy[field] = event.target.checked; 
+		} else if (type == "color") {
+			setColor(event.hex);
+			settingsCopy.CARD_COLORS[field] = event.hex;
+		}
+		setSettings(settingsCopy);
+
+		console.log(settings);
+	}
+
+	var inputComponent;
+	if (type == "text") {
+		inputComponent = <input type="text" defaultValue={settings[field]} onChange={changeSettings} key={settings[field]}/>;
+	} else if (type == "checkbox") {
+		inputComponent = <input type="checkbox" defaultChecked={settings[field]} onChange={changeSettings} key={settings[field]}/>;
+	} else if (type == "color") {
+		inputComponent = <Compact color={color} onChange={changeSettings}/>
+	}
+
+	return (
+		<tr>
+			<td>{name}</td>
+			<td>{desc}</td>
+			<td>{inputComponent}</td>
+		</tr>
+	)
+}	
 
 
 //! MAIN COMPONENTS
@@ -319,31 +353,10 @@ function RecentOrders() {
 
 function KitchenCustomizer() {
 	const { settings, setSettings } = useContext(SettingsContext);
-	/*
-		Order refresh rate 
-		Card color dictionary
-		How many order cards are full by default
-		Default step size for showing recent orders (starting & how many "show more" will display)
-		How many here & togo columns (would have to split the orders evenly)
-		Here vs. Togo orders on the left or right
-	*/
-	const inputFieldChange = (field) => (event) => {
-		const settingsCopy = {...settings};
-		settingsCopy[field] = Number(event.target.value);
-		setSettings(settingsCopy);
-	};
-
-	const checkboxChange = (field) => (event) => {
-		const settingsCopy = {...settings};
-		settingsCopy[field] = event.target.checked;
-		setSettings(settingsCopy);
-	}
 
 	const restoreDefault = () => {
 		setSettings(DEFAULT_SETTINGS);
 	}
-	
-
 
 	return (<div className="kt-customizerInputs">
 		<h1>KITCHEN CUSTOMIZER</h1>
@@ -354,26 +367,41 @@ function KitchenCustomizer() {
 					<th>Description</th>
 					<th>Value</th>
 				</tr>
-				<tr>
-					<td>Order Refresh Rate (s)</td>
-					<td>How often the "Orders" and "Recent Order" pages will refresh with newly entered orders.</td>
-					<td><input type="text" defaultValue={settings.ORDER_REFRESH_S} onChange={inputFieldChange("ORDER_REFRESH_S")}/></td>
-				</tr>
-				<tr>
-					<td>Full Order Render Count</td>
-					<td>How many order cards are automatically expanded in the "here" and "togo" columns.</td>
-					<td><input type="text" defaultValue={settings.ORDER_RENDER_LIMIT} onChange={inputFieldChange("ORDER_RENDER_LIMIT")}/></td>
-				</tr>
-				<tr>
-					<td>Recent Order Count</td>
-					<td>How many of the most recent orders will be displayed in "Recent Orders".</td>
-					<td><input type="text" defaultValue={settings.RECENT_ORDER_COUNT} onChange={inputFieldChange("RECENT_ORDER_COUNT")}/></td>
-				</tr>
-				<tr>
-					<td>Here Orders Left</td>
-					<td>Alters which of the two order columns is displayed first on the "Orders" page.</td>
-					<td><input type="checkbox" defaultChecked={settings.HERE_ORDERS_LEFT} onChange={checkboxChange("HERE_ORDERS_LEFT")}/></td>
-				</tr>
+				<SettingsInput 	name="Order Refresh Rate (s)"
+								desc="How pages will refresh with newly entered orders."
+								field="ORDER_REFRESH_S"
+								type="text"/>
+				
+				<SettingsInput 	name="Full Order Render Count"
+								desc="How many order cards are automatically expanded in the HERE/TOGO columns."
+								field="ORDER_RENDER_LIMIT"
+								type="text"/>
+
+				<SettingsInput 	name="Recent Order Count"
+								desc="How many of the most recent orders will be displayed."
+								field="RECENT_ORDER_COUNT"
+								type="text"/>
+
+				<SettingsInput 	name="Here Orders on Left"
+								desc="Alters which of the two order columns is displayed."
+								field="HERE_ORDERS_LEFT"
+								type="checkbox"/>
+
+				<SettingsInput  name="Pending Order Color"
+								field="pending"
+								type="color"/>
+
+				<SettingsInput  name="In Progress Order Color"
+								field="in_progress"
+								type="color"/>
+
+				<SettingsInput  name="Completed Order Color"
+								field="completed"
+								type="color"/>
+				
+				<SettingsInput  name="Canceled Order Color"
+								field="cancelled"
+								type="color"/>
 			</tbody>
 		</table>
 
