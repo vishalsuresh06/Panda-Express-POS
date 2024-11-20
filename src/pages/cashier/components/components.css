@@ -1,0 +1,58 @@
+/* Container styling */
+.cshr_selectionContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; /* Space between elements */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 50px auto;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+/* Class label (e.g., "Bowl") */
+.cshr_classLbl {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #007bff; /* Accent line */
+  padding-bottom: 10px;
+}
+
+/* Labels for sides and entrees */
+.cshr_sideLbl,
+.cshr_entreeLbl {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #555;
+  margin: 10px 0;
+}
+
+/* Highlight the side label */
+.cshr_sideLbl {
+  color: #007bff; /* Accent color for "Side" */
+  font-weight: bold;
+}
+
+/* Spacing for entree labels */
+.cshr_entreeLbl {
+  background-color: #fff;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for entree labels */
+.cshr_entreeLbl:hover {
+  background-color: #f0f8ff;
+  border-color: #007bff;
+  color: #007bff;
+  cursor: pointer;
+}

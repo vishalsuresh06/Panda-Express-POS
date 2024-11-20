@@ -6,23 +6,28 @@ import {
   InventoryEdit,
 } from "./pages/manager";
 import Cashier from "./pages/cashier";
+import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";
 import Customers from "./pages/customers";
 import Kitchen from "./pages/kitchen";
 import Menu from "./pages/menu";
 import NotFound from "./pages/notfound";
+import Login from "./pages/login";
 import "./index.css";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="" element={<Cashier />} />
         {/* Manager and its subpages */}
         <Route path="manager" element={<Manager />}>
           <Route path="employees" element={<EmployeeEdit />} />
           <Route path="menu" element={<MenuEdit />} />
           <Route path="inventory" element={<InventoryEdit />} />
         </Route>
+
+        {/* Cashier and its subpages */}
+        <Route path="/cashier" element={<Cashier />} />
+        <Route path="/itemSelection" element={<ItemSelection />} />
 
         {/* Other main routes */}
         <Route path="/customer" element={<Customers />} />
