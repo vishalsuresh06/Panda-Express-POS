@@ -4,4 +4,5 @@ from api.views import cashier_views, kiosk_views, kitchen_views, manager_views, 
 urlpatterns = [
     path("employees/",  manager_views.EmployeeView.as_view(), name="employees"),
     path("menu/",       manager_views.MenuView.as_view(), name="menu"),
+    path("kiosk_menu/",   kiosk_views.KioskView.as_view(), name = "Kiosk_menu")
 ]
