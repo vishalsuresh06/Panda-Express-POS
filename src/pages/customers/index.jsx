@@ -3,8 +3,8 @@ import React from 'react';
 
 export default function Customers() {
     const [ItemList, setItems] = useState([
-        {id : 9, price : 9.00, name : "chicken"},
-        {id : 1, name : "ghost"}
+        {id : 9, price : 9, name : "chicken"},
+        {id : 1, price : 2, name : "ghost"}
     ]);
 
     const remove_item = (id_to_remove)=>{
@@ -37,6 +37,24 @@ function OrderItems({ItemList, set, remove_Item}) {
     );
 }
 
+function Subtotal(items){
+    console.log(Object.values(items).flat())
+    const total = Object.values(items).flat().reduce((sum, item) => {
+        console.log(sum)
+        return sum + Number(item.price)
+        
+    }, 0)
+    console.log(total)
+    return(
+        // {items.map((item) => (
+        //     <li key={item.id}>{item.name}</li>
+        // ))}
+        <>
+            {total}
+        </>
+    );
+}
+
 function CheckoutView({ItemList, set, remove_Item}) {
 return (
     <div className="cshr_checkoutContainer">
@@ -44,7 +62,8 @@ return (
         <OrderItems ItemList = {ItemList} set = {set}  remove_Item = {remove_Item}/>
     </div>
     <div className="cshr_totalContainer">
-        <h1 className="cshr_taxAmt">Tax: {getTax(ItemList)}</h1>
+        <h1 className="cshr_taxAmt">Subtotal: <Subtotal items = {ItemList}/></h1>
+        
         <h1 className="cshr_totAmt">Total: {getTotal(ItemList)}</h1>
         <div className="cshr_btnContainer">
         <button className="cshr_checkoutBtn">Checkout</button>
@@ -55,16 +74,7 @@ return (
 );
 }
 
-function getTax(items={ItemList}){
-    return(
-        // {items.map((item) => (
-        //     <li key={item.id}>{item.name}</li>
-        // ))}
-        <>
-            Yes
-        </>
-    )
-}
+
 
 function getTotal(items={ItemList}){
     return(
