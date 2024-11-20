@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { Compact } from '@uiw/react-color';
 import { Link, Outlet } from 'react-router-dom';
-import { apiURL } from '../../config.js';
+import { apiURL, WEATHER_API_KEY} from '../../config.js';
 import './kitchen.css';
 
 
@@ -19,11 +19,14 @@ import './kitchen.css';
 
 //! PAGE SETTINGS
 const SettingsContext = createContext(null);
+const WEATHER_REFRESH_MIN = 10;					// DON'T INCREASE THIS, >1000 API calls charges Ryan (please no)
+
 const DEFAULT_SETTINGS = {
 	ORDER_REFRESH_S: 5,
 	ORDER_RENDER_LIMIT: 2,
 	RECENT_ORDER_COUNT: 10,
 	HERE_ORDERS_LEFT: true,
+	TEMP_FAHRENHEIT: true,
 	CARD_COLORS: {
 		"pending": 		"#969696",
 		"in_progress": 	"#ffff64",
@@ -169,10 +172,55 @@ function SettingsInput({name, desc, field, type}) {
 
 //! MAIN COMPONENTS
 function NavBar() {
+	const { settings, setSettings } = useContext(SettingsContext);
+	const [weather, setWeather] = useState({});
+	const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+
+
+	async function fetchWeather() {
+		try {
+			let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&
+																						lon=-96.314445&
+																						units=${settings.TEMP_FAHRENHEIT ? "imperial" : "metric"}&
+																						appid=${WEATHER_API_KEY}`);
+			if (response.ok) {
+				const data = await response.json();
+				console.log(data);
+				setWeather(data)
+			} else {
+				setWeather({})
+			}
+		} catch (error) {
+			console.log(error);
+			setWeather({});
+		}
+	}
+
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			setCurrentTime(new Date().toLocaleTimeString());
+		}, 1000);
+		
+		return () => clearInterval(intervalID);
+	}, []);	
+
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			fetchWeather();
+		}, WEATHER_REFRESH_MIN*60*1000);
+		
+		fetchWeather();
+		return () => clearInterval(intervalID);
+	}, [settings.TEMP_FAHRENHEIT]);	
+
+
+
 	return (<div className="kt-navBar">
+		<h4>{currentTime}</h4>
 		<Link className="kt-navBtn" to="/kitchen/orders">Orders</Link>
 		<Link className="kt-navBtn" to="/kitchen/recentorders">Recent Orders</Link>
 		<Link className="kt-navBtn" to="/kitchen/customize">Customize</Link>
+		{Object.keys(weather).length > 0 && <h4>{weather.current.temp} {settings.TEMP_FAHRENHEIT ? "F" : "C"} | {weather.current.weather[0].description.toUpperCase()}</h4>}
 	</div>)
 }
 
@@ -385,6 +433,10 @@ function KitchenCustomizer() {
 				<SettingsInput 	name="Here Orders on Left"
 								desc="Alters which of the two order columns is displayed."
 								field="HERE_ORDERS_LEFT"
+								type="checkbox"/>
+				
+				<SettingsInput  name="Temperature in Fahrenheit"
+								field="TEMP_FAHRENHEIT"
 								type="checkbox"/>
 
 				<SettingsInput  name="Pending Order Color"
