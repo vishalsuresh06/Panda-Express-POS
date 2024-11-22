@@ -36,6 +36,20 @@ const DEFAULT_SETTINGS = {
 }
 
 //! HELPER COMPONENTS
+function CardButtons({onHandle, inProgress, order}) {
+	if (inProgress) {
+		return <div className="kt-buttons">
+			<button className="kt-complete" onClick={() => onHandle(order, "complete")}> Complete </button>
+			<button className="kt-cancel" onClick={() => onHandle(order, "cancel")}> Cancel </button>
+			<button className="kt-toggle" onClick={() => onHandle(order, "toggle")}> {order.status == "pending" ? "Start" : "Stop"} </button>
+		</div>
+	} else {
+		return <div className="kt-buttons">
+			<button className="kt-restore" onClick={() => onHandle(order, "restore")}> Restore </button>
+		</div>
+	}
+}
+
 function OrderItemCard({orderItem}) {
 		
 	return (<div className="kt-orderItemCard">
@@ -43,7 +57,7 @@ function OrderItemCard({orderItem}) {
 		<ul> {
 			
 			orderItem.food_items.map((food_item, index) => (
-				<li key={index}> {food_item.quantity} x {food_item.food_item} </li>
+				<li className="notranslate" key={index}> {food_item.quantity} x {food_item.food_item} </li>
 			))
 
 		} </ul>
@@ -58,21 +72,6 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 	function calcTOS() {
 		let seconds = Math.floor((Date.now()-Date.parse(order.date_created))/1000);
 		return `${String(Math.floor(seconds/60)).padStart(2, '0')}:${String(seconds%60).padStart(2, '0')}`
-	}
-
-	// Conditional button display
-	function CardButtons() {
-		if (inProgress) {
-			return <>
-				<button className="kt-complete" onClick={() => onHandle(order, "complete")}> Complete </button>
-				<button className="kt-cancel" onClick={() => onHandle(order, "cancel")}> Cancel </button>
-				<button className="kt-toggle" onClick={() => onHandle(order, "toggle")}> {order.status == "pending" ? "Start" : "Stop"} </button>
-			</>
-		} else {
-			return <>
-				<button className="kt-restore" onClick={() => onHandle(order, "restore")}> Restore </button>
-			</>
-		}
 	}
 
 	// 1s timer to update the TOS on every card
@@ -91,7 +90,7 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 	return (<div style={style} className="kt-orderCard">
 		<div className="kt-orderCardHeaders">
 			<h3 className="kt-orderInfo"> Order #{order.id} for {order.customer_name} </h3>
-			<h3 className="kt-TOS"> {inProgress && TOS} </h3>
+			<h3 className="kt-TOS notranslate"> {inProgress && TOS} </h3>
 		</div>
 
 		<div>
@@ -104,9 +103,8 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 
 				} </ul>
 
-				<div className="kt-buttons">
-					<CardButtons/>
-				</div>
+				
+				<CardButtons onHandle={onHandle} inProgress={inProgress} order={order}/>
 			</div>}	
 		</div>
 
@@ -147,8 +145,6 @@ function SettingsInput({name, desc, field, type}) {
 			settingsCopy.CARD_COLORS[field] = event.hex;
 		}
 		setSettings(settingsCopy);
-
-		console.log(settings);
 	}
 
 	var inputComponent;
@@ -172,7 +168,7 @@ function SettingsInput({name, desc, field, type}) {
 
 //! MAIN COMPONENTS
 function NavBar() {
-	const { settings, setSettings } = useContext(SettingsContext);
+	const {settings, setSettings} = useContext(SettingsContext);
 	const [weather, setWeather] = useState({});
 	const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
@@ -185,7 +181,6 @@ function NavBar() {
 																						appid=${WEATHER_API_KEY}`);
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data);
 				setWeather(data)
 			} else {
 				setWeather({})
@@ -216,11 +211,11 @@ function NavBar() {
 
 
 	return (<div className="kt-navBar">
-		<h4>{currentTime}</h4>
+		<h4 className="notranslate">{currentTime}</h4>
 		<Link className="kt-navBtn" to="/kitchen/orders">Orders</Link>
 		<Link className="kt-navBtn" to="/kitchen/recentorders">Recent Orders</Link>
 		<Link className="kt-navBtn" to="/kitchen/customize">Customize</Link>
-		{Object.keys(weather).length > 0 && <h4>{weather.current.temp} {settings.TEMP_FAHRENHEIT ? "F" : "C"} | {weather.current.weather[0].description.toUpperCase()}</h4>}
+		{Object.keys(weather).length > 0 && <h4><span className="notranslate">{weather.current.temp} {settings.TEMP_FAHRENHEIT ? "F" : "C"}</span> | {weather.current.weather[0].description.toUpperCase()}</h4>}
 	</div>)
 }
 
@@ -406,6 +401,31 @@ function KitchenCustomizer() {
 		setSettings(DEFAULT_SETTINGS);
 	}
 
+	var translateWidgetAdded = false;
+	const googleTranslateElementInit = () => {
+		if (!translateWidgetAdded) {
+			new window.google.translate.TranslateElement(
+				  {
+					pageLanguage: "es",
+					autoDisplay: false
+				  },
+				  "google_translate_element"
+			);
+
+			translateWidgetAdded = true;
+		}
+	};
+
+	useEffect(() => {
+		var addScript = document.createElement("script");
+		addScript.setAttribute(
+			"src",
+			"//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+		);
+		document.body.appendChild(addScript);
+		window.googleTranslateElementInit = googleTranslateElementInit;
+	}, []);
+
 	return (<div className="kt-customizerInputs">
 		<h1>KITCHEN CUSTOMIZER</h1>
 		<table className="kt-inputsTable">
@@ -414,6 +434,11 @@ function KitchenCustomizer() {
 					<th>Setting</th>
 					<th>Description</th>
 					<th>Value</th>
+				</tr>
+				<tr>
+					<td>Language</td>
+					<td></td>
+					<td><div id="google_translate_element"></div></td>
 				</tr>
 				<SettingsInput 	name="Order Refresh Rate (s)"
 								desc="How pages will refresh with newly entered orders."
@@ -469,14 +494,15 @@ function KitchenCustomizer() {
 function Kitchen() {
 	const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
-	return (
+	return (<>
 		<SettingsContext.Provider value={{settings, setSettings}}>
 			<div className="kt-mainDiv">
 				<NavBar/>
 				<Outlet/>
 			</div>
 		</SettingsContext.Provider>
-	)
+		<div id="google_translate_element"></div>
+	</>)
 }
 
 export {Kitchen, KitchenOrders, RecentOrders, KitchenCustomizer}
