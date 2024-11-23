@@ -1,4 +1,6 @@
-
+.goog-te-banner-frame {
+	display: none !important;
+}
 
 .kt-mainDiv {
 	font-family: Verdana, sans-serif;

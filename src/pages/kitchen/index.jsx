@@ -211,6 +211,7 @@ function NavBar() {
 
 
 	return (<div className="kt-navBar">
+		<div id="google_translate_element"></div>
 		<h4 className="notranslate">{currentTime}</h4>
 		<Link className="kt-navBtn" to="/kitchen/orders">Orders</Link>
 		<Link className="kt-navBtn" to="/kitchen/recentorders">Recent Orders</Link>
@@ -401,30 +402,7 @@ function KitchenCustomizer() {
 		setSettings(DEFAULT_SETTINGS);
 	}
 
-	var translateWidgetAdded = false;
-	const googleTranslateElementInit = () => {
-		if (!translateWidgetAdded) {
-			new window.google.translate.TranslateElement(
-				  {
-					pageLanguage: "es",
-					autoDisplay: false
-				  },
-				  "google_translate_element"
-			);
-
-			translateWidgetAdded = true;
-		}
-	};
-
-	useEffect(() => {
-		var addScript = document.createElement("script");
-		addScript.setAttribute(
-			"src",
-			"//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-		);
-		document.body.appendChild(addScript);
-		window.googleTranslateElementInit = googleTranslateElementInit;
-	}, []);
+	
 
 	return (<div className="kt-customizerInputs">
 		<h1>KITCHEN CUSTOMIZER</h1>
@@ -434,11 +412,6 @@ function KitchenCustomizer() {
 					<th>Setting</th>
 					<th>Description</th>
 					<th>Value</th>
-				</tr>
-				<tr>
-					<td>Language</td>
-					<td></td>
-					<td><div id="google_translate_element"></div></td>
 				</tr>
 				<SettingsInput 	name="Order Refresh Rate (s)"
 								desc="How pages will refresh with newly entered orders."
@@ -494,6 +467,33 @@ function KitchenCustomizer() {
 function Kitchen() {
 	const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
+	var translateWidgetAdded = false;
+	const googleTranslateElementInit = () => {
+		if (!translateWidgetAdded) {
+			new window.google.translate.TranslateElement(
+				{
+					pageLanguage: "en",
+					autoDisplay: false,
+					includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de", 
+        			layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+				},
+				"google_translate_element"
+			);
+
+			translateWidgetAdded = true;
+		}
+	};
+
+	useEffect(() => {
+		var addScript = document.createElement("script");
+		addScript.setAttribute(
+			"src",
+			"//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+		);
+		document.body.appendChild(addScript);
+		window.googleTranslateElementInit = googleTranslateElementInit;
+	}, []);
+
 	return (<>
 		<SettingsContext.Provider value={{settings, setSettings}}>
 			<div className="kt-mainDiv">
@@ -501,7 +501,6 @@ function Kitchen() {
 				<Outlet/>
 			</div>
 		</SettingsContext.Provider>
-		<div id="google_translate_element"></div>
 	</>)
 }
 
