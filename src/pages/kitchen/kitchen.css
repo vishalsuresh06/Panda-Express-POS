@@ -1,11 +1,17 @@
+.goog-te-banner-frame {
+	display: none !important;
+}
+
 .kt-mainDiv {
 	font-family: Verdana, sans-serif;
-	height: 100vh;
+	height: 90vh;
 	box-sizing: border-box;
 }
 .kt-mainDiv h1 {
 	text-align: center;
 	margin: 0px;
+	background-color: #f44336;
+	opacity: 0.9;
 }
 
 .kt-columnContainer {
@@ -18,7 +24,7 @@
 	display: flex;
 	flex-direction: column;
 	padding:0px;
-	
+	width: 50vw;
 }
 
 .kt-column ul {
@@ -53,12 +59,9 @@
 	margin-right:10px;
 }
 
-.kt-column h1 {
-	border: 2px solid black;
+.kt-orderCardBody {
+	display: flex;
 }
-
-
-
 
 .kt-orderCard {
 	border: 1px solid rgb(0, 0, 0);
@@ -69,41 +72,21 @@
 	display: block;
 	width: 100px;
 	height: 50px;
-	font-size: 20px;
 }
 
 .kt-buttons {
-	display: flex;
-	justify-content: flex-end;
-	flex-direction: column;
-	align-items: flex-end;
+	margin-left: auto;
 }
 
-.kt-navBar button {
-	padding: 0;
-	border: none;
-	background: none;
-}
-
-.kt-navBar ul {
-	list-style-type: none;
-	padding: 0;
-	margin: 0; 
-}
-
-.kt-navBar button:hover {
-	background-color: maroon;
-}
-
-.kt-navBar {
-	background-color: red;
+.kt-buttons button {
+	font-size:16px;
 }
 
 .kt-cancel:hover {
 	background-color: red;
 }
 
-.kt-confirm:hover {
+.kt-complete:hover {
 	background-color: green;
 }
 
@@ -111,4 +94,70 @@
 	background-color: darkslategray;
 }
 
+.kt-inputsTable {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 40%;
+	margin-top:10px;
+	margin-left: auto;
+	margin-right: auto;
+}
 
+.kt-inputsTable td, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+
+
+.kt-dftContainer {
+    display: flex;
+    justify-content: center;
+	margin-top: 50px;
+}
+
+.kt-dftButton {
+    display: inline-block;
+	border:none;
+    background-color: #f44336;
+    color: #FFFFFF;
+    text-align: center;
+    opacity: 0.9;
+}
+
+.kt-dftButton:hover {
+    color: white;
+    background-color: red;
+    opacity: 1;
+}
+
+/** NAV BAR STYLING*/
+.kt-navBar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+
+.kt-navBtn:-webkit-any-link {
+    display: inline-block;
+    background-color: #f44336;
+    color: #FFFFFF;
+    padding: 14px 25px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.kt-navBtn:hover {
+    color: white;
+    background-color: red;
+    opacity: 1;
+}
