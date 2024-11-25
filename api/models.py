@@ -24,7 +24,8 @@ class Order(models.Model):
 
     customer_name = models.CharField(max_length=100)
     employee = models.ForeignKey('api.Employee', on_delete=models.RESTRICT)
-    date = models.DateTimeField()
+    date_created = models.DateTimeField() # When the order is first added to the database
+    date_processed = models.DateTimeField(null=True) # The most recent time the order was "completed" or "canceled"
     type = models.CharField(max_length=100, choices=TYPE_CHOICES, default='here')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     total_price = models.DecimalField(decimal_places=2, max_digits=10)

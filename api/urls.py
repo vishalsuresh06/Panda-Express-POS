@@ -6,6 +6,6 @@ urlpatterns = [
     path("menu/",       manager_views.MenuView.as_view(), name="menu"),
     path("kiosk_menu/",   kiosk_views.KioskView.as_view(), name = "Kiosk_menu"),
     path("inventory/", manager_views.InventoryView.as_view(), name="inventory"),
-	  path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
-	  path("kitchen/orderhistory", kitchen_views.OrderHistoryView.as_view(), name="orderhistory"),
+	path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
+	path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
 ]
