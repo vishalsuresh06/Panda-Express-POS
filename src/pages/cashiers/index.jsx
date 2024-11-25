@@ -1,5 +1,5 @@
 import NavBar from "./cashierpages/NavBar";
-import CheckoutView from "./cashierpages/Checkout";
+import CheckoutView from "./cashierpages/checkout";
 import OrderView from "./cashierpages/OrderView";
 
 function Cashier() {

@@ -78,3 +78,37 @@ class MenuView(APIView):
 
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
+class InventoryView(APIView):
+    def get(self, request):
+        rawData = InventoryItem.objects.all()
+        serializer = InventoryItemSerializer(rawData, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    def post(self, request):
+        action = request.data['action']
+        data = request.data['data']
+        
+        if action == "add":
+            serializer = InventoryItemSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+
+                return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
+
+            return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
+        elif action == "delete":
+            fooditem = InventoryItem.objects.get(id=data)
+            fooditem.delete()
+
+            return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
+        else:
+            fooditem = InventoryItem.objects.get(id=data['id'])
+            serializer = InventoryItemSerializer(fooditem, data=data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({"success": True}, status=status.HTTP_201_CREATED)
+            else:
+                print("Invalid input")
+
+        return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    

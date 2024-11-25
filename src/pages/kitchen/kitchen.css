@@ -1,31 +1,114 @@
- 
-h1 {
+.kt-mainDiv {
+	font-family: Verdana, sans-serif;
+	height: 100vh;
+	box-sizing: border-box;
+}
+.kt-mainDiv h1 {
 	text-align: center;
 	margin: 0px;
 }
 
-.columnContainer {
+.kt-columnContainer {
 	display: flex;
+	height: 100%;
 }
 
-.column {
+.kt-column {
 	flex: 1;
-	padding:20px;
-	border: 5px solid #ccc;
+	display: flex;
+	flex-direction: column;
+	padding:0px;
+	
 }
 
-.column li {
-	margin-bottom: 5px;
-}
-
-.column ul {
+.kt-column ul {
 	list-style-type: none;
 	padding: 0;
 	margin: 0; 
 }
 
-.orderCard {
-  background-color: lightblue;
-  border: 2px solid blue;
-  padding: 10px;
+.kt-cardList {
+	flex-grow: 1;
+    overflow-y: scroll; 
+    padding: 10px;
+    box-sizing: border-box;
 }
+
+.kt-column li {
+	margin: 5px;
+}
+
+.kt-orderCardHeaders {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start; 
+	width: 100%; 
+	background-color: #757575;	
+}
+
+.kt-orderInfo {
+	margin-left:10px;
+}
+.kt-TOS {
+	margin-right:10px;
+}
+
+.kt-column h1 {
+	border: 2px solid black;
+}
+
+
+
+
+.kt-orderCard {
+	border: 1px solid rgb(0, 0, 0);
+	padding: 0px;
+}
+
+.kt-mainDiv button {
+	display: block;
+	width: 100px;
+	height: 50px;
+	font-size: 20px;
+}
+
+.kt-buttons {
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.kt-navBar button {
+	padding: 0;
+	border: none;
+	background: none;
+}
+
+.kt-navBar ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0; 
+}
+
+.kt-navBar button:hover {
+	background-color: maroon;
+}
+
+.kt-navBar {
+	background-color: red;
+}
+
+.kt-cancel:hover {
+	background-color: red;
+}
+
+.kt-confirm:hover {
+	background-color: green;
+}
+
+.kt-toggle:hover {
+	background-color: darkslategray;
+}
+
+
