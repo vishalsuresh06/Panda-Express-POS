@@ -50,7 +50,7 @@ return (
 
 
 function getTotal(items={ItemList}){
-    console.log(Object.values(items).flat())
+    // console.log(Object.values(items).flat())
     const total = Object.values(items).flat().reduce((sum, item) => {
         return sum + Number(item.price)
         

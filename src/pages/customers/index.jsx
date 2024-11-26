@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import React from 'react';
 import { apiURL } from '../../config.js';
 import CheckoutView from "./CheckoutView";
@@ -11,19 +12,22 @@ export default function Customers() {
         {array_id : -1, type_id : 1, price : 2.00, name : "ghost"}
     ]);
 
-    async function updateMenu(){
+    
+
+    useEffect( () => async function updateMenu(){
         try {
             let response = await fetch(`${apiURL}/api/kiosk_menu/`, {
-                method: "GET",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(reqBody),
+                method: "GET"
             });
 
             if (response.ok) {
-                return response
+                const fetchedMenu = await response.json()
+                const menuWithNumbers = fetchedMenu.map(item => ({
+                    ...item,
+                    id: Number(item.id),
+                    alt_price: parseFloat(item.alt_price)
+                }));
+                setMenu(menuWithNumbers)
             } else {
                 return false
             }
@@ -31,7 +35,7 @@ export default function Customers() {
             console.log(error);
             return false
         }
-    }
+    }, [])
 
     const remove_item = (id_to_remove)=>{
         setItems(items => 
@@ -49,12 +53,49 @@ export default function Customers() {
         setCurr(currI + 1)
     }
 
+    
+    const addItem = (id) => {
+        // Find the item in the menu array by matching the id
+        const item = menu.find(item => item.id === id);
+    
+        // If the item isn't found, log an error and return early
+        if (!item) {
+            console.error(`Item with id ${id} not found in the menu.`);
+            return;  // Stop execution if no matching item is found
+        }
+    
+        // Proceed to add the item to the ItemList
+        setItems(current => [
+            ...current, 
+            { 
+                array_id: currI, 
+                type_id: item.id, 
+                price: parseFloat(item.alt_price), // Use alt_price for price
+                name: item.name
+            }
+        ]);
+    
+        console.log("Item created with id ", currI, " item: ", item);
+        setCurr(currI + 1); // Increment the current item index
+    };
+    
+
     return (
         <>
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {addWater} remove_Item = {remove_item}/>
-            
+            <WaterButton menu= {menu} addItem = {addItem}/>
         </>
     );
+}
+
+function WaterButton({ menu, addItem }){
+    const id = 13
+    console.log(id)
+    return (
+        <button onClick={() => addItem(id)}>
+            add water
+        </button>
+    )
 }
 
 
