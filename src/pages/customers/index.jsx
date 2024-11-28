@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import React from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { Link, Outlet } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import CheckoutView from "./CheckoutView";
 
-export default function Customers() {
+function Customers() {
     const [currI, setCurr] = useState(0)
     const [menu, setMenu] = useState([])
+    const [orderTypes, setOrderTypes] = useState([])
     const [ItemList, setItems] = useState([
         {array_id : -2, type_id : 9, price : 9.00, name : "chicken"},
         {array_id : -1, type_id : 1, price : 2.00, name : "ghost"}
@@ -28,6 +28,29 @@ export default function Customers() {
                     alt_price: parseFloat(item.alt_price)
                 }));
                 setMenu(menuWithNumbers)
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }, [])
+
+    useEffect( () => async function updateOrders(){
+        try {
+            let response = await fetch(`${apiURL}/api/kiosk_orders/`, {
+                method: "GET"
+            });
+
+            if (response.ok) {
+                const fetchedMenu = await response.json()
+                const menuWithNumbers = fetchedMenu.map(item => ({
+                    ...item,
+                    id: Number(item.id),
+                    price: parseFloat(item.Base_price)
+                }));
+                setOrderTypes(menuWithNumbers)
             } else {
                 return false
             }
@@ -84,6 +107,7 @@ export default function Customers() {
         <>
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {addWater} remove_Item = {remove_item}/>
             <WaterButton menu= {menu} addItem = {addItem}/>
+            <Outlet/>
         </>
     );
 }
@@ -97,6 +121,14 @@ function WaterButton({ menu, addItem }){
         </button>
     )
 }
+
+function OrderButtons(){
+    return(
+        <></>
+    )
+}
+
+export {Customers,OrderButtons}
 
 
 

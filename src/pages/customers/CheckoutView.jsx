@@ -16,14 +16,13 @@ function OrderItems({ItemList, remove_Item}) {
 function Subtotal(items){
     const total = Object.values(items).flat().reduce((sum, item) => {
         return sum + Number(item.price)
-        
     }, 0)
     return(
         // {items.map((item) => (
         //     <li key={item.array_id}>{item.name}</li>
         // ))}
         <>
-            {total.toFixed(2)}
+            ${total.toFixed(2)}
         </>
     );
 }
@@ -61,7 +60,7 @@ function getTotal(items={ItemList}){
         //     <li key={item.array_id}>{item.name}</li>
         // ))}
         <>
-            {(total * 1.08).toFixed(2)}
+            ${(total * 1.08).toFixed(2)}
         </>
     );
 }
