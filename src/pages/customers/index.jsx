@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { apiURL } from '../../config.js';
 import CheckoutView from "./CheckoutView";
 
@@ -101,12 +101,19 @@ function Customers() {
         console.log("Item created with id ", currI, " item: ", item);
         setCurr(currI + 1); // Increment the current item index
     };
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        navigate('base');
+    }, [navigate]);
     
 
     return (
         <>
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {addWater} remove_Item = {remove_item}/>
             <WaterButton menu= {menu} addItem = {addItem}/>
+            <Link  to="/customer/base">Customize</Link>
             <Outlet/>
         </>
     );
@@ -124,7 +131,8 @@ function WaterButton({ menu, addItem }){
 
 function OrderButtons(){
     return(
-        <></>
+        <div className="CK-itemTypes"><Link className="CK-navBtn" to="Customers/BuildFood"/> Bowl </div>
+        // <p>you made it!!!</p>
     )
 }
 

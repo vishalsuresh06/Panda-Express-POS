@@ -26,6 +26,10 @@ function App() {
           <Route path="recentorders" element={<RecentOrders />} />
         </Route>
 
+        <Route path="customer" element={<Customers />}>
+          <Route path="base" element={<OrderButtons />} />
+        </Route>
+
         <Route path="/menu" element={<Menu />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
