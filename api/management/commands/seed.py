@@ -122,7 +122,7 @@ class Command(BaseCommand):
 
             nonlocal order_id
 
-            current_sales = 0;
+            current_sales = 0
             while current_sales < sales_limit:
                 employee = random.choice([employee1, employee2])
                 order_total = round(random.uniform(10, 100), 2)

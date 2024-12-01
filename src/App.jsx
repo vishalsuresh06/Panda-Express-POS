@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock } from './pages/manager';
+import { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock, Sales, ProductUsage } from './pages/manager';
 import Cashiers from './pages/cashiers';
 import Customers from './pages/customers';
 import {Kitchen, KitchenOrders, RecentOrders} from './pages/kitchen';
@@ -19,6 +19,8 @@ function App() {
           <Route path="excess" element={<Excess />} />
           <Route path="sellstogether" element={<SellsTogether />} />
           <Route path="restock" element={<Restock />} />
+          <Route path="sales" element={<Sales />} />
+          <Route path="productusage" element={<ProductUsage />} />
         </Route>
 
         <Route path="/cashier" element={<Cashiers />} />

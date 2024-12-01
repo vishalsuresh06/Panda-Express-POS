@@ -114,3 +114,10 @@
 .mngr-settingsTable tbody tr:nth-of-type(even) {
     background-color: #f3f3f3;
 }
+.mngr-salescontainer {
+    display: flex;
+}
+
+.mngr-salescol {
+    width: 50%;
+}
