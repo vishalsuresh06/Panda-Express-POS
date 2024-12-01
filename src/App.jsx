@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings } from './pages/manager';
+import { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether } from './pages/manager';
 import Cashiers from './pages/cashiers';
 import Customers from './pages/customers';
 import {Kitchen, KitchenOrders, RecentOrders} from './pages/kitchen';
@@ -16,6 +16,8 @@ function App() {
           <Route path="menu" element={<MenuEdit />} />
           <Route path="inventory" element={<InventoryEdit />} />
           <Route path="kitchensettings" element={<KitchenSettings />} />
+          <Route path="excess" element={<Excess />} />
+          <Route path="sellstogether" element={<SellsTogether />} />
         </Route>
 
         <Route path="/cashier" element={<Cashiers />} />

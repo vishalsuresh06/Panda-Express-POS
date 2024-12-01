@@ -8,4 +8,5 @@ urlpatterns = [
 	path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
 	path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
 	path("settings", general_views.SettingsView.as_view(), name="settings"),
+	path("manager/excess", manager_views.ExcessView.as_view(), name="excess"),
 ]

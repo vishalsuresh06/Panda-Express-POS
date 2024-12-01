@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from api.serializers import *
 from api.models import *
+from datetime import datetime
+from collections import Counter
 
 
 class EmployeeView(APIView):
@@ -41,8 +43,6 @@ class EmployeeView(APIView):
                 print("Invalid input")
 
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-
 
 class MenuView(APIView):
     def get(self, request):
@@ -112,3 +112,23 @@ class InventoryView(APIView):
 
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
+class ExcessView(APIView):
+    def get(self, request):
+        timestamp = request.GET.get("timestamp")
+        orders = Order.objects.filter(date_created__range=[timestamp, datetime.now()])
+        
+        foodCounts = Counter()
+        for order in orders:
+            for orderItem in order.order_items.all():
+                for foodItem in orderItem.food_items.all():
+                    foodQuantity = orderItem.orderfoodquantity_set.get(food_item=foodItem).quantity
+                    foodCounts[foodItem] += foodQuantity
+
+        
+        itemCounts = Counter()
+        for foodItem, foodQuantity in foodCounts.items():
+            for invFoodPair in foodItem.foodinventoryquantity_set.all():
+                itemCounts[str(invFoodPair.inventory_item)] += invFoodPair.quantity * foodQuantity
+
+
+        return JsonResponse(itemCounts, status=status.HTTP_200_OK)

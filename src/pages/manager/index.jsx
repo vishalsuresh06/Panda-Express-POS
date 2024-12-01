@@ -417,7 +417,7 @@ function KitchenSettings() {
             <h2 className="mngr-font">KITCHEN CUSTOMIZER</h2>
             <table className="mngr-settingsTable">
                 <thead>
-                    <tr>
+                    <tr>   
                         <th className="mngr-font">Setting</th>
                         <th className="mngr-font">Description</th>
                         <th className="mngr-font">Value</th>
@@ -472,6 +472,61 @@ function KitchenSettings() {
     </KitchenSettingsContext.Provider>)
 }
 
+/*
+Goal: 
+Given a time stamp, I need to to look at all inventory items and calculate 
+the amount of each that was used from that timestamp until the present. Then
+I need to examine which items sold less than 10% of their current quanity, assuming
+no restocks have happened.
+
+That is, if at the present we have 100, and we have sold 20 in the last month,
+that means we started the month with 120, and only sold 20, that means we sold
+20/120 = 16% of its quantity
+
+if (#sold/(current_amount + #sold) < 10%) then highlight that amount in a table
+*/
+function Excess() {
+    const [targetTime, setTargetTime] = useState('2023-01-12');
+    const [loading, setLoading] = useState(false);
+    const [excessItems, setExcessItems] = useState(null);
+
+    async function fetchExcessItems() {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/excess?timestamp=${targetTime}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setExcessItems(data);
+            } else {
+                setExcessItems({});
+            }
+        } catch (error) {
+            console.log(error)
+            setExcessItems({});
+        }
+    }
+
+    const handleTimeChange = (event) => {
+        setTargetTime(event.target.value);
+    }
+
+    const queryExcess = () => {
+        fetchExcessItems();
+    }
+
+    return (<div className="mngr-excess">
+        <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime}/>
+        <button onClick={queryExcess}>QUERY</button>
+    </div>)
+}
+
+function SellsTogether() {
+    return (<div className="mngr-sellstogether">
+        SELLS TOGETHER
+    </div>)
+}
+
 function Manager() {
     return (
         <>
@@ -485,6 +540,8 @@ function Manager() {
                     <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
                     <Link to="/manager/zreport" className='mngr-btn'>Z Report</Link>
                     <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
+                    <Link to="/manager/excess" className='mngr-btn'>Excess Inventory</Link>
+                    <Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together</Link>
                 </div>
                 <Outlet />
             </div>
@@ -492,4 +549,6 @@ function Manager() {
     )
 }
 
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings}
+
+
+export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether}
