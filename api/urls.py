@@ -5,6 +5,7 @@ urlpatterns = [
     path("menu/", manager_views.MenuView.as_view(), name="menu"),
     path("inventory/", manager_views.InventoryView.as_view(), name="inventory"),
     path('manager/menu-query/<int:id>', manager_views.menuQueryView, name='menuquery'),
+    path('manager/inventory-query/<int:id>', manager_views.inventoryQueryView, name='inventoryquery'),
 	path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
 	path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
 ]
