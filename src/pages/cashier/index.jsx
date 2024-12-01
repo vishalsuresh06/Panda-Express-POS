@@ -82,9 +82,14 @@ function Cashier() {
     navigate("/itemSelection", { state: { itemType } });
   };
 
+  const handleManager = () => {
+    navigate("/manager");
+  };
+
   const handleLogout = () => {
     deleteCheckout();
     localStorage.setEmployee("employee", "");
+    console.log("This activates");
     navigate("/login");
   };
 
@@ -106,7 +111,9 @@ function Cashier() {
         </button>
         <h1 className="cshr_employeeLbl">Logged In: {employee}</h1>
         <h1 className="cshr_timeLbl">{time}</h1>
-        <button className="cshr_managerBtn">Manager</button>
+        <button className="cshr_managerBtn" onClick={handleManager}>
+          Manager
+        </button>
         <button className="cshr_cateringBtn">Catering</button>
         <button className="cshr_inventoryBtn">Inventory</button>
       </div>

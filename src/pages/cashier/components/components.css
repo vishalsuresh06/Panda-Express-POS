@@ -1,134 +1,5 @@
-/* Container for the whole section */
-.cshr_appContainer {
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* Title styling */
-.cshr_appLabel {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-/* Button container for appetizers */
-.cshr_appBtnContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-
-/* Individual buttons for appetizers */
-.cshr_appBtn {
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #fff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover effect for appetizer buttons */
-.cshr_appBtn:hover {
-  background-color: #0056b3;
-}
-
-/* Confirm button styling */
-.cshr_confirmBtn {
-  margin-top: 20px;
-  padding: 12px 25px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #28a745;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-/* Hover and active effects for confirm button */
-.cshr_confirmBtn:hover {
-  background-color: #218838;
-}
-
-/* General container styling */
-.cshr_aLCContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: #f9f9f9; /* Light background color */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* Header styling */
-.aLCLabel {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/* Button container styling */
-.cshr_appaLCContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-/* Individual button styling */
-.cshr_aLCBtn {
-  background-color: #007bff;
-  color: #fff;
-  font-size: 16px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.cshr_aLCBtn:hover {
-  background-color: #0056b3;
-}
-
-/* Confirm button styling */
-.cshr_confirmBtn {
-  background-color: #28a745;
-  color: #fff;
-  font-size: 18px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.cshr_confirmBtn:hover {
-  background-color: #1e7e34;
-}
-
-/* Family Feast Container */
-.cshr_famFeastContainer {
+/* General container for Item Selection */
+.cshr_itemSelectionContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,51 +7,100 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
   margin: 20px auto;
+  max-width: 600px;
 }
 
-/* Header Label */
-.cshr_famFeastLabel {
-  font-size: 28px;
+/* Header for each item type */
+.cshr_itemSelectionTitle {
+  font-size: 24px;
   font-weight: bold;
-  color: #444;
+  color: #333;
   margin-bottom: 20px;
+}
+
+/* Buttons for selection */
+.cshr_itemSelectionBtn {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   text-align: center;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
-/* Side Container */
-.cshr_famFeastSideContainer {
+.cshr_itemSelectionBtn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Confirm Button */
+.cshr_confirmBtn {
   width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.cshr_confirmBtn:hover {
+  background-color: #777;
+}
+
+/* Style for the different sections (e.g., sides, entrees) */
+.cshr_sectionContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   margin-bottom: 20px;
 }
 
-.cshr_famFeastSideContainer h2 {
-  font-size: 20px;
+.cshr_sectionTitle {
+  font-size: 18px;
   font-weight: bold;
   color: #555;
-  margin: 15px 0 10px;
+  margin-bottom: 10px;
 }
 
-/* Entree Container */
-.cshr_famFeastEntreeContainer {
-  width: 100%;
+.cshr_sectionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.cshr_famFeastEntreeContainer h2 {
-  font-size: 20px;
-  font-weight: bold;
-  color: #555;
-  margin: 15px 0 10px;
-}
-
-/* Buttons */
-.cshr_appBtn {
-  background-color: #007bff;
-  color: #fff;
-  font-size: 16px;
+.cshr_sectionItemBtn {
   padding: 10px 15px;
-  margin: 5px;
-  border: none;
-  border-radius: 4;
+  font-size: 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cshr_sectionItemBtn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Price display */
+.cshr_priceContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cshr_priceLabel {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+.cshr_priceValue {
+  font-size: 18px;
+  color: #333;
 }

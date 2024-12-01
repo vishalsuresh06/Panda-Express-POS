@@ -24,33 +24,22 @@ function ItemSelection() {
   });
 
   useEffect(() => {
-    switch (itemType) {
-      case 0:
-        setSelection((prev) => ({ ...prev, type: "Bowl" }));
-        break;
-      case 1:
-        setSelection((prev) => ({ ...prev, type: "Plate" }));
-        break;
-      case 2:
-        setSelection((prev) => ({ ...prev, type: "Bigger Plate" }));
-        break;
-      case 3:
-        setSelection((prev) => ({ ...prev, type: "Cub Meal" }));
-        break;
-      case 4:
-        setSelection((prev) => ({ ...prev, type: "Family Feast" }));
-        break;
-      case 5:
-        setSelection((prev) => ({ ...prev, type: "Drinks" }));
-        break;
-      case 6:
-        setSelection((prev) => ({ ...prev, type: "A La Carte" }));
-        break;
-      case 7:
-        setSelection((prev) => ({ ...prev, type: "Sides/Appetizers" }));
-        break;
-      default:
-        break;
+    if (itemType === 0) {
+      setSelection((prev) => ({ ...prev, type: "Bowl" }));
+    } else if (itemType === 1) {
+      setSelection((prev) => ({ ...prev, type: "Plate" }));
+    } else if (itemType === 2) {
+      setSelection((prev) => ({ ...prev, type: "Bigger Plate" }));
+    } else if (itemType === 3) {
+      setSelection((prev) => ({ ...prev, type: "Cub Meal" }));
+    } else if (itemType === 4) {
+      setSelection((prev) => ({ ...prev, type: "Family Feast" }));
+    } else if (itemType === 5) {
+      setSelection((prev) => ({ ...prev, type: "Drinks" }));
+    } else if (itemType === 6) {
+      setSelection((prev) => ({ ...prev, type: "A La Carte" }));
+    } else if (itemType === 7) {
+      setSelection((prev) => ({ ...prev, type: "Sides/Appetizers" }));
     }
   }, [itemType]);
 
@@ -217,12 +206,134 @@ function ItemSelection() {
     });
   };
 
-  switch (itemType) {
-    case 0: //Bowl
-      return (
-        <div className="cshr_bowlContainer">
-          <h1 className="cshr_bowlLabel">Bowl</h1>
-          <h1>Side</h1>
+  if (itemType === 0) {
+    // Bowl
+    return (
+      <div className="cshr_bowlContainer">
+        <h1 className="cshr_bowlLabel">Bowl</h1>
+        <h1>Side</h1>
+        {menuItems.sides.map((sideItem, index) => (
+          <button
+            key={index}
+            className="cshr_sideBtn"
+            onClick={() => handleSideSelection(sideItem)}
+          >
+            {sideItem.name}
+          </button>
+        ))}
+        <h1>Entree</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else if (itemType === 1) {
+    // Plate
+    return (
+      <div className="cshr_plateContainer">
+        <h1 className="cshr_plateLabel">Plate</h1>
+        {menuItems.sides.map((sideItem, index) => (
+          <button
+            key={index}
+            className="cshr_sideBtn"
+            onClick={() => handleSideSelection(sideItem)}
+          >
+            {sideItem.name}
+          </button>
+        ))}
+        <h1>Entree 1</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <h1>Entree 2</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else if (itemType === 2) {
+    // Bigger Plate
+    return (
+      <div className="cshr_bPlateContainer">
+        <h1 className="cshr_bPlateLabel">Bigger Plate</h1>
+        {menuItems.sides.map((sideItem, index) => (
+          <button
+            key={index}
+            className="cshr_sideBtn"
+            onClick={() => handleSideSelection(sideItem)}
+          >
+            {sideItem.name}
+          </button>
+        ))}
+        <h1>Entree 1</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <h1>Entree 2</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <h1>Entree 3</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else if (itemType === 3) {
+    // Cub Meal
+    // No implementation
+  } else if (itemType === 4) {
+    // Family Feast
+    return (
+      <div className="cshr_famFeastContainer">
+        <h1 className="cshr_famFeastLabel">Family Feast</h1>
+        <div className="cshr_famFeastSideContainer">
+          <h1 className="cshr_famFeastSideLabel">Side 1</h1>
           {menuItems.sides.map((sideItem, index) => (
             <button
               key={index}
@@ -232,25 +343,7 @@ function ItemSelection() {
               {sideItem.name}
             </button>
           ))}
-          <h1>Entree</h1>
-          {menuItems.entrees.map((entreeItem, index) => (
-            <button
-              key={index}
-              className="cshr_entreeBtn"
-              onClick={() => handleEntreeSelection(entreeItem)}
-            >
-              {entreeItem.name}
-            </button>
-          ))}
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
-        </div>
-      );
-    case 1: //Plate
-      return (
-        <div className="cshr_plateContainer">
-          <h1 className="cshr_plateLabel">Bowl</h1>
+          <h1 className="cshr_famFeastSideLabel">Side 2</h1>
           {menuItems.sides.map((sideItem, index) => (
             <button
               key={index}
@@ -260,7 +353,10 @@ function ItemSelection() {
               {sideItem.name}
             </button>
           ))}
-          <h1>Entree 1</h1>
+          <h1 className="cshr_famFeastSideLabel">Side 3</h1>
+        </div>
+        <div className="cshr_famFeastEntreeContainer">
+          <h1 className="cshr_famFeastEntreeLabel">Entree 1</h1>
           {menuItems.entrees.map((entreeItem, index) => (
             <button
               key={index}
@@ -270,7 +366,7 @@ function ItemSelection() {
               {entreeItem.name}
             </button>
           ))}
-          <h1>Entree 2</h1>
+          <h1 className="cshr_famFeastEntreeLabel">Entree 2</h1>
           {menuItems.entrees.map((entreeItem, index) => (
             <button
               key={index}
@@ -280,25 +376,7 @@ function ItemSelection() {
               {entreeItem.name}
             </button>
           ))}
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
-        </div>
-      );
-    case 2: //Bigger Plate
-      return (
-        <div className="cshr_bPlateContainer">
-          <h1 className="cshr_bPlateLabel">Bowl</h1>
-          {menuItems.sides.map((sideItem, index) => (
-            <button
-              key={index}
-              className="cshr_sideBtn"
-              onClick={() => handleSideSelection(sideItem)}
-            >
-              {sideItem.name}
-            </button>
-          ))}
-          <h1>Entree 1</h1>
+          <h1 className="cshr_famFeastEntreeLabel">Entree 3</h1>
           {menuItems.entrees.map((entreeItem, index) => (
             <button
               key={index}
@@ -308,158 +386,77 @@ function ItemSelection() {
               {entreeItem.name}
             </button>
           ))}
-          <h1>Entree 2</h1>
-          {menuItems.entrees.map((entreeItem, index) => (
+        </div>
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else if (itemType === 5) {
+    // Drinks
+    return (
+      <div className="cshr_drinksContainer">
+        <h1 className="cshr_drinksLabel">Drinks</h1>
+        <div className="cshr_drinkBtnContainer">
+          {menuItems.drinks.map((drinkItem, index) => (
             <button
               key={index}
-              className="cshr_entreeBtn"
-              onClick={() => handleEntreeSelection(entreeItem)}
+              className="cshr_appBtn"
+              onClick={() => handleDrinkSelection(drinkItem)}
             >
-              {entreeItem.name}
+              {drinkItem.name}
             </button>
           ))}
-          <h1>Entree 3</h1>
-          {menuItems.entrees.map((entreeItem, index) => (
+        </div>
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else if (itemType === 6) {
+    // A La Carte
+    return (
+      <div className="cshr_aLCContainer">
+        <h1 className="aLCLabel">A La Carte</h1>
+        <div className="cshr_appaLCContainer">
+          {[...menuItems.sides, ...menuItems.entrees].map((item, index) => (
             <button
               key={index}
-              className="cshr_entreeBtn"
-              onClick={() => handleEntreeSelection(entreeItem)}
+              className="cshr_aLCBtn"
+              onClick={() => handleAppSelection(item)}
             >
-              {entreeItem.name}
+              {item.name}
             </button>
           ))}
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
         </div>
-      );
-    case 3: //Cub Meal
-      break;
-    case 4: //Family Feast
-      return (
-        <div className="cshr_famFeastContainer">
-          <h1 className="cshr_famFeastLabel">Family Feast</h1>
-          <div className="cshr_famFeastSideContainer">
-            <h1 className="cshr_famFeastSideLabel">Side 1</h1>
-            {menuItems.sides.map((sideItem, index) => (
-              <button
-                key={index}
-                className="cshr_sideBtn"
-                onClick={() => handleSideSelection(sideItem)}
-              >
-                {sideItem.name}
-              </button>
-            ))}
-            <h1 className="cshr_famFeastSideLabel">Side 2</h1>
-            {menuItems.sides.map((sideItem, index) => (
-              <button
-                key={index}
-                className="cshr_sideBtn"
-                onClick={() => handleSideSelection(sideItem)}
-              >
-                {sideItem.name}
-              </button>
-            ))}
-            <h1 className="cshr_famFeastSideLabel">Side 2</h1>
-          </div>
-          <div className="cshr_famFeastEntreeContainer">
-            <h1 className="cshr_famFeastEntreeLabel">Entree 1</h1>
-            {menuItems.entrees.map((entreeItem, index) => (
-              <button
-                key={index}
-                className="cshr_entreeBtn"
-                onClick={() => handleEntreeSelection(entreeItem)}
-              >
-                {entreeItem.name}
-              </button>
-            ))}
-            <h1 className="cshr_famFeastEntreeLabel">Entree 2</h1>
-            {menuItems.entrees.map((entreeItem, index) => (
-              <button
-                key={index}
-                className="cshr_entreeBtn"
-                onClick={() => handleEntreeSelection(entreeItem)}
-              >
-                {entreeItem.name}
-              </button>
-            ))}
-            <h1 className="cshr_famFeastEntreeLabel">Entree 3</h1>
-            {menuItems.entrees.map((entreeItem, index) => (
-              <button
-                key={index}
-                className="cshr_entreeBtn"
-                onClick={() => handleEntreeSelection(entreeItem)}
-              >
-                {entreeItem.name}
-              </button>
-            ))}
-          </div>
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else if (itemType === 7) {
+    // Sides/Appetizers
+    return (
+      <div className="cshr_sideContainer">
+        <h1 className="cshr_sideLabel">Sides</h1>
+        <div className="cshr_sideBtnContainer">
+          {menuItems.apps.map((appItem, index) => (
+            <button
+              key={index}
+              className="cshr_appBtn"
+              onClick={() => handleAppSelection(appItem)}
+            >
+              {appItem.name}
+            </button>
+          ))}
         </div>
-      );
-      break;
-    case 5: //Drinks
-      return (
-        <div className="cshr_drinksContainer">
-          <h1 className="cshr_drinksLabel">Drinks</h1>
-          <div className="cshr_drinkBtnContainer">
-            {menuItems.drinks.map((drinkItem, index) => (
-              <button
-                key={index}
-                className="cshr_appBtn"
-                onClick={() => handleDrinkSelection(drinkItem)}
-              >
-                {drinkItem.name}
-              </button>
-            ))}
-          </div>
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
-        </div>
-      );
-    case 6: //A La Carte
-      return (
-        <div className="cshr_aLCContainer">
-          <h1 className="aLCLabel">A La Carte</h1>
-          <div className="cshr_appaLCContainer">
-            {[...menuItems.sides, ...menuItems.entrees].map((item, index) => (
-              <button
-                key={index}
-                className="cshr_aLCBtn"
-                onClick={() => handleAppSelection(item)}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
-        </div>
-      );
-    case 7: // Appetizers
-      return (
-        <div className="cshr_appContainer">
-          <h1 className="cshr_appLabel">Appetizers and Sides</h1>
-          <div className="cshr_appBtnContainer">
-            {menuItems.apps.map((appItem, index) => (
-              <button
-                key={index}
-                className="cshr_appBtn"
-                onClick={() => handleAppSelection(appItem)}
-              >
-                {appItem.name}
-              </button>
-            ))}
-          </div>
-          <button className="cshr_confirmBtn" onClick={handleConfirm}>
-            Confirm
-          </button>
-        </div>
-      );
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
+  } else {
+    return null; // Return nothing if no itemType matches
   }
 }
 
