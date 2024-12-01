@@ -103,12 +103,6 @@
 	background-color: darkslategray;
 }
 
-tr:nth-child(even) {
-	background-color: #dddddd;
-}
-
-
-
 .kt-dftContainer {
     display: flex;
     justify-content: center;

@@ -117,6 +117,7 @@ class ExcessView(APIView):
         timestamp = request.GET.get("timestamp")
         orders = Order.objects.filter(date_created__range=[timestamp, datetime.now()])
         
+        # Count quantity of each food item sold
         foodCounts = Counter()
         for order in orders:
             for orderItem in order.order_items.all():
@@ -124,17 +125,20 @@ class ExcessView(APIView):
                     foodQuantity = orderItem.orderfoodquantity_set.get(food_item=foodItem).quantity
                     foodCounts[foodItem] += foodQuantity
 
-        
-        itemCounts = Counter()
+        # Count quantity of each inventory item sold based on food sales
+        itemCounts = dict([(invItem, 0) for invItem in InventoryItem.objects.all()])
         for foodItem, foodQuantity in foodCounts.items():
             for invFoodPair in foodItem.foodinventoryquantity_set.all():
                 itemCounts[invFoodPair.inventory_item] += invFoodPair.quantity * foodQuantity
 
+        # Format JSON for return
         excessItems = []
         for invItem, quantitySold in itemCounts.items():
-            percentSold = quantitySold/(invItem.stock + quantitySold)
+            percentSold = int(100*quantitySold/(invItem.stock + quantitySold))
 
             excessItems.append({"name": str(invItem),
                                 "quantitySold": quantitySold,
                                 "percentSold": percentSold})
+        
+        excessItems.sort(key=lambda item: item["percentSold"])
         return JsonResponse(excessItems, safe=False, status=status.HTTP_200_OK)

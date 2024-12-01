@@ -86,9 +86,14 @@
 }
 
 .mngr-settingsTable td, th {
-	border: 1px solid #dddddd;
 	text-align: left;
 	padding: 8px;
+}
+
+.mngr-settingsTable thead tr {
+    background-color: #dd4545;
+    color: #ffffff;
+    text-align: center;
 }
 
 .mngr-kitchensettings {
@@ -96,4 +101,19 @@
     flex-direction: column; 
     align-items: center;     
     justify-content: center; 
+}
+
+.mngr-excess {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;     
+    justify-content: center; 
+}
+
+.mngr-excessItem {
+    background-color: #ff00007f;
+}
+
+.mngr-normalItem {
+    background-color: rgba(0, 128, 0, 0.507);
 }

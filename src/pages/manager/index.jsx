@@ -418,9 +418,9 @@ function KitchenSettings() {
             <table className="mngr-settingsTable">
                 <thead>
                     <tr>   
-                        <th className="mngr-font">Setting</th>
-                        <th className="mngr-font">Description</th>
-                        <th className="mngr-font">Value</th>
+                        <td className="mngr-font">Setting</td>
+                        <td className="mngr-font">Description</td>
+                        <td className="mngr-font">Value</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -473,9 +473,9 @@ function KitchenSettings() {
 }
 
 function Excess() {
-    const [targetTime, setTargetTime] = useState('2023-01-12');
+    const [targetTime, setTargetTime] = useState(new Date().toISOString().split('T')[0]);
     const [loading, setLoading] = useState(false);
-    const [excessItems, setExcessItems] = useState(null);
+    const [excessItems, setExcessItems] = useState([]);
 
     async function fetchExcessItems() {
         try {
@@ -502,9 +502,30 @@ function Excess() {
         fetchExcessItems();
     }
 
-    return (<div className="mngr-excess">
-        <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime}/>
-        <button onClick={queryExcess}>QUERY</button>
+    return (<div className="mngr-excess mngr-font">
+        <h2>Excess Inventory</h2>
+        <div className="mngr-excessQuery">
+            <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime}/>
+            <button onClick={queryExcess}>QUERY</button>
+        </div>
+        <table className="mngr-settingsTable">
+            <thead>
+                <tr>
+                    <td>Inventory Item</td>
+                    <td>Units Sold</td>
+                    <td>Percent of Quantity</td>
+                </tr>
+            </thead>
+            <tbody>
+                {excessItems.map((item, index) => (
+                    <tr>
+                        <td>{item.name}</td>
+                        <td>{item.quantitySold}</td>
+                        <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     </div>)
 }
 
