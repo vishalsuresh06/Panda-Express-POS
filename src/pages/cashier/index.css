@@ -74,7 +74,9 @@
 
 .cshr_itemDisplay {
   flex: 1;
+  overflow-y: auto;
   background-color: lightgray;
+  border: 1px solid #ddd;
   padding: 20px;
   margin-bottom: 10px;
 }
@@ -142,4 +144,87 @@
 
 .cshr_typeBtn:hover {
   background-color: #e0e0e0;
+}
+
+/* Card container for individual items */
+.cshr_itemContainer {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px;
+  font-family: Arial, sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect for card */
+.cshr_itemContainer:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Label for item type */
+.cshr_typeLbl {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+  text-align: center;
+}
+
+/* Price label styling */
+.cshr_priceLbl {
+  font-size: 16px;
+  font-weight: 500;
+  color: #007bff;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* Side label styling */
+.cshr_sideLbl {
+  font-size: 14px;
+  font-weight: normal;
+  color: #666;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* List styling for entrees */
+.cshr_entreeList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  color: #444;
+  text-align: center;
+}
+
+/* Individual entree list items */
+.cshr_entreeList li {
+  margin: 2px 0;
+}
+
+/* Delete button styling */
+.cshr_deleteBtn {
+  background-color: #ff4d4f;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect for delete button */
+.cshr_deleteBtn:hover {
+  background-color: #d9363e;
 }

@@ -5,6 +5,7 @@ import "./components.css";
 
 function ItemSelection() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { itemType } = location.state || {}; // Get the 'itemType' from state
   const [menuItems, setMenuItems] = useState({
     sides: [],
@@ -12,15 +13,16 @@ function ItemSelection() {
     drinks: [],
     apps: [],
   });
+
   const [selection, setSelection] = useState({
-    side: "",
+    type: "",
+    side: [],
     entrees: [],
     drink: "",
+    app: "",
     price: 0,
   });
-  const navigate = useNavigate();
 
-  // Fetch menu items from API
   useEffect(() => {
     async function fetchMenu() {
       try {
@@ -40,141 +42,103 @@ function ItemSelection() {
         console.error("Error fetching menu items:", error);
       }
     }
-
     fetchMenu();
   }, []);
 
-  // Confirm Selection and Navigate Back to Cashier
-  const confirmClick = () => {
+  const handleAppSelection = (appItem) => {
+    setSelection((prev) => ({
+      ...prev,
+      type: "Appetizer",
+      app: appItem.name,
+      price: appItem.alt_price,
+    }));
+  };
+
+  const handleDrinkSelection = (drinkItem) => {
+    setSelection((prev) => ({
+      ...prev,
+      type: "Drink",
+      drink: drinkItem.name,
+      price: drinkItem.alt_price,
+    }));
+  };
+
+  const handleConfirm = () => {
     navigate("/cashier", { state: { selection } });
   };
 
-  // Update Selection for Drinks
-  const drinkClick = (drink) => {
-    setSelection((prev) => ({
-      ...prev,
-      drink: drink.name,
-      price: (Number(prev.price) + Number(drink.alt_price)).toFixed(2),
-    }));
-  };
-
-  // Update Selection for Sides
-  const sideClick = (side) => {
-    setSelection((prev) => ({
-      ...prev,
-      side: side.name,
-      price: (Number(prev.price) + Number(side.alt_price)).toFixed(2),
-    }));
-  };
-
-  // Update Selection for Entrees
-  const entreeClick = (entree) => {
-    setSelection((prev) => ({
-      ...prev,
-      entrees: [...prev.entrees, entree.name],
-      price: (Number(prev.price) + Number(entree.alt_price)).toFixed(2),
-    }));
-  };
-
-  // Render Items Based on `itemType`
-  const renderItems = () => {
-    switch (itemType) {
-      case 0: // Bowl
-        return (
-          <div>
-            <h1>Bowl</h1>
-            <h2>Side</h2>
-            {menuItems.sides.map((side) => (
-              <button key={side.name} onClick={() => sideClick(side)}>
-                {side.name} - ${side.alt_price}
-              </button>
-            ))}
-            <h2>Entree</h2>
-            {menuItems.entrees.map((entree) => (
-              <button key={entree.name} onClick={() => entreeClick(entree)}>
-                {entree.name} - ${entree.alt_price}
+  switch (itemType) {
+    case 0: //Bigger Plate
+      break;
+    case 1: //Plate
+      break;
+    case 2: //Bowl
+      break;
+    case 3: //Cub Meal
+      break;
+    case 4: //Family Feast
+      break;
+    case 5: //Drinks
+      return (
+        <div className="cshr_drinksContainer">
+          <h1 className="cshr_drinksLabel">Drinks</h1>
+          <div className="cshr_drinkBtnContainer">
+            {menuItems.drinks.map((drinkItem, index) => (
+              <button
+                key={index}
+                className="cshr_appBtn"
+                onClick={() => handleDrinkSelection(drinkItem)}
+              >
+                {drinkItem.name}
               </button>
             ))}
           </div>
-        );
-      case 1: // Plate
-        return (
-          <div>
-            <h1>Plate</h1>
-            <h2>Side</h2>
-            {menuItems.sides.map((side) => (
-              <button key={side.name} onClick={() => sideClick(side)}>
-                {side.name} - ${side.alt_price}
-              </button>
-            ))}
-            <h2>Entree 1</h2>
-            {menuItems.entrees.map((entree) => (
-              <button key={entree.name} onClick={() => entreeClick(entree)}>
-                {entree.name} - ${entree.alt_price}
-              </button>
-            ))}
-            <h2>Entree 2</h2>
-            {menuItems.entrees.map((entree) => (
-              <button key={entree.name} onClick={() => entreeClick(entree)}>
-                {entree.name} - ${entree.alt_price}
+          <button className="cshr_confirmBtn" onClick={handleConfirm}>
+            Confirm
+          </button>
+        </div>
+      );
+    case 6: //A La Carte
+      return (
+        <div className="cshr_aLCContainer">
+          <h1 className="aLCLabel">A La Carte</h1>
+          <div className="cshr_appaLCContainer">
+            {[...menuItems.sides, ...menuItems.entrees].map((item, index) => (
+              <button
+                key={index}
+                className="cshr_aLCBtn"
+                onClick={() => handleAppSelection(item)}
+              >
+                {item.name}
               </button>
             ))}
           </div>
-        );
-      case 2: // Bigger Plate
-        return (
-          <div>
-            <h1>Bigger Plate</h1>
-            <h2>Side</h2>
-            {menuItems.sides.map((side) => (
-              <button key={side.name} onClick={() => sideClick(side)}>
-                {side.name} - ${side.alt_price}
-              </button>
-            ))}
-            <h2>Entree 1</h2>
-            {menuItems.entrees.map((entree) => (
-              <button key={entree.name} onClick={() => entreeClick(entree)}>
-                {entree.name} - ${entree.alt_price}
-              </button>
-            ))}
-            <h2>Entree 2</h2>
-            {menuItems.entrees.map((entree) => (
-              <button key={entree.name} onClick={() => entreeClick(entree)}>
-                {entree.name} - ${entree.alt_price}
-              </button>
-            ))}
-            <h2>Entree 3</h2>
-            {menuItems.entrees.map((entree) => (
-              <button key={entree.name} onClick={() => entreeClick(entree)}>
-                {entree.name} - ${entree.alt_price}
+          <button className="cshr_confirmBtn" onClick={handleConfirm}>
+            Confirm
+          </button>
+        </div>
+      );
+    case 7: // Appetizers
+      return (
+        <div className="cshr_appContainer">
+          <h1 className="cshr_appLabel">Appetizers and Sides</h1>
+          <div className="cshr_appBtnContainer">
+            {menuItems.apps.map((appItem, index) => (
+              <button
+                key={index}
+                className="cshr_appBtn"
+                onClick={() => handleAppSelection(appItem)}
+              >
+                {appItem.name}
               </button>
             ))}
           </div>
-        );
-      case 5: // Drinks
-        return (
-          <div>
-            <h1>Drinks</h1>
-            {menuItems.drinks.map((drink) => (
-              <button key={drink.name} onClick={() => drinkClick(drink)}>
-                {drink.name} - ${drink.alt_price}
-              </button>
-            ))}
-          </div>
-        );
-      default:
-        return <h1>Invalid Item Type</h1>;
-    }
-  };
-
-  return (
-    <div className="itemSelectionContainer">
-      {renderItems()}
-      <button className="confirmButton" onClick={confirmClick}>
-        Confirm
-      </button>
-    </div>
-  );
+          <button className="cshr_confirmBtn" onClick={handleConfirm}>
+            Confirm
+          </button>
+        </div>
+      );
+  }
 }
 
 export default ItemSelection;
