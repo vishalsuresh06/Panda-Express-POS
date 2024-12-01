@@ -142,3 +142,39 @@ class ExcessView(APIView):
         
         excessItems.sort(key=lambda item: item["percentSold"])
         return JsonResponse(excessItems, safe=False, status=status.HTTP_200_OK)
+    
+class SellsTogetherView(APIView):
+    def get(self, request):
+        try:
+            startDate = datetime.strptime(request.GET.get("startDate"), '%Y-%m-%d')
+            endDate = datetime.strptime(request.GET.get("endDate"), '%Y-%m-%d')
+
+            # Iterate through all orders in target window, counting food item pairs
+            menuItemPairs = Counter()
+            for order in Order.objects.filter(date_created__range=[startDate, endDate]):
+                for orderItem in order.order_items.all():
+                    
+                    # Only considers entree & side food items
+                    foodItems = [foodItem for foodItem in orderItem.food_items.all() if foodItem.type in ["Entree", "Side"]]
+                    for index1 in range(len(foodItems)):
+                        for index2 in range(index1+1, len(foodItems)):
+
+                            # Orders pairs to avoid (A,B) and (B,A) being counted separetely
+                            foodItem1, foodItem2 = sorted([foodItems[index1].name, foodItems[index2].name])
+                            menuItemPairs[(foodItem1, foodItem2)] += 1
+            
+            pairCounts = sorted(menuItemPairs.items(), key=lambda item: item[1], reverse=True)
+            response = []
+            for (foodItem1, foodItem2), count in pairCounts:
+                response.append({
+                    "foodItem1": foodItem1,
+                    "foodItem2": foodItem2,
+                    "count": count
+                })
+            return JsonResponse(response, safe=False, status=status.HTTP_202_ACCEPTED)
+                            
+        except Exception as e:
+            print(e)
+            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+
+                   

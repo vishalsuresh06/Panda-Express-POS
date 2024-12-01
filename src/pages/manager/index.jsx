@@ -472,18 +472,24 @@ function KitchenSettings() {
     </KitchenSettingsContext.Provider>)
 }
 
+function getToday() {
+    return new Date().toISOString().split('T')[0];
+}
+
 function Excess() {
-    const [targetTime, setTargetTime] = useState(new Date().toISOString().split('T')[0]);
-    const [loading, setLoading] = useState(false);
+    const [targetTime, setTargetTime] = useState(getToday());
     const [excessItems, setExcessItems] = useState([]);
 
-    async function fetchExcessItems() {
+    const handleTimeChange = (event) => {
+        setTargetTime(event.target.value);
+    }
+
+    const queryExcess = async () => {
         try {
             let response = await fetch(`${apiURL}/api/manager/excess?timestamp=${targetTime}`);
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 setExcessItems(data);
             } else {
                 setExcessItems({});
@@ -492,14 +498,6 @@ function Excess() {
             console.log(error)
             setExcessItems({});
         }
-    }
-
-    const handleTimeChange = (event) => {
-        setTargetTime(event.target.value);
-    }
-
-    const queryExcess = () => {
-        fetchExcessItems();
     }
 
     return (<div className="mngr-excess mngr-font">
@@ -518,7 +516,7 @@ function Excess() {
             </thead>
             <tbody>
                 {excessItems.map((item, index) => (
-                    <tr>
+                    <tr key={index}>
                         <td>{item.name}</td>
                         <td>{item.quantitySold}</td>
                         <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
@@ -530,8 +528,58 @@ function Excess() {
 }
 
 function SellsTogether() {
-    return (<div className="mngr-sellstogether">
-        SELLS TOGETHER
+    const [startDate, setStartDate] = useState("2023-01-01");
+    const [endDate, setEndDate] = useState("2023-12-31");
+    const [foodPairs, setFoodPairs] = useState([]);
+
+    const changeStart = (event) => {
+        setStartDate(event.target.value);
+    }
+
+    const changeEnd = (event) => {
+        setEndDate(event.target.value);
+    }
+
+    const queryPairs = async () => {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/sellstogether?startDate=${startDate}&endDate=${endDate}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setFoodPairs(data);
+            } else {
+                setFoodPairs({});
+            }
+        } catch (error) {
+            console.log(error)
+            setFoodPairs({});
+        }
+    };
+
+    return (<div className="mngr-sellstogether mngr-font">
+        <h2>What Sells Together</h2>
+        <input type="date" defaultValue={startDate} key={startDate} onChange={changeStart}/>
+        <input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd}/>
+        <button onClick={queryPairs}>QUERY</button>
+        <table className="mngr-settingsTable">
+            <thead>
+                <tr>
+                    <td>Food Item 1</td>
+                    <td>Food Item 2</td>
+                    <td>Frequency</td>
+                </tr>
+            </thead>
+            <tbody>
+                {foodPairs.map((pair, index) => (
+                    <tr key={index}>
+                        <td>{pair.foodItem1}</td>
+                        <td>{pair.foodItem2}</td>
+                        <td>{pair.count}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
     </div>)
 }
 
