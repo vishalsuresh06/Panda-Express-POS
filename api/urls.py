@@ -7,5 +7,5 @@ urlpatterns = [
     path("inventory/", manager_views.InventoryView.as_view(), name="inventory"),
 	path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
 	path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
-	path("settings/", general_views.SettingsView.as_view(), name="settings"),
+	path("settings", general_views.SettingsView.as_view(), name="settings"),
 ]

@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { Compact } from '@uiw/react-color';
 import { apiURL } from '../../config.js';
 import './manager.css';
+
+const KitchenSettingsContext = createContext(null);
 
 function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
     const [items, setItems] = useState([]);
@@ -307,6 +310,168 @@ function InventoryEdit() {
     )
 }
 
+function SettingsInput({name, desc, field, type}) {
+    const {settings, setSettings} = useContext(KitchenSettingsContext);
+    const [color, setColor] = useState(type == "color" ? settings[field] : "");
+
+	const changeSettings = async (event) => {
+		const settingsCopy = {...settings};
+        var data;
+		if (type == "text") {
+            
+			settingsCopy[field] = event.target.value; 
+		} else if (type == "checkbox") {
+			settingsCopy[field] = (event.target.checked ? "true" : "false"); 
+		} else if (type == "color") {
+			setColor(event.hex);
+			settingsCopy[field] = event.hex;
+		}
+		setSettings(settingsCopy);
+
+        let reqBody = { action: "set", field: field, data: settingsCopy[field] };
+        try {
+            await fetch(`${apiURL}/api/settings`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
+        } catch (error) { 
+            console.log(error);
+        }
+	}
+
+    // Prevents while DB settings are still being loaded in
+
+	var inputComponent;
+	if (type == "text") {
+		inputComponent = <input type="text" value={settings[field]} onChange={changeSettings}/>;
+	} else if (type == "checkbox") {
+		inputComponent = <input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings}/>;
+	} else if (type == "color") {
+		inputComponent = <Compact color={color} onChange={changeSettings}/>
+	}
+
+	return (
+		<tr>
+			<td>{name}</td>
+			<td>{desc}</td>
+			<td>{inputComponent}</td>
+		</tr>
+	)
+}	
+
+function KitchenSettings() {
+    const [settings, setSettings] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    // Fetch the current settings from the database
+	useEffect(() => {
+		async function fetchSettings() {
+			try {
+				let response = await fetch(`${apiURL}/api/settings`);
+
+				if (response.ok) {
+					const data = await response.json();
+					setSettings(data);
+                    setLoading(false);
+				} else {
+					setSettings({});
+                    setLoading(true);
+				}
+			} catch (error) {
+				console.log(error)
+				setSettings({});
+                setLoading(true);
+			}
+		}
+
+		fetchSettings();
+	}, []);
+
+    const restoreDefaults = async () => {
+        let reqBody = { action: "restoredefaults"};
+        try {
+            await fetch(`${apiURL}/api/settings`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
+        } catch (error) { 
+            console.log(error);
+        }
+        window.location.reload();
+    }
+
+    if (loading) {
+        return <></>;
+    }
+
+	return (<KitchenSettingsContext.Provider value={{settings, setSettings}}>
+        <div className="mngr-kitchensettings">
+            <h2 className="mngr-font">KITCHEN CUSTOMIZER</h2>
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <th className="mngr-font">Setting</th>
+                        <th className="mngr-font">Description</th>
+                        <th className="mngr-font">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <SettingsInput 	name="Order Refresh Rate (s)"
+                                    desc="How pages will refresh with newly entered orders."
+                                    field="kt_refreshRate"
+                                    type="text"/>
+                    
+                    <SettingsInput 	name="Full Order Render Count"
+                                    desc="How many order cards are automatically expanded in the HERE/TOGO columns."
+                                    field="kt_fullOrderCount"
+                                    type="text"/>
+
+                    <SettingsInput 	name="Recent Order Count"
+                                    desc="How many of the most recent orders will be displayed."
+                                    field="kt_recentOrderCount"
+                                    type="text"/>
+
+                    <SettingsInput 	name="Here Orders on Left"
+                                    desc="Alters which of the two order columns is displayed."
+                                    field="kt_hereOrdersLeft"
+                                    type="checkbox"/>
+                    
+                    <SettingsInput  name="Temperature in Fahrenheit"
+                                    field="kt_tempUnits"
+                                    type="checkbox"/>
+
+                    <SettingsInput  name="Pending Order Color"
+                                    field="kt_pendingColor"
+                                    type="color"/>
+
+                    <SettingsInput  name="In Progress Order Color"
+                                    field="kt_inprogressColor"
+                                    type="color"/>
+
+                    <SettingsInput  name="Completed Order Color"
+                                    field="kt_completedColor"
+                                    type="color"/>
+                    
+                    <SettingsInput  name="Canceled Order Color"
+                                    field="kt_cancelledColor"
+                                    type="color"/>
+
+                </tbody>
+            </table>
+
+            <button onClick={restoreDefaults}>RESTORE DEFAULTS</button>
+        </div>
+    </KitchenSettingsContext.Provider>)
+}
+
 function Manager() {
     return (
         <>
@@ -319,6 +484,7 @@ function Manager() {
                     <Link to="/manager/sales" className='mngr-btn'>Sales</Link>
                     <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
                     <Link to="/manager/zreport" className='mngr-btn'>Z Report</Link>
+                    <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
                 </div>
                 <Outlet />
             </div>
@@ -326,4 +492,4 @@ function Manager() {
     )
 }
 
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit }
+export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings}

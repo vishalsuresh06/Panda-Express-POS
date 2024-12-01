@@ -122,15 +122,4 @@ class OrderFoodQuantity(models.Model):
 class SettingParameter(models.Model):
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField()
-
-    @staticmethod
-    def get(key):
-        try:
-            return SettingParameter.objects.get(key=key).value
-        except SettingParameter.DoesNotExist:
-            return None
-    
-    @staticmethod
-    def set(key, value):
-        obj, created = SettingParameter.objects.update_or_create(key=key, defaults={'value': value})
-        return obj
+    default = models.TextField()

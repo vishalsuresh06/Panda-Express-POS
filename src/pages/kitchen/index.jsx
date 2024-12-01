@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { Compact } from '@uiw/react-color';
 import { Link, Outlet } from 'react-router-dom';
 import { apiURL, WEATHER_API_KEY} from '../../config.js';
 import './kitchen.css';
@@ -8,20 +7,6 @@ import './kitchen.css';
 //! PAGE SETTINGS
 const SettingsContext = createContext(null);
 const WEATHER_REFRESH_MIN = 10;					// DON'T INCREASE THIS, >1000 API calls charges Ryan (please no)
-
-// Default settings are used while the true settings are being loaded from the database to prevent everything breaking...
-const DEFAULT_SETTINGS = {
-    "kt_refreshRate": "5",
-    "kt_fullOrderCount": "2",
-    "kt_recentOrderCount": "10",
-    "kt_hereOrdersLeft": "true",
-    "kt_tempUnits": "F",
-    "kt_pendingColor": "#969696",
-    "kt_inprogressColor": "#ffff64",
-    "kt_cancelledColor": "#1dc871",
-    "kt_completedColor": "#b46471",
-}
-
 
 //! HELPER COMPONENTS
 function CardButtons({onHandle, inProgress, order}) {
@@ -117,7 +102,7 @@ function OrderColumn({title, orders, onHandle, current}) {
 	const { settings, setSettings } = useContext(SettingsContext);
 
 	return (<div className="kt-column">
-		<h1>{title} Orders ({orders.length})</h1>
+		<h1>{title} ({orders.length})</h1>
 
 		<ul className="kt-cardList">
 			{orders.map((order, index) => (
@@ -132,40 +117,6 @@ function OrderColumn({title, orders, onHandle, current}) {
 	</div>)
 }
 
-function SettingsInput({name, desc, field, type}) {
-	const { settings, setSettings } = useContext(SettingsContext);
-	const [color, setColor] = useState(type == "color" ? settings[field] : "");
-	
-	const changeSettings = (event) => {
-		const settingsCopy = {...settings};
-		if (type == "text") {
-			settingsCopy[field] = Number(event.target.value); 
-		} else if (type == "checkbox") {
-			settingsCopy[field] = (event.target.checked ? "true" : "false"); 
-		} else if (type == "color") {
-			setColor(event.hex);
-			settingsCopy.field = event.hex;
-		}
-		setSettings(settingsCopy);
-	}
-
-	var inputComponent;
-	if (type == "text") {
-		inputComponent = <input type="text" defaultValue={settings[field]} onChange={changeSettings} key={settings[field]}/>;
-	} else if (type == "checkbox") {
-		inputComponent = <input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings} key={settings[field] == "true"}/>;
-	} else if (type == "color") {
-		inputComponent = <Compact color={color} onChange={changeSettings}/>
-	}
-
-	return (
-		<tr>
-			<td>{name}</td>
-			<td>{desc}</td>
-			<td>{inputComponent}</td>
-		</tr>
-	)
-}	
 
 
 //! MAIN COMPONENTS
@@ -210,14 +161,11 @@ function NavBar() {
 		return () => clearInterval(intervalID);
 	}, [settings.kt_tempUnits]);	
 
-
-
 	return (<div className="kt-navBar">
 		<div id="google_translate_element"></div>
 		<h4 className="notranslate">{currentTime}</h4>
-		<Link className="kt-navBtn" to="/kitchen/orders">Orders</Link>
-		<Link className="kt-navBtn" to="/kitchen/recentorders">Recent Orders</Link>
-		<Link className="kt-navBtn" to="/kitchen/customize">Customize</Link>
+			<Link className="kt-navBtn" to="/kitchen/orders">Orders</Link>
+			<Link className="kt-navBtn" to="/kitchen/recentorders">Recent Orders</Link>
 		{Object.keys(weather).length > 0 && <h4><span className="notranslate">{weather.current.temp} {settings.kt_tempUnits}</span> | {weather.current.weather[0].description.toUpperCase()}</h4>}
 	</div>)
 }
@@ -246,6 +194,8 @@ function KitchenOrders() {
 
 	// Either "comlete" or "cancel" or "toggle" the target order 
 	const handleOrder = async (order, action) => {
+		console.log(action);
+
 		if (action == "toggle") {
 			toggleOrder(order);
 		} else if (action == "complete" || action == "cancel") {
@@ -257,7 +207,7 @@ function KitchenOrders() {
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
-		}, Number(settings.kt_refreshRate)*1000);
+		}, parseInt(settings.kt_refreshRate)*1000);
 		
 		fetchOrders();	
 		return () => clearInterval(intervalID);
@@ -343,7 +293,7 @@ function RecentOrders() {
 
 	async function fetchOrders() {
 		try {
-			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${Number(settings.kt_recentOrderCount)}`);
+			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${parseInt(settings.kt_recentOrderCount)}`);
 
 			if (response.ok) {
 				const data = await response.json();
@@ -386,7 +336,7 @@ function RecentOrders() {
 	useEffect(() => {
 		const intervalID = setInterval(() => {
 			fetchOrders();
-		}, Number(settings.refreshRate)*1000);
+		}, parseInt(settings.kt_refreshRate)*1000);
 		
 		fetchOrders();
 		return () => clearInterval(intervalID);
@@ -397,77 +347,11 @@ function RecentOrders() {
 	</div>)
 }
 
-function KitchenCustomizer() {
-	const { settings, setSettings } = useContext(SettingsContext);
-
-	const restoreDefault = () => {
-		setSettings(DEFAULT_SETTINGS);
-	}
-
-	
-
-	return (<div className="kt-customizerInputs">
-		<h1>KITCHEN CUSTOMIZER</h1>
-		<table className="kt-inputsTable">
-			<tbody>
-				<tr>
-					<th>Setting</th>
-					<th>Description</th>
-					<th>Value</th>
-				</tr>
-				<SettingsInput 	name="Order Refresh Rate (s)"
-								desc="How pages will refresh with newly entered orders."
-								field="ORDER_REFRESH_S"
-								type="text"/>
-				
-				<SettingsInput 	name="Full Order Render Count"
-								desc="How many order cards are automatically expanded in the HERE/TOGO columns."
-								field="ORDER_RENDER_LIMIT"
-								type="text"/>
-
-				<SettingsInput 	name="Recent Order Count"
-								desc="How many of the most recent orders will be displayed."
-								field="RECENT_ORDER_COUNT"
-								type="text"/>
-
-				<SettingsInput 	name="Here Orders on Left"
-								desc="Alters which of the two order columns is displayed."
-								field="HERE_ORDERS_LEFT"
-								type="checkbox"/>
-				
-				<SettingsInput  name="Temperature in Fahrenheit"
-								field="TEMP_FAHRENHEIT"
-								type="checkbox"/>
-
-				<SettingsInput  name="Pending Order Color"
-								field="pending"
-								type="color"/>
-
-				<SettingsInput  name="In Progress Order Color"
-								field="in_progress"
-								type="color"/>
-
-				<SettingsInput  name="Completed Order Color"
-								field="completed"
-								type="color"/>
-				
-				<SettingsInput  name="Canceled Order Color"
-								field="cancelled"
-								type="color"/>
-			</tbody>
-		</table>
-
-		<div className="kt-dftContainer">
-			<button className="kt-dftButton" onClick={restoreDefault}>Restore Default</button>
-		</div>
-	</div>)
-}
-
-
 
 //! PARENT COMPONENT
 function Kitchen() {
-	const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+	const [settings, setSettings] = useState({});
+	const [loading, setLoading] = useState(true);
 	
 	// Load settings from database into context
 	useEffect(() => {
@@ -478,12 +362,15 @@ function Kitchen() {
 				if (response.ok) {
 					const data = await response.json();
 					setSettings(data);
+					setLoading(false);
 				} else {
 					setSettings({});
+					setLoading(true);
 				}
 			} catch (error) {
 				console.log(error)
 				setSettings({});
+				setLoading(true);
 			}
 		}
 
@@ -517,6 +404,10 @@ function Kitchen() {
 	// 	window.googleTranslateElementInit = googleTranslateElementInit;
 	// }, []);
 
+	if (loading) {
+		return <></>;
+	}
+
 	return (<>
 		<SettingsContext.Provider value={{settings, setSettings}}>
 			<div className="kt-mainDiv">
@@ -527,4 +418,4 @@ function Kitchen() {
 	</>)
 }
 
-export {Kitchen, KitchenOrders, RecentOrders, KitchenCustomizer}
+export {Kitchen, KitchenOrders, RecentOrders}

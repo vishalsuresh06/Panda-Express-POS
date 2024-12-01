@@ -45,5 +45,5 @@ class OrderSerializer(serializers.ModelSerializer):
 class SettingSerializer(serializers.ModelSerializer):
     class Meta:
         model = SettingParameter
-        fields = ['key', 'value']
+        fields = ['key', 'value', 'default']
 

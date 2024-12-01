@@ -15,8 +15,8 @@ DEFAULT_SETTINGS = {
     "kt_tempUnits": "F",
     "kt_pendingColor": "#969696",
     "kt_inprogressColor": "#ffff64",
-    "kt_cancelledColor": "#1dc871",
-    "kt_completedColor": "#b46471",
+    "kt_completedColor": "#1dc871",
+    "kt_cancelledColor": "#b46471",
 }
 
 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         
         # Load default settings
         for key,value in DEFAULT_SETTINGS.items():
-            SettingParameter.objects.create(key=key, value=value)
+            SettingParameter.objects.create(key=key, value=value, default=value)
 
 
         # Employees
