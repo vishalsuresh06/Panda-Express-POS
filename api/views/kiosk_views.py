@@ -12,10 +12,11 @@ class KioskView(APIView):
         rawData = FoodItem.objects.all()
         serializer = FoodItemSerializer(rawData, many=True)
         return JsonResponse(serializer.data, safe=False)
+    def post(self, request):
+        pass
 
 class OrderTypes(APIView):
     def get(self, request):
         rawData = OrderItemType.objects.all()
         serializer = OrderItemTypeSerializer(rawData, many=True)
         return JsonResponse(serializer.data, safe=False)
-    

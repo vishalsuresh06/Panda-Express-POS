@@ -13,8 +13,8 @@ function OrderItems({ItemList, remove_Item}) {
                         </li>
                     ))}
                 </ul>
-                <div className="CK_killOrderButton">
-                <button onClick={() => remove_Item(item.array_id)}> Delete Item</button>
+                <div >
+                <button className="CK_killOrderButton" onClick={() => remove_Item(item.array_id)}> Delete Item</button>
                 </div>
             </li>
         ))}
@@ -37,6 +37,7 @@ function Subtotal(items){
 }
 
 export default function CheckoutView({ItemList, removeAll, remove_Item, checkout}) {
+    console.log(ItemList)
 return (
     <div className="CK_checkoutContainer">
     <div className="CK_itemListContainer">

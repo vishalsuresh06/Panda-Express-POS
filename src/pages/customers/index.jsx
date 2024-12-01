@@ -1,17 +1,81 @@
 import { useState, useEffect } from 'react';
-import { apiURL } from '../../config.js';
+import { apiURL, WEATHER_API_KEY } from '../../config.js';
 import CheckoutView from "./CheckoutView";
+
 import "./kiosk.css"
 
 
-
+const WEATHER_REFRESH_MIN = 10
 
 function Customers() {
     const [currI, setCurr] = useState(0)
-    const [sysState, setState] = useState(-1)
+    const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
     const [ItemList, setItems] = useState([]);
     const [orderTypes, setOrderTypes] = useState([])
+    const [currTime, setTime] = useState(new Date().toLocaleTimeString())
+    const [currWeather, setWeather] = useState({})
+
+    useEffect(() => {
+        const intervalID = setInterval(() => {
+            setTime(new Date().toLocaleTimeString());
+        }, 1000);
+
+        return () => clearInterval(intervalID);
+    }, []);
+
+    var translateWidgetAdded = false;
+    const googleTranslateElementInit = () => {
+        if (!translateWidgetAdded) {
+            new window.google.translate.TranslateElement(
+                {
+                    pageLanguage: "en",
+                    autoDisplay: false,
+                    includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de", 
+                    layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+                },
+                "google_translate_element"
+            );
+
+            translateWidgetAdded = true;
+        }
+    };
+
+    useEffect(() => {
+        var addScript = document.createElement("script");
+        addScript.setAttribute(
+            "src",
+            "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+        );
+        document.body.appendChild(addScript);
+        window.googleTranslateElementInit = googleTranslateElementInit;
+    }, []);
+
+
+    async function fetchWeather() {
+        try {
+            console.log(WEATHER_API_KEY)
+            let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&lon=-96.314445&units=imperial&appid=${WEATHER_API_KEY}`);
+            if (response.ok) {
+                const data = await response.json();
+                setWeather(data)
+            } else {
+                setWeather({})
+            }
+        } catch (error) {
+            console.log(error);
+            setWeather({});
+        }
+    }
+
+    useEffect(() => {
+        const intervalID = setInterval(() => {
+            fetchWeather();
+        }, WEATHER_REFRESH_MIN*60*1000);
+        
+        fetchWeather();
+        return () => clearInterval(intervalID);
+    }, []);    
 
     useEffect( () => async function updateOrders(){
         try {
@@ -40,7 +104,7 @@ function Customers() {
 
     useEffect( () => async function updateMenu(){
         try {
-            let response = await fetch(`${apiURL}/api/kiosk_menu/`, {
+            let response = await fetch(`${apiURL}/api/kiosk/`, {
                 method: "GET"
             });
 
@@ -83,8 +147,8 @@ function Customers() {
             ...current, 
             { 
                 array_id: currI, 
-                type_id: OrderItemTypeID,
-                name: orderTypes.find(item => item.id === OrderItemTypeID).name,
+                type_id: orderTypes.find(item => item.name === OrderItemTypeID).id,
+                name: OrderItemTypeID,
                 price: totalPrice,
                 items: itemList,
             }
@@ -102,7 +166,7 @@ function Customers() {
 
 
     const Order = () => {
-        if (sysState === 1){
+        if (sysState === "Bowl"){
             //bowl
             return (<BuildFood
                 numEntree={1}
@@ -110,11 +174,11 @@ function Customers() {
                 addItem = {addItem}
                 setSys = {setState}
                 typeID = {sysState}
-                typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
                 />)
             
         }
-        if (sysState === 2){
+        if (sysState === "Plate"){
             //plate
             return (<BuildFood
                  numEntree={2}
@@ -122,10 +186,10 @@ function Customers() {
                  addItem = {addItem}
                  setSys = {setState}
                  typeID = {sysState}
-                 typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                 typePrice = {orderTypes.find(item => item.name === sysState).base_price}
                  />)
         }
-        if (sysState === 3){
+        if (sysState === "Cub Meal"){
             //cub meal
             return (<BuildFood
                 numEntree={1}
@@ -135,11 +199,11 @@ function Customers() {
                 setSys = {setState}
                 typeID = {sysState}
                 upMult={0.666}
-                typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
                 />)
             
         }
-        if (sysState === 4){
+        if (sysState === "Family Feast"){
             //family feast
             return (<BuildFood
                 numEntree={3}
@@ -148,11 +212,11 @@ function Customers() {
                 addItem = {addItem}
                 setSys = {setState}
                 typeID = {sysState}
-                typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
                 upMult={3}
                 />)
         }
-        if (sysState === 5){
+        if (sysState === "Bigger Plate"){
             //bigger plate
             return (<BuildFood
                 numEntree={3}
@@ -160,7 +224,37 @@ function Customers() {
                 addItem = {addItem}
                 setSys = {setState}
                 typeID = {sysState}
-                typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
+                />)
+        }
+        if (sysState === "Drink"){
+            //Drink
+            return (<SinglePick
+                orderType={"Drink"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                />)
+        }
+        if (sysState === "Appetizer"){
+            //Appetizer
+            return (<SinglePick
+                orderType={"Appetizer"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                />)
+        }
+        if (sysState === "A La Carte"){
+            //A La Carte
+            return (<SinglePick
+                orderType={"A La Carte"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
                 />)
         }
         return (<OrderButtons setSys={setState} orderTypes={orderTypes}/>)
@@ -169,6 +263,9 @@ function Customers() {
 
     return (
         <>
+            <h4 className="notranslate">{currTime}</h4>
+            <div id="google_translate_element"></div>
+            {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {addWater} remove_Item = {remove_item}/>
             {/* <WaterButton menu= {menu} addItem = {addItem}/> */}
             {Order()}
@@ -187,8 +284,13 @@ function Customers() {
 // }
 
 function OrderButtons({setSys, orderTypes}){
-    const removeID = [8,9,10,11,12]
-    console.log(orderTypes)
+    const removeID = ["A La Carte (Side) (L)",
+                      "A La Carte (Side) (S)",
+                      "A La Carte (Entree) (S)",
+                      "A La Carte (Entree) (M)",
+                      "A La Carte (Entree) (L)"
+    ]
+    // console.log(orderTypes)
 
     // const navigate = useNavigate();
 
@@ -204,16 +306,16 @@ function OrderButtons({setSys, orderTypes}){
 
     return(
         <ul className="CK-subMenuOptions">
-        {orderTypes.filter(type => !removeID.includes(type.id)).map((type) => (
+        {orderTypes.filter(type => !removeID.includes(type.name)).map((type) => (
             <div className='CK-subMenuOptionsItem' key={type.id}>
-                <button onClick={() => buttonPressAction(type.id)}>
+                <button onClick={() => buttonPressAction(type.name)}>
                     <div>{type.name}</div>
                     <div>${type.base_price}</div>
                     </button>
             </div>
         ))}
         <div className='CK-subMenuOptionsItem' key={8}>
-            <button onClick={() => buttonPressAction(8)}>
+            <button onClick={() => buttonPressAction("A La Carte")}>
                 <div>A La Carte</div>
             </button>
         </div>
@@ -243,13 +345,13 @@ function FoodCard({id, menu, setOrd, ord, max}){
     }
 
     function buttonHandle(){
-        console.log("click")
+        // console.log("click")
         if (clicked === 0 && ord.filter(item=> item.type===currItem.type).length < max){
-            setOrd(current => [...current, {array_id: numExtra, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
+            setOrd(current => [...current, {array_id: numExtra, alt_price: currItem.alt_price, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
             setclick(1)
         }
         else{
-            console.log(ord[0].name)
+            // console.log(ord[0].name)
             setExtra(0)
             setOrd(items => items.filter(item => item.id !== currItem.id))
             setclick(0)
@@ -265,7 +367,7 @@ function FoodCard({id, menu, setOrd, ord, max}){
         }
     }
     function addAnother(){
-        setOrd(current => [...current, {array_id: numExtra+1, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
+        setOrd(current => [...current, {array_id: numExtra+1, alt_price: currItem.alt_price, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
         setExtra(numExtra + 1)
     }
     function killAnother(){
@@ -282,6 +384,11 @@ function FoodCard({id, menu, setOrd, ord, max}){
             return (<div><button className="CK-removeOne" onClick={killAnother}>remove 1</button></div>)
         }
     }
+    function howMuch(){
+        if(clicked===1){
+            return (<div>{numExtra+1}</div>)
+        }
+    }
     return(
         <div className="CK-FoodCard">
         <button className={getStatus()} onClick={() => buttonHandle()}>
@@ -289,6 +396,7 @@ function FoodCard({id, menu, setOrd, ord, max}){
             {isPrem()}
         </button>
         <MoreButton/>
+        {howMuch()}
         <LessButton/>
         </div>
     )
@@ -324,7 +432,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         }, Number(typePrice));
         console.log(total)
         addItem(typeID, total, currOrder)
-        setSys(-1)
+        setSys("")
     }
 
     function CompleteButton(){
@@ -350,6 +458,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         <h3>Entree</h3>
         <h5>Pick {numEntree} entree{Es()}</h5>
         <ul className="CK-entrees">
+            
             {menu.filter(item => item.type === "Entree").map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} max={numEntree} setOrd={setOrder} ord={currOrder} />
@@ -369,6 +478,34 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
             <CompleteButton/>
         </div>
         
+    </div>
+    )
+}
+
+function SinglePick({orderType, typeID, menu, addItem, setSys}){
+    const [currOrder,setOrder] = useState([])
+    function completeOrder(){
+        console.log(currOrder)
+        currOrder.map(item=> (
+            addItem(typeID, item.alt_price, [item])
+        ))
+        setSys("")
+    }
+    return(
+    <div className = "CK-singlePick">
+        <button onClick={() => setSys(-1)} className="CK-cancelOrder">Back</button>
+        <ul className="CK-singlePickList CK-sides">
+            {menu.filter(item => item.type === orderType).map((item) => (
+                <li key={item.id}>
+                    <FoodCard id={item.id} menu={menu} setOrd={setOrder} ord={currOrder} max={1}/>
+                </li>
+            ))}
+        </ul>
+        <div>
+            <button className= "CK-CompleteButton" onClick={() => completeOrder()}>
+                    Complete
+                </button>
+        </div>
     </div>
     )
 }

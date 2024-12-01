@@ -43,7 +43,11 @@
     margin-left: 30%;
 }
 
-.CK_killOrderButton{
+.CK-singlePick{
+    margin-left: 30%;
+}
+
+button.CK_killOrderButton{
     background-color: red;
 }
 button.CK-clicked{
