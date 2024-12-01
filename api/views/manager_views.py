@@ -1,12 +1,14 @@
 from django.http import JsonResponse
 from django.core import serializers
+from django.db.models import Sum
+from django.db.models.functions import TruncDay
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from api.serializers import *
 from api.models import *
-
+from datetime import datetime, timedelta
 
 class EmployeeView(APIView):
     def get(self, request):
@@ -111,4 +113,39 @@ class InventoryView(APIView):
                 print("Invalid input")
 
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
-    
+
+@api_view(['GET'])
+def menuQueryView(request, id):
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    try:
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+    except ValueError:
+        return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    days = [start_date + timedelta(days = i) for i in range((end_date - start_date).days + 1)]
+
+    results = (
+        Order.objects.filter(
+            date_created__range=[start_date, end_date],
+            order_items__orderfoodquantity__food_item_id=id,
+        )
+        .annotate(day=TruncDay("date_created"))
+        .values("day")
+        .annotate(total_quantity=Sum("order_items__orderfoodquantity__quantity"))
+        .order_by("day")
+    )
+
+
+    results_dict = {result["day"].date(): result["total_quantity"] for result in results}
+
+    final_results = []
+    for date in days:
+        final_results.append({
+            "date": date.date(),
+            "quantity": results_dict.get(date.date(), 0)
+    })
+
+    return Response(final_results, status=status.HTTP_200_OK)

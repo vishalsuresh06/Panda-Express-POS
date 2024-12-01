@@ -1,5 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { Line } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+);
 import { apiURL } from '../../config.js';
 import './manager.css';
 
@@ -307,6 +327,143 @@ function InventoryEdit() {
     )
 }
 
+function Sales() {
+    const [startDate, setStartDate] = useState('2023-01-01');
+    const [endDate, setEndDate] = useState('2023-01-12');
+    const [chartData, setChartData] = useState(null);
+
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [menuItems, setMenuItems] = useState([]);
+
+    useEffect(() => {
+        async function fetchMenu() {
+            try {
+                let response = await fetch(`${apiURL}/api/menu`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setMenuItems(data)
+                } else {
+                    setMenuItems([])
+                }
+            } catch (error) {
+                console.log(error)
+                setMenuItems([])
+            }
+        }
+
+        fetchMenu();
+    }, []);
+
+    const handleCheckboxChange = (id) => {
+        setSelectedIds((prevSelectedIds) => {
+            if (prevSelectedIds.includes(id)) {
+                return prevSelectedIds.filter((item) => item !== id);
+            } else {
+                return [...prevSelectedIds, id];
+            }
+        });
+    };
+
+    const handleStartChange = (event) => {
+        setStartDate(event.target.value);
+    };
+
+    const handleEndChange = (event) => {
+        setEndDate(event.target.value);
+    };
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        let datesPopulated = false
+
+        const promises = selectedIds.map(async (id) => {
+            try {
+                let response = await fetch(`${apiURL}/api/manager/menu-query/${id}?start_date=${startDate}&end_date=${endDate}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    function getRandomColor() {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256);
+                        return `rgba(${r}, ${g}, ${b}, 0.7)`; // Adjust alpha for transparency
+                    }
+
+                    const color = getRandomColor()
+
+                    let newDataset = {
+                        label: menuItems.find(item => item.id === id).name,
+                        backgroundColor: color,
+                        borderColor: color,
+                        data: [],
+                    }
+
+                    let populateDates = false
+                    if (!datesPopulated) {
+                        datesPopulated = true
+                        populateDates = true
+                    }
+                    data.forEach((day) => {
+                        if (populateDates) {
+                            newChartData.labels.push(day.date)
+                        }
+                        newDataset.data.push(day.quantity)
+                    })
+
+                    newChartData.datasets.push(newDataset)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        await Promise.all(promises);
+
+        setChartData(newChartData);
+
+        setLoading(false)
+    }
+
+    return (
+        <div className='mngr-salescontainer'>
+            <div className='mngr-salescol'>
+                {chartData ? (
+                    <Line data={chartData} />
+                ) : (
+                    <p>Send a query</p>
+                )}
+            </div>
+            <div className='mngr-salescol'>
+                <div>
+                    <h3>Select Items</h3>
+                    {menuItems.map((item) => (
+                        <div key={item.id}>
+                            <input
+                                type="checkbox"
+                                checked={selectedIds.includes(item.id)}
+                                onChange={() => handleCheckboxChange(item.id)}
+                            />
+                            <label> {item.name}</label>
+                        </div>
+                    ))}
+                </div>
+                <input type="date" value={startDate} onChange={handleStartChange} />
+                <input type="date" value={endDate} onChange={handleEndChange} />
+                <button onClick={fetchData} disabled={loading}>Query</button>
+            </div>
+        </div>
+    )
+}
+
 function Manager() {
     return (
         <>
@@ -326,4 +483,4 @@ function Manager() {
     )
 }
 
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit }
+export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, Sales }

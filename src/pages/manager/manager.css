@@ -74,3 +74,11 @@
     background-color: red;
     opacity: 1;
 }
+
+.mngr-salescontainer {
+    display: flex;
+}
+
+.mngr-salescol {
+    width: 50%;
+}
