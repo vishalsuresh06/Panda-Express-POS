@@ -7,6 +7,7 @@ import "./index.css";
 function Login() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [employee, setEmployee] = useState("Vishal Suresh");
   const navigate = useNavigate();
 
   const onButtonClick = () => {
@@ -16,7 +17,7 @@ function Login() {
     }
 
     setPasswordError("");
-    navigate("/cashier");
+    navigate("/cashier", { state: { employee } });
   };
 
   return (

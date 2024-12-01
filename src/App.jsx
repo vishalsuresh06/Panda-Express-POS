@@ -26,6 +26,7 @@ function App() {
         </Route>
 
         {/* Cashier and its subpages */}
+        <Route path="/login" element={<Login />} />
         <Route path="/cashier" element={<Cashier />} />
         <Route path="/itemSelection" element={<ItemSelection />} />
 

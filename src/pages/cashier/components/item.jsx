@@ -9,6 +9,7 @@ function Item({ type, side, entrees, price }) {
           <li key={entree}>{entree}</li>
         ))}
       </ul>
+      <button className="cshr_deleteBtn">X</button>
     </div>
   );
 }
