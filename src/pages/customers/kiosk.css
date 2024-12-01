@@ -13,8 +13,8 @@
 }
 
 .CK-entrees{
+    display:inline-flex;
     position: top;
-    margin-left: 45%;
     list-style-type:none
 }
 
@@ -26,18 +26,25 @@
 }
 
 .CK-sides{
-    margin-left: 85%;
+    display:inline-flex;
+    position:top;
     list-style-type:none
 }
 
 .CK-sidesItem{
     position: top;
     text-align: center;
-    margin-right: 90%;
+    margin-right: 50%;
     background-color: aqua;
     margin-top: 20px;
 }
 
+.CK-BuildFoodPage{
+    margin-left: 45%;
+}
+
+
 button.CK-clicked{
-    color:grey
+    color:grey;
+    background-color: green;
 }

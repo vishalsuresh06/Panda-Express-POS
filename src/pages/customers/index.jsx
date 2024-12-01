@@ -10,10 +10,7 @@ function Customers() {
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState(-1)
     const [menu, setMenu] = useState([])
-    const [ItemList, setItems] = useState([
-        {array_id : -2, type_id : 9, price : 9.00, name : "chicken"},
-        {array_id : -1, type_id : 1, price : 2.00, name : "ghost"}
-    ]);
+    const [ItemList, setItems] = useState([]);
     const [orderTypes, setOrderTypes] = useState([])
 
     useEffect( () => async function updateOrders(){
@@ -81,15 +78,15 @@ function Customers() {
     }
 
     
-    const addItem = (OrderItemTypeID, totalPrice, itemList) => {
+    const addItem = (OrderItemTypeID, totalPrice, itemList, itemName) => {
         setItems(current => [
             ...current, 
             { 
                 array_id: currI, 
                 type_id: OrderItemTypeID,
-                type_name: orderTypes.find(item => item.id === OrderItemTypeID).name,
+                name: orderTypes.find(item => item.id === OrderItemTypeID).name,
                 price: totalPrice,
-                items: itemList
+                items: itemList,
             }
         ]);
     
@@ -200,7 +197,7 @@ function OrderButtons({setSys, orderTypes}){
 }
 
 
-function FoodCard({id, menu, setOrd, ord}){
+function FoodCard({id, menu, setOrd, ord, max}){
     // console.log(menu)
     const  currItem = menu.find(item => item.id === id)
     const [clicked, setclick] = useState(0)
@@ -221,7 +218,7 @@ function FoodCard({id, menu, setOrd, ord}){
 
     function buttonHandle(){
         console.log("click")
-        if (clicked === 0 || clicked === 2){
+        if (clicked === 0 && ord.filter(item=> item.type===currItem.type).length < max){
             setOrd(current => [...current, {id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
             setclick(1)
         }
@@ -249,13 +246,21 @@ function FoodCard({id, menu, setOrd, ord}){
         </div>
     )
 }
-function BuildFood({numEntree, menu, addItem, setSys, typeID, typePrice}){
+function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePrice}){
     // console.log(numEntree)
     // console.log(menu)
     const [currOrder,setOrder] = useState([])
     console.log("curr order: ", currOrder)
-    function s(){
+    function Es(){
         if (numEntree === 1){
+            return ("")
+        }
+        else{
+            return ("s")
+        }
+    }
+    function Ss(){
+        if (numSide === 1){
             return ("")
         }
         else{
@@ -294,25 +299,25 @@ function BuildFood({numEntree, menu, addItem, setSys, typeID, typePrice}){
     return (
     <div className = "CK-BuildFoodPage">
         <button onClick={() => setSys(-1)} className="CK-cancelOrder">Back</button>
+        <h3>Entree</h3>
+        <h5>Pick {numEntree} entree{Es()}</h5>
         <ul className="CK-entrees">
-            <h3>Entree</h3>
-            <h5>Pick {numEntree} entree{s()}</h5>
             {menu.filter(item => item.type === "Entree").map((item) => (
                 <li key={item.id}>
-                    <FoodCard id={item.id} menu={menu} setOrd={setOrder} ord={currOrder} />
+                    <FoodCard id={item.id} menu={menu} max={numEntree} setOrd={setOrder} ord={currOrder} />
                 </li>
             ))}
-            <CompleteButton/>
         </ul>
+        <h3>Side</h3>
+        <h5>Pick {numEntree} side{Ss()}</h5>
         <ul className="CK-sides">
-            <h3>Side</h3>
-            <h5>Pick {numEntree} entree{s()}</h5>
             {menu.filter(item => item.type === "Side").map((item) => (
                 <li key={item.id}>
-                    <FoodCard id={item.id} menu={menu} setOrd={setOrder} ord={currOrder} />
+                    <FoodCard id={item.id} menu={menu} max={numSide} setOrd={setOrder} ord={currOrder} />
                 </li>
             ))}
         </ul>
+        <CompleteButton/>
         
     </div>
     )

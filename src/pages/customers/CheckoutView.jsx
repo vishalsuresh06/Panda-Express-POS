@@ -5,7 +5,14 @@ function OrderItems({ItemList, remove_Item}) {
         <ul>
         {ItemList.map((item) => (
             <li key={item.array_id}>
-                {item.name}
+                {item.name}  ---  ${item.price.toFixed(2)}
+                <ul>
+                    {item.items.map(i => (
+                        <li>
+                            {i.name}
+                        </li>
+                    ))}
+                </ul>
                 <div className="Cust_killOrderButton">
                 <button onClick={() => remove_Item(item.array_id)}> kill Item</button>
                 </div>
