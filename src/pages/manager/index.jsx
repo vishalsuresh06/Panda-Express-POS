@@ -667,6 +667,8 @@ function Restock() {
             </tbody>
         </table>
     </div>)
+}
+
 function Sales() {
     const [startDate, setStartDate] = useState('2023-01-01');
     const [endDate, setEndDate] = useState('2023-01-12');
@@ -965,6 +967,4 @@ function Manager() {
     )
 }
 
-
-
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock, Sales, ProductUsage}
+export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock, Sales, ProductUsage }
