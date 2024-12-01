@@ -1,15 +1,35 @@
 from django.core.management.base import BaseCommand
-from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity
+from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity, SettingParameter
 from django.utils import timezone
 import datetime
 import random
 import pytz
 
 
+# IMPORTANT: Both fields must be STRINGS
+DEFAULT_SETTINGS = {
+    "kt_refreshRate": "5",
+    "kt_fullOrderCount": "2",
+    "kt_recentOrderCount": "10",
+    "kt_hereOrdersLeft": "true",
+    "kt_tempUnits": "F",
+    "kt_pendingColor": "#969696",
+    "kt_inprogressColor": "#ffff64",
+    "kt_completedColor": "#1dc871",
+    "kt_cancelledColor": "#b46471",
+}
+
+
 class Command(BaseCommand):
     help = 'Seed the database with initial data'
 
     def handle(self, *args, **kwargs):
+        
+        # Load default settings
+        for key,value in DEFAULT_SETTINGS.items():
+            SettingParameter.objects.create(key=key, value=value, default=value)
+
+
         # Employees
         employee1 = Employee.objects.create(name='Bob China', password='ILovePandaExpress', is_manager=False, wage=12.00)
         employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=False, wage=7.50)
@@ -158,3 +178,10 @@ class Command(BaseCommand):
 
 
         self.stdout.write(self.style.SUCCESS('Database seeded successfully'))
+
+
+
+        
+
+	
+
