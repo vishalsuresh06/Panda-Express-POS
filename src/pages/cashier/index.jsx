@@ -23,7 +23,7 @@ function Cashier() {
   useEffect(() => {
     if (incomingEmployee) {
       setEmployee(incomingEmployee);
-      localStorage.setItem("employee", incomingEmployee); // Persist to localStorage
+      localStorage.setItem("employee", incomingEmployee);
     }
   }, [incomingEmployee]);
 
@@ -32,7 +32,7 @@ function Cashier() {
     if (selection && selection.type) {
       const newItem = {
         type: selection.type,
-        side: selection.side || "",
+        sides: selection.sides || [],
         entrees: selection.entrees || [],
         price: selection.price || 0,
         drink: selection.drink || "",
@@ -84,7 +84,7 @@ function Cashier() {
 
   const handleLogout = () => {
     deleteCheckout();
-    localStorage.setEmployee("");
+    localStorage.setEmployee("employee", "");
     navigate("/login");
   };
 
@@ -172,19 +172,58 @@ function Cashier() {
   );
 }
 
-function Item({ type, side, entrees, price, drink, app, onDelete }) {
+function Item({ type, sides = [], entrees = [], price, drink, app, onDelete }) {
   return (
     <div className="cshr_itemContainer">
       <h1 className="cshr_typeLbl">{type}</h1>
-      <h3 className="cshr_sideLbl">{drink}</h3>
-      <h3 className="cshr_sideLbl">{app}</h3>
-      <h2 className="cshr_priceLbl">${price}</h2>
-      <h3 className="cshr_sideLbl">{side}</h3>
-      <ul className="cshr_entreeList">
-        {entrees.map((entree, index) => (
-          <li key={index}>{entree}</li>
-        ))}
-      </ul>
+
+      <div className="cshr_detailsContainer">
+        {drink && (
+          <>
+            <p className="cshr_drinkValue">{drink}</p>
+          </>
+        )}
+
+        {app && (
+          <>
+            <p className="cshr_appValue">{app}</p>
+          </>
+        )}
+
+        {price && (
+          <>
+            <h3 className="cshr_priceLbl">Price:</h3>
+            <p className="cshr_priceValue">${price}</p>
+          </>
+        )}
+      </div>
+
+      {sides.length > 0 && (
+        <div className="cshr_sidesContainer">
+          <h3 className="cshr_sidesLbl">Sides:</h3>
+          <ul className="cshr_sideList">
+            {sides.map((side, index) => (
+              <li key={index} className="cshr_sideItem">
+                {side}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {entrees.length > 0 && (
+        <div className="cshr_entreesContainer">
+          <h3 className="cshr_entreesLbl">Entrees:</h3>
+          <ul className="cshr_entreeList">
+            {entrees.map((entree, index) => (
+              <li key={index} className="cshr_entreeItem">
+                {entree}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <button className="cshr_deleteBtn" onClick={onDelete}>
         X
       </button>

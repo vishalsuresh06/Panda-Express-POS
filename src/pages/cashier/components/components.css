@@ -63,10 +63,6 @@
   background-color: #218838;
 }
 
-.cshr_confirmBtn:active {
-  transform: scale(0.98);
-}
-
 /* General container styling */
 .cshr_aLCContainer {
   display: flex;
@@ -129,4 +125,62 @@
 
 .cshr_confirmBtn:hover {
   background-color: #1e7e34;
+}
+
+/* Family Feast Container */
+.cshr_famFeastContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+/* Header Label */
+.cshr_famFeastLabel {
+  font-size: 28px;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Side Container */
+.cshr_famFeastSideContainer {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.cshr_famFeastSideContainer h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #555;
+  margin: 15px 0 10px;
+}
+
+/* Entree Container */
+.cshr_famFeastEntreeContainer {
+  width: 100%;
+}
+
+.cshr_famFeastEntreeContainer h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #555;
+  margin: 15px 0 10px;
+}
+
+/* Buttons */
+.cshr_appBtn {
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  padding: 10px 15px;
+  margin: 5px;
+  border: none;
+  border-radius: 4;
 }

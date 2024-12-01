@@ -146,85 +146,85 @@
   background-color: #e0e0e0;
 }
 
-/* Card container for individual items */
+/* General container */
 .cshr_itemContainer {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  width: 200px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  margin: 10px;
-  font-family: Arial, sans-serif;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
 }
 
-/* Hover effect for card */
-.cshr_itemContainer:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Label for item type */
+/* Labels */
 .cshr_typeLbl {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.cshr_detailsContainer h3,
+.cshr_sidesLbl,
+.cshr_entreesLbl {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 8px;
-  color: #333;
-  text-align: center;
+  color: #555;
+  margin: 10px 0 5px;
 }
 
-/* Price label styling */
-.cshr_priceLbl {
-  font-size: 16px;
-  font-weight: 500;
-  color: #007bff;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-/* Side label styling */
-.cshr_sideLbl {
-  font-size: 14px;
-  font-weight: normal;
-  color: #666;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-/* List styling for entrees */
+.cshr_sideList,
 .cshr_entreeList {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 14px;
-  color: #444;
-  text-align: center;
 }
 
-/* Individual entree list items */
-.cshr_entreeList li {
-  margin: 2px 0;
+.cshr_sideItem,
+.cshr_entreeItem {
+  font-size: 16px;
+  color: #666;
+  margin: 5px 0;
 }
 
-/* Delete button styling */
+/* Button */
 .cshr_deleteBtn {
-  background-color: #ff4d4f;
-  color: #ffffff;
+  align-self: flex-end;
+  background-color: #e74c3c;
+  color: #fff;
+  font-size: 16px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 14px;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s ease;
+  margin-top: 20px;
 }
 
-/* Hover effect for delete button */
 .cshr_deleteBtn:hover {
-  background-color: #d9363e;
+  background-color: #c0392b;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .cshr_itemContainer {
+    padding: 15px;
+  }
+
+  .cshr_typeLbl {
+    font-size: 20px;
+  }
+
+  .cshr_detailsContainer h3,
+  .cshr_sidesLbl,
+  .cshr_entreesLbl {
+    font-size: 16px;
+  }
+
+  .cshr_deleteBtn {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
 }
