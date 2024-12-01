@@ -285,7 +285,7 @@ function ItemSelection() {
           </button>
         </div>
       );
-    case 2: //Bowl
+    case 2: //Bigger Plate
       return (
         <div className="cshr_bPlateContainer">
           <h1 className="cshr_bPlateLabel">Bowl</h1>
@@ -339,7 +339,61 @@ function ItemSelection() {
       return (
         <div className="cshr_famFeastContainer">
           <h1 className="cshr_famFeastLabel">Family Feast</h1>
-          <div className="cshr_famFeastSideContainer"></div>
+          <div className="cshr_famFeastSideContainer">
+            <h1 className="cshr_famFeastSideLabel">Side 1</h1>
+            {menuItems.sides.map((sideItem, index) => (
+              <button
+                key={index}
+                className="cshr_sideBtn"
+                onClick={() => handleSideSelection(sideItem)}
+              >
+                {sideItem.name}
+              </button>
+            ))}
+            <h1 className="cshr_famFeastSideLabel">Side 2</h1>
+            {menuItems.sides.map((sideItem, index) => (
+              <button
+                key={index}
+                className="cshr_sideBtn"
+                onClick={() => handleSideSelection(sideItem)}
+              >
+                {sideItem.name}
+              </button>
+            ))}
+            <h1 className="cshr_famFeastSideLabel">Side 2</h1>
+          </div>
+          <div className="cshr_famFeastEntreeContainer">
+            <h1 className="cshr_famFeastEntreeLabel">Entree 1</h1>
+            {menuItems.entrees.map((entreeItem, index) => (
+              <button
+                key={index}
+                className="cshr_entreeBtn"
+                onClick={() => handleEntreeSelection(entreeItem)}
+              >
+                {entreeItem.name}
+              </button>
+            ))}
+            <h1 className="cshr_famFeastEntreeLabel">Entree 2</h1>
+            {menuItems.entrees.map((entreeItem, index) => (
+              <button
+                key={index}
+                className="cshr_entreeBtn"
+                onClick={() => handleEntreeSelection(entreeItem)}
+              >
+                {entreeItem.name}
+              </button>
+            ))}
+            <h1 className="cshr_famFeastEntreeLabel">Entree 3</h1>
+            {menuItems.entrees.map((entreeItem, index) => (
+              <button
+                key={index}
+                className="cshr_entreeBtn"
+                onClick={() => handleEntreeSelection(entreeItem)}
+              >
+                {entreeItem.name}
+              </button>
+            ))}
+          </div>
           <button className="cshr_confirmBtn" onClick={handleConfirm}>
             Confirm
           </button>

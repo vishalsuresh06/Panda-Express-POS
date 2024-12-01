@@ -36,7 +36,7 @@ function Cashier() {
         entrees: selection.entrees || [],
         price: selection.price || 0,
         drink: selection.drink || "",
-        app: selection.app || "None",
+        app: selection.app || "",
       };
 
       const updatedItems = [...items, newItem];
@@ -120,7 +120,7 @@ function Cashier() {
               type={item.type}
               app={item.app}
               drink={item.drink}
-              side={item.side}
+              sides={item.sides}
               entrees={item.entrees}
               price={item.price}
               onDelete={() => handleDeleteItem(index)}
@@ -172,7 +172,7 @@ function Cashier() {
   );
 }
 
-function Item({ type, sides = [], entrees = [], price, drink, app, onDelete }) {
+function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
   return (
     <div className="cshr_itemContainer">
       <h1 className="cshr_typeLbl">{type}</h1>
