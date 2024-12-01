@@ -128,7 +128,13 @@ class ExcessView(APIView):
         itemCounts = Counter()
         for foodItem, foodQuantity in foodCounts.items():
             for invFoodPair in foodItem.foodinventoryquantity_set.all():
-                itemCounts[str(invFoodPair.inventory_item)] += invFoodPair.quantity * foodQuantity
+                itemCounts[invFoodPair.inventory_item] += invFoodPair.quantity * foodQuantity
 
+        excessItems = []
+        for invItem, quantitySold in itemCounts.items():
+            percentSold = quantitySold/(invItem.stock + quantitySold)
 
-        return JsonResponse(itemCounts, status=status.HTTP_200_OK)
+            excessItems.append({"name": str(invItem),
+                                "quantitySold": quantitySold,
+                                "percentSold": percentSold})
+        return JsonResponse(excessItems, safe=False, status=status.HTTP_200_OK)

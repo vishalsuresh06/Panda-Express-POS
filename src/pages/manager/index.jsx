@@ -472,19 +472,6 @@ function KitchenSettings() {
     </KitchenSettingsContext.Provider>)
 }
 
-/*
-Goal: 
-Given a time stamp, I need to to look at all inventory items and calculate 
-the amount of each that was used from that timestamp until the present. Then
-I need to examine which items sold less than 10% of their current quanity, assuming
-no restocks have happened.
-
-That is, if at the present we have 100, and we have sold 20 in the last month,
-that means we started the month with 120, and only sold 20, that means we sold
-20/120 = 16% of its quantity
-
-if (#sold/(current_amount + #sold) < 10%) then highlight that amount in a table
-*/
 function Excess() {
     const [targetTime, setTargetTime] = useState('2023-01-12');
     const [loading, setLoading] = useState(false);
