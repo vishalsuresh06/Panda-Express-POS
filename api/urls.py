@@ -10,4 +10,5 @@ urlpatterns = [
 	path("settings", general_views.SettingsView.as_view(), name="settings"),
 	path("manager/excess", manager_views.ExcessView.as_view(), name="excess"),
 	path("manager/sellstogether", manager_views.SellsTogetherView.as_view(), name="sellstogether"),
+	path("manager/restock", manager_views.RestockView.as_view(), name="restock"),
 ]

@@ -492,11 +492,11 @@ function Excess() {
                 const data = await response.json();
                 setExcessItems(data);
             } else {
-                setExcessItems({});
+                setExcessItems([]);
             }
         } catch (error) {
             console.log(error)
-            setExcessItems({});
+            setExcessItems([]);
         }
     }
 
@@ -546,14 +546,13 @@ function SellsTogether() {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 setFoodPairs(data);
             } else {
-                setFoodPairs({});
+                setFoodPairs([]);
             }
         } catch (error) {
             console.log(error)
-            setFoodPairs({});
+            setFoodPairs([]);
         }
     };
 
@@ -583,6 +582,73 @@ function SellsTogether() {
     </div>)
 }
 
+function Restock() {
+    const [restockList, setRestockList] = useState([]);
+
+    const queryRestock = async () => {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/restock`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setRestockList(data);
+            } else {
+                setRestockList([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setRestockList([]);
+        }
+    }
+
+    const restockItem = (item) => async () => {
+        let reqBody = { "invItem": item }
+        try {
+            let response = await fetch(`${apiURL}/api/manager/restock`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
+
+            queryRestock();
+			return response.ok;
+			
+        } catch (error) { return false; }
+    };
+
+    useEffect(() => {
+        queryRestock();
+    }, [])
+
+    return (<div className="mngr-restockReport">
+        <h2>RESTOCK REPORT</h2>
+        <button onClick={queryRestock}>Refresh</button>
+        <table className="mngr-settingsTable">
+            <thead>
+                <tr>
+                    <td>Inventory Item</td>
+                    <td>Current Stock</td>
+                    <td>Restock Threshold</td>
+                    <td>Restock</td>
+                </tr>
+            </thead>
+            <tbody>
+                {restockList.map((invItem, index) => (
+                    <tr key={index}>
+                        <td>{invItem.name}</td>
+                        <td>{invItem.stock}</td>
+                        <td>{invItem.restock_threshold}</td>
+                        <td><button onClick={restockItem(invItem)}>Restock (Purchase {invItem.restock_amount})</button></td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    </div>)
+}
+
 function Manager() {
     return (
         <>
@@ -598,6 +664,7 @@ function Manager() {
                     <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
                     <Link to="/manager/excess" className='mngr-btn'>Excess Inventory</Link>
                     <Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together</Link>
+                    <Link to="/manager/restock" className='mngr-btn'>Restock Report</Link>
                 </div>
                 <Outlet />
             </div>
@@ -607,4 +674,4 @@ function Manager() {
 
 
 
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether}
+export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock}

@@ -96,7 +96,7 @@
     text-align: center;
 }
 
-.mngr-kitchensettings, .mngr-excess, .mngr-sellstogether {
+.mngr-kitchensettings, .mngr-excess, .mngr-sellstogether, .mngr-restockReport {
     display: flex;
     flex-direction: column; 
     align-items: center;     

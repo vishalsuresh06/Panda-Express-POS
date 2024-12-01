@@ -153,7 +153,6 @@ class SellsTogetherView(APIView):
             menuItemPairs = Counter()
             for order in Order.objects.filter(date_created__range=[startDate, endDate]):
                 for orderItem in order.order_items.all():
-                    
                     # Only considers entree & side food items
                     foodItems = [foodItem for foodItem in orderItem.food_items.all() if foodItem.type in ["Entree", "Side"]]
                     for index1 in range(len(foodItems)):
@@ -177,4 +176,34 @@ class SellsTogetherView(APIView):
             print(e)
             return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
-                   
+class RestockView(APIView):
+    def get(self, request):
+        try:
+            response = []
+            for invItem in InventoryItem.objects.all():
+                if invItem.stock < invItem.restock_threshold:
+                    response.append({
+                        "name": invItem.name,
+                        "stock": invItem.stock,
+                        "restock_threshold": invItem.restock_threshold,
+                        "restock_amount": invItem.restock_amount
+                    })
+
+            return JsonResponse(response, safe=False, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        try:
+            invItemReq = request.data["invItem"]
+            invItem = InventoryItem.objects.get(name=invItemReq["name"])
+            invItem.stock += invItem.restock_amount
+            invItem.save()
+            return JsonResponse({"success":True}, status=status.HTTP_200_OK)
+
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
