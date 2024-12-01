@@ -1,0 +1,43 @@
+
+
+.CK-subMenuOptions{
+    margin-left: 45%;
+    list-style-type:none
+}
+
+.CK-subMenuOptionsItem{
+    text-align: center;
+    margin-right: 50%;
+    background-color: aqua;
+    margin-top: 20px;
+}
+
+.CK-entrees{
+    position: top;
+    margin-left: 45%;
+    list-style-type:none
+}
+
+.CK-entreesItem{
+    text-align: center;
+    margin-right: 50%;
+    background-color: aqua;
+    margin-top: 20px;
+}
+
+.CK-sides{
+    margin-left: 85%;
+    list-style-type:none
+}
+
+.CK-sidesItem{
+    position: top;
+    text-align: center;
+    margin-right: 90%;
+    background-color: aqua;
+    margin-top: 20px;
+}
+
+button.CK-clicked{
+    color:grey
+}

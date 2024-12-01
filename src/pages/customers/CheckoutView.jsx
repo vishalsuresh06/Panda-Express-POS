@@ -1,3 +1,5 @@
+import "./checkoutView.css"
+
 function OrderItems({ItemList, remove_Item}) {
     return(
         <ul>
@@ -29,17 +31,17 @@ function Subtotal(items){
 
 export default function CheckoutView({ItemList, removeAll, remove_Item, checkout}) {
 return (
-    <div className="cshr_checkoutContainer">
-    <div className="cshr_itemListContainer">
+    <div className="CK_checkoutContainer">
+    <div className="CK_itemListContainer">
         <OrderItems ItemList = {ItemList}  remove_Item = {remove_Item}/>
     </div>
-    <div className="cshr_totalContainer">
-        <h1 className="cshr_taxAmt">Subtotal: <Subtotal items = {ItemList}/></h1>
+    <div className="CK_totalContainer">
+        <h1 className="CK_taxAmt">Subtotal: <Subtotal items = {ItemList}/></h1>
         
-        <h1 className="cshr_totAmt">Total: {getTotal(ItemList)}</h1>
-        <div className="cshr_btnContainer">
-        <button className="cshr_checkoutBtn" onClick = {checkout}>Checkout</button>
-        <button className="cshr_clearBtn" onClick = {removeAll}>Clear</button>
+        <h1 className="CK_totAmt">Total: {getTotal(ItemList)}</h1>
+        <div className="CK_btnContainer">
+        <button className="CK_checkoutBtn" onClick = {checkout}>Checkout</button>
+        <button className="CK_clearBtn" onClick = {removeAll}>Clear</button>
         </div>
     </div>
     </div>
