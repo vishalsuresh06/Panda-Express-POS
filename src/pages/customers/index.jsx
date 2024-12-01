@@ -126,11 +126,31 @@ function Customers() {
                  />)
         }
         if (sysState === 3){
-            //family feast
+            //cub meal
+            return (<BuildFood
+                numEntree={1}
+                numSide={2}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                upMult={0.666}
+                typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                />)
             
         }
         if (sysState === 4){
-            //cub meal
+            //family feast
+            return (<BuildFood
+                numEntree={3}
+                numSide={2}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                typePrice = {orderTypes.find(item => item.id === sysState).base_price}
+                upMult={3}
+                />)
         }
         if (sysState === 5){
             //bigger plate
@@ -167,7 +187,7 @@ function Customers() {
 // }
 
 function OrderButtons({setSys, orderTypes}){
-
+    const removeID = [8,9,10,11,12]
     console.log(orderTypes)
 
     // const navigate = useNavigate();
@@ -178,20 +198,25 @@ function OrderButtons({setSys, orderTypes}){
         // {id: 3, name: 'Cub Meal', base_price: '6.60', price: NaN}
         // {id: 4, name: 'Family Feast', base_price: '43.00', price: NaN}
         // {id: 5, name: 'Bigger Plate'
-        console.log("chage state: ", id)
+        console.log("change state: ", id)
         setSys(id)
     }
 
     return(
         <ul className="CK-subMenuOptions">
-        {orderTypes.map((type) => (
+        {orderTypes.filter(type => !removeID.includes(type.id)).map((type) => (
             <div className='CK-subMenuOptionsItem' key={type.id}>
                 <button onClick={() => buttonPressAction(type.id)}>
                     <div>{type.name}</div>
-                    <div>{type.base_price}</div>
+                    <div>${type.base_price}</div>
                     </button>
             </div>
         ))}
+        <div className='CK-subMenuOptionsItem' key={8}>
+            <button onClick={() => buttonPressAction(8)}>
+                <div>A La Carte</div>
+            </button>
+        </div>
         </ul>
     );
 }
@@ -201,6 +226,7 @@ function FoodCard({id, menu, setOrd, ord, max}){
     // console.log(menu)
     const  currItem = menu.find(item => item.id === id)
     const [clicked, setclick] = useState(0)
+    const [numExtra, setExtra] = useState(0)
     function isPrem(){
         // console.log("0.00 === ", currItem.upcharge)
         if(currItem.upcharge === "0.00"){
@@ -219,11 +245,12 @@ function FoodCard({id, menu, setOrd, ord, max}){
     function buttonHandle(){
         console.log("click")
         if (clicked === 0 && ord.filter(item=> item.type===currItem.type).length < max){
-            setOrd(current => [...current, {id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
+            setOrd(current => [...current, {array_id: numExtra, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
             setclick(1)
         }
         else{
             console.log(ord[0].name)
+            setExtra(0)
             setOrd(items => items.filter(item => item.id !== currItem.id))
             setclick(0)
         }
@@ -237,16 +264,37 @@ function FoodCard({id, menu, setOrd, ord, max}){
             return "CK-unclicked"
         }
     }
+    function addAnother(){
+        setOrd(current => [...current, {array_id: numExtra+1, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
+        setExtra(numExtra + 1)
+    }
+    function killAnother(){
+        setOrd(current => current.filter(item => !(item.id === currItem.id && item.array_id === numExtra)))
+        setExtra(numExtra-1)
+    }
+    function MoreButton(){
+        if (clicked===1 && ord.filter(item=> item.type===currItem.type).length < max){
+            return (<div><button className="CK-addAnother" onClick={addAnother}>add another</button></div>)
+        }
+    }
+    function LessButton(){
+        if (numExtra > 0){
+            return (<div><button className="CK-removeOne" onClick={killAnother}>remove 1</button></div>)
+        }
+    }
     return(
         <div className="CK-FoodCard">
         <button className={getStatus()} onClick={() => buttonHandle()}>
             <h4>{currItem.name}</h4>
             {isPrem()}
         </button>
+        <MoreButton/>
+        <LessButton/>
         </div>
     )
 }
-function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePrice}){
+
+function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePrice, upMult=1}){
     // console.log(numEntree)
     // console.log(menu)
     const [currOrder,setOrder] = useState([])
@@ -272,7 +320,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         console.log(typePrice)
         const total = currOrder.reduce((sum, item) => {
             console.log("add: ", item.upcharge, sum)
-            return sum + (Number(item.upcharge));
+            return sum + (Number(item.upcharge) * Number(upMult));
         }, Number(typePrice));
         console.log(total)
         addItem(typeID, total, currOrder)
@@ -280,7 +328,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     }
 
     function CompleteButton(){
-        if (numEntree === currOrder.filter(item => item.type === "Entree").length && 1 === currOrder.filter(item => item.type === "Side").length){
+        if (numEntree === currOrder.filter(item => item.type === "Entree").length && numSide === currOrder.filter(item => item.type === "Side").length){
             return (
                 <button className= "CK-CompleteButton" onClick={completeOrder}>
                     Complete
@@ -309,7 +357,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
             ))}
         </ul>
         <h3>Side</h3>
-        <h5>Pick {numEntree} side{Ss()}</h5>
+        <h5>Pick {numSide} side{Ss()}</h5>
         <ul className="CK-sides">
             {menu.filter(item => item.type === "Side").map((item) => (
                 <li key={item.id}>
@@ -317,7 +365,9 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
                 </li>
             ))}
         </ul>
-        <CompleteButton/>
+        <div>
+            <CompleteButton/>
+        </div>
         
     </div>
     )
