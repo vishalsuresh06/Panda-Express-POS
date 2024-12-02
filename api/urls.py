@@ -2,8 +2,10 @@ from django.urls import path, include
 from api.views import cashier_views, kiosk_views, kitchen_views, manager_views, menu_views, general_views
 
 urlpatterns = [
-    path("employees/", manager_views.EmployeeView.as_view(), name="employees"),
-    path("menu/", manager_views.MenuView.as_view(), name="menu"),
+    path("employees/",  manager_views.EmployeeView.as_view(), name="employees"),
+    path("menu/",       manager_views.MenuView.as_view(), name="menu"),
+    path("kiosk/",   kiosk_views.KioskView.as_view(), name = "Kiosk_menu"),
+    path("kiosk_orders/",   kiosk_views.OrderTypes.as_view(), name = "Kiosk_orders"),
     path("inventory/", manager_views.InventoryView.as_view(), name="inventory"),
     path('manager/menu-query/<int:id>', manager_views.menuQueryView, name='menuquery'),
     path('manager/inventory-query/<int:id>', manager_views.inventoryQueryView, name='inventoryquery'),

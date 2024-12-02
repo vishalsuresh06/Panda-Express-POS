@@ -1,0 +1,56 @@
+
+
+.CK-subMenuOptions{
+    margin-left: 45%;
+    list-style-type:none
+}
+
+.CK-subMenuOptionsItem{
+    text-align: center;
+    margin-right: 50%;
+    background-color: aqua;
+    margin-top: 20px;
+}
+
+.CK-entrees{
+    display:inline-flex;
+    position: top;
+    list-style-type:none
+}
+
+.CK-entreesItem{
+    text-align: center;
+    margin-right: 50%;
+    background-color: aqua;
+    margin-top: 20px;
+}
+
+.CK-sides{
+    display:inline-flex;
+    position:top;
+    list-style-type:none
+}
+
+.CK-sidesItem{
+    position: top;
+    text-align: center;
+    margin-right: 50%;
+    background-color: aqua;
+    margin-top: 20px;
+}
+
+.CK-BuildFoodPage{
+    margin-left: 30%;
+}
+
+.CK-singlePick{
+    margin-left: 30%;
+}
+
+button.CK_killOrderButton{
+    background-color: red;
+}
+button.CK-clicked{
+    color:grey;
+    background-color: green;
+}

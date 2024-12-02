@@ -31,6 +31,7 @@ function App() {
           <Route path="recentorders" element={<RecentOrders />} />
         </Route>
 
+
         <Route path="/menu" element={<Menu />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
