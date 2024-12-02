@@ -326,7 +326,34 @@ function ItemSelection() {
     );
   } else if (itemType === 3) {
     // Cub Meal
-    // No implementation
+    return (
+      <div className="cshr_bowlContainer">
+        <h1 className="cshr_bowlLabel">Cub Meal</h1>
+        <h1>Side</h1>
+        {menuItems.sides.map((sideItem, index) => (
+          <button
+            key={index}
+            className="cshr_sideBtn"
+            onClick={() => handleSideSelection(sideItem)}
+          >
+            {sideItem.name}
+          </button>
+        ))}
+        <h1>Entree</h1>
+        {menuItems.entrees.map((entreeItem, index) => (
+          <button
+            key={index}
+            className="cshr_entreeBtn"
+            onClick={() => handleEntreeSelection(entreeItem)}
+          >
+            {entreeItem.name}
+          </button>
+        ))}
+        <button className="cshr_confirmBtn" onClick={handleConfirm}>
+          Confirm
+        </button>
+      </div>
+    );
   } else if (itemType === 4) {
     // Family Feast
     return (
