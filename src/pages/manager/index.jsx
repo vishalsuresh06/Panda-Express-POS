@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Compact } from '@uiw/react-color';
 import { Line } from 'react-chartjs-2';
+import { ManagerRoute } from '../../utils/Auth';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,6 +13,9 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { apiURL } from '../../config.js';
+import './manager.css';
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -21,8 +25,6 @@ ChartJS.register(
     Tooltip,
     Legend,
 );
-import { apiURL } from '../../config.js';
-import './manager.css';
 
 const KitchenSettingsContext = createContext(null);
 
@@ -946,6 +948,7 @@ function ProductUsage() {
 function Manager() {
     return (
         <>
+            <ManagerRoute></ManagerRoute>
             <div>
                 <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
@@ -954,8 +957,6 @@ function Manager() {
                     <Link to="/manager/inventory" className='mngr-btn'>Inventory</Link>
                     <Link to="/manager/sales" className='mngr-btn'>Sales</Link>
                     <Link to="/manager/productusage" className='mngr-btn'>Product Usage</Link>
-                    <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
-                    <Link to="/manager/zreport" className='mngr-btn'>Z Report</Link>
                     <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
                     <Link to="/manager/excess" className='mngr-btn'>Excess Inventory</Link>
                     <Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together</Link>

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
 #TODO restrict food item types 
@@ -38,12 +39,14 @@ class Order(models.Model):
 
 
 
-class Employee(models.Model):
+class Employee(AbstractBaseUser):
     name = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    is_manager = models.BooleanField()
+    pin = models.CharField(max_length=6, default=1234)
+    is_manager = models.BooleanField(default=False)
     wage = models.DecimalField(decimal_places=2, max_digits=10)
 
+    USERNAME_FIELD='id'
+    
     def __str__(self):
         return self.name
 
@@ -70,19 +73,25 @@ class FoodItem(models.Model):
     DESSERT = "dessert"
     DRINK = "drink"
 
-    TYPE_CHOICES = {
-        ENTREE : "Entree",
-        SIDE : "Side",
-        APPETIZER : "Appetizer",
-        DESSERT : "Dessert",
-        DRINK : "Drink",
-    }
+    TYPE_CHOICES = [
+        (ENTREE , "Entree"),
+        (SIDE , "Side"),
+        (APPETIZER , "Appetizer"),
+        (DESSERT , "Dessert"),
+        (DRINK , "Drink"),
+    ]
 
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=100, choices=TYPE_CHOICES, default='entree')
+    type = models.CharField(max_length=100, choices=TYPE_CHOICES, default= ENTREE)
     alt_price = models.DecimalField(decimal_places=2, max_digits=10)
     upcharge = models.DecimalField(decimal_places=2, max_digits=10)
     on_menu = models.BooleanField()
+
+    image = models.ImageField(upload_to='food_images/', null=True, blank=True)
+    calories = models.IntegerField(null=True, blank=True)
+    is_spicy = models.BooleanField(default=False)
+    is_premium = models.BooleanField(default=False)
+    is_gluten_free = models.BooleanField(default=False)
 
     inventory_items = models.ManyToManyField('api.InventoryItem', through='FoodInventoryQuantity')
 

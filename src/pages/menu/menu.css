@@ -1,165 +1,185 @@
-/* Main container */
-.menu-container {
-    width: 90%;
-    margin: 0 auto;
-    font-family: Arial, sans-serif;
-    color: #333;
+/* General Menu Section Styling */
+.menu-navigation {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
-/* Hero Section */
-.menu-hero {
-    text-align: center;
-    padding: 20px 0;
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 20px;
+.menu-page {
+  background-color: #2a2a2a; /* Dark gray background */
+  min-height: 100vh; /* Ensure the background covers the full height */
 }
 
-.menu-logo {
-    width: 150px;
-    margin-bottom: 10px;
+.menu-page h1,
+.menu-page a {
+  color: #d04a4a; /* Muted red for visibility */
 }
 
-/* Section Titles */
-.menu-section-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 20px 0 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
+.menu-page .menu-nav-list li a:hover {
+  color: #b33939; /* Slightly darker red hover effect */
 }
 
-/* Sizes Section */
-.menu-sizes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    margin-bottom: 40px;
+/* Menu List Styling */
+.menu-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.menu-size-card {
-    text-align: center;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    width: 200px;
-    background-color: #f9f9f9;
+/* Menu Item Styling */
+.menu-item {
+  background-color: #3a3a3a; /* Light gray for contrast */
+  border: 1px solid #555; /* Subtle border */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  width: 250px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.menu-size-name {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-top: 10px;
+.menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
 }
 
-.menu-size-description,
-.menu-size-calories {
-    font-size: 0.9rem;
-    color: #666;
+.menu-item-details {
+  padding: 15px;
 }
 
-/* Grid layout for menu items */
-.menu-grid {
-    display: flex;
+.menu-item-details h2 {
+  font-size: 1.5rem;
+  margin: 10px 0;
+  color: #d04a4a; /* Muted red for text */
+}
+
+.menu-item-details p {
+  font-size: 1rem;
+  margin: 5px 0;
+  color: #fff; /* White text for readability */
+}
+
+/* Icons Styling */
+.menu-item-icons {
+  margin-top: 10px;
+}
+
+.menu-item-icons span {
+  display: inline-block;
+  font-size: 1.2rem;
+  margin-right: 8px;
+}
+
+/* Specific Icon Colors */
+.spicy-icon {
+  color: #d04a4a; /* Red for spicy */
+}
+
+.premium-icon {
+  color: gold;
+}
+
+.gluten-free-icon {
+  color: green;
+}
+
+/* Navigation Links Styling */
+.menu-nav-list {
+  display: flex;
+  justify-content: center; /* Center the navigation links */
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  gap: 15px; /* Add spacing between links */
+}
+
+.menu-nav-list li {
+  font-size: 1.2rem;
+}
+
+.menu-nav-list a {
+  text-decoration: none;
+  color: #d04a4a; /* Muted red */
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.menu-nav-list a:hover {
+  text-decoration: underline; /* Add underline on hover */
+}
+
+/* General Menu Section Styling */
+.menu-section {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center; /* Center all content */
+}
+
+.menu-section h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #d04a4a; /* Muted red */
+  text-align: center;
+  text-decoration: underline;
+}
+
+.menu-section h2 {
+  font-size: 1.5rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #d04a4a; /* Muted red */
+  text-align: center; /* Center subheaders */
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .menu-list {
     flex-direction: column;
-    gap: 20px;
-    margin-bottom: 40px;
+    align-items: center;
+  }
+
+  .menu-item {
+    width: 90%;
+  }
 }
 
-.menu-card {
-    display: flex;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    overflow: hidden;
+@media (min-width: 769px) and (max-width: 1024px) {
+  .menu-item {
+    width: 300px;
+  }
 }
 
-.menu-card-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px 0 0 8px;
+/* Image Styling */
+.menu-item-image {
+  width: 100px; /* Consistent width */
+  height: 100px; /* Consistent height */
+  object-fit: cover; /* Ensures the image fills the area without distortion */
+  border-radius: 50%; /* Makes it circular */
+  margin-bottom: 10px;
+  display: block;
+  margin: 0 auto; /* Centers the image */
 }
 
-.menu-card-content {
-    padding: 15px;
-    flex: 1;
+/* Error Message Styling */
+.error-message {
+  color: red;
+  font-size: 1rem;
+  margin: 20px 0;
 }
 
-.menu-card-name {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 5px;
+/* Featured and Popular Sections Styling */
+.featured-section,
+.popular-section,
+.sizes-section {
+  margin-top: 30px;
 }
 
-.menu-card-calories {
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.menu-card-tags {
-    margin-top: 10px;
-}
-
-.menu-tag {
-    display: inline-block;
-    padding: 5px 10px;
-    font-size: 0.8rem;
-    border-radius: 5px;
-    margin: 5px 5px 0 0;
-}
-
-.spicy {
-    background-color: #ffebeb;
-    color: #d9534f;
-}
-
-.gluten-free {
-    background-color: #e0f4e9;
-    color: #5cb85c;
-}
-
-.premium {
-    background-color: #fff5e6;
-    color: #f0ad4e;
-}
-
-/* Additional sections (sides, drinks, appetizers) styling */
-.menu-drinks,
-.menu-appetizers,
-.menu-sides {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    margin-bottom: 40px;
-}
-
-.menu-drink-card,
-.menu-appetizer-card,
-.menu-side-card {
-    width: calc(33% - 20px);
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    padding: 15px;
-}
-
-.menu-drink-card img,
-.menu-appetizer-card img,
-.menu-side-card img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.menu-drink-card h3,
-.menu-appetizer-card h3,
-.menu-side-card h3 {
-    font-size: 1.1rem;
-    margin: 10px 0;
+.featured-section .menu-item,
+.popular-section .menu-item {
+  margin: 0 auto;
 }
