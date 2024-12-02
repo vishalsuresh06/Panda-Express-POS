@@ -4,7 +4,7 @@ from .models import *
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['id', 'name', 'is_manager', 'wage']
+        fields = ['id', 'name', 'pin', 'is_manager', 'wage']
 
 class OrderItemTypeSerializer(serializers.ModelSerializer):
     class Meta:

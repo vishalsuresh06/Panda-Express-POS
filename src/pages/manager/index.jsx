@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
+import { ManagerRoute } from '../../utils/Auth';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,6 +12,9 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import { apiURL } from '../../config.js';
+import './manager.css';
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -20,8 +24,6 @@ ChartJS.register(
     Tooltip,
     Legend,
 );
-import { apiURL } from '../../config.js';
-import './manager.css';
 
 function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
     const [items, setItems] = useState([]);
@@ -604,6 +606,7 @@ function ProductUsage() {
 function Manager() {
     return (
         <>
+            <ManagerRoute></ManagerRoute>
             <div>
                 <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
