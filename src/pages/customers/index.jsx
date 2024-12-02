@@ -135,13 +135,9 @@ function Customers() {
         updateOrders();
     }, [])
 
-    
-
-    useEffect( () => async function updateMenu(){
+    async function updateMenu(){
         try {
-            let response = await fetch(`${apiURL}/api/kiosk/`, {
-                method: "GET"
-            });
+            let response = await fetch(`${apiURL}/api/kiosk/`);
 
             if (response.ok) {
                 const fetchedMenu = await response.json()
@@ -158,7 +154,11 @@ function Customers() {
             console.log(error);
             return false
         }
-    }, [])
+    }
+
+    useEffect( () => {
+        updateMenu();
+    }, []);
 
     const remove_item = (id_to_remove)=>{
         setItems(items => 
