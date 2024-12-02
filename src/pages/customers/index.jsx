@@ -8,6 +8,34 @@ import "./kiosk.css"
 const WEATHER_REFRESH_MIN = 10
 
 function Customers() {
+
+    const check = (name, togo) =>{
+        // try {
+        //     let response = await fetch(`${apiURL}/api/kiosk/`, {
+        //         method: "POST"
+        //     });
+
+        //     if (response.ok) {
+        //         const fetchedMenu = await response.json()
+        //         const menuWithNumbers = fetchedMenu.map(item => ({
+        //             ...item,
+        //             id: Number(item.id),
+        //             alt_price: parseFloat(item.alt_price)
+        //         }));
+        //         setMenu(menuWithNumbers)
+        //     } else {
+        //         return false
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        //     return false
+        // }
+        console.log(name)
+        console.log(togo)
+        clear()
+    }
+
+
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
@@ -135,11 +163,6 @@ function Customers() {
         setItems([])
     }
 
-    const addWater = () =>{
-        setItems(current => [...current, {array_id : currI, type_id : 0, price : 1.00, name : "Water"}])
-        console.log("water created with id ", currI)
-        setCurr(currI + 1)
-    }
 
     
     const addItem = (OrderItemTypeID, totalPrice, itemList, itemName) => {
@@ -260,13 +283,13 @@ function Customers() {
         return (<OrderButtons setSys={setState} orderTypes={orderTypes}/>)
     }
     
-
+    
     return (
         <>
             <h4 className="notranslate">{currTime}</h4>
             <div id="google_translate_element"></div>
             {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
-            <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {addWater} remove_Item = {remove_item}/>
+            <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
             {/* <WaterButton menu= {menu} addItem = {addItem}/> */}
             {Order()}
         </>
