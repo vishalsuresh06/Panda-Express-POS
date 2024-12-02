@@ -6,6 +6,7 @@ from api.views.menu_views import MenuView
   
 urlpatterns = [
     path('login/', auth_views.pinLogin),
+    path('googlelogin/', auth_views.googleLogin),
     path("food-items/", MenuView.as_view(), name="food_items"),
     path("food-items/<int:pk>/", MenuView.as_view(), name="food_item_detail"),
     path("employees/",  manager_views.EmployeeView.as_view(), name="employees"),
