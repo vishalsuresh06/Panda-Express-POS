@@ -270,16 +270,16 @@ function Customers() {
                 typeID = {sysState}
                 />)
         }
-        if (sysState === "A La Carte"){
-            //A La Carte
-            return (<SinglePick
-                orderType={"A La Carte"}
-                menu={menu}
-                addItem = {addItem}
-                setSys = {setState}
-                typeID = {sysState}
-                />)
-        }
+        // if (sysState === "A La Carte"){
+        //     //A La Carte
+        //     return (<SinglePick
+        //         orderType={"A La Carte"}
+        //         menu={menu}
+        //         addItem = {addItem}
+        //         setSys = {setState}
+        //         typeID = {sysState}
+        //         />)
+        // }
         return (<OrderButtons setSys={setState} orderTypes={orderTypes}/>)
     }
     
