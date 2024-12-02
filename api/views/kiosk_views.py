@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from api.serializers import *
 from api.models import *
 from datetime import datetime
+from collections import Counter
 
 
 class KioskView(APIView):
@@ -16,6 +17,7 @@ class KioskView(APIView):
     def post(self, request):
         try:
             orderData = request.data
+            print(orderData)
 
             newOrder = Order.objects.create(
                 customer_name       = orderData["name"],
@@ -27,16 +29,26 @@ class KioskView(APIView):
                 total_price         = orderData["total"]
             )
 
+
+
             for orderItemData in orderData["orderItems"]:
                 newOrderItem = OrderItem.objects.create(
                     order = newOrder,
                     order_item_type = OrderItemType.objects.get(name=orderItemData["name"]) 
                 )
 
-                foodItems = []
+
+                foodItemCounter = Counter()
                 for foodItemData in orderItemData["items"]:
-                    foodItems.append(FoodItem.objects.get(id=foodItemData["id"]))
-                newOrderItem.food_items.set(foodItems)
+                    foodItemCounter[FoodItem.objects.get(id=foodItemData["id"])] += 1
+                
+                for foodItem, quantity in foodItemCounter.items():
+                    OrderFoodQuantity.objects.create(
+                        order_item = newOrderItem,
+                        food_item = foodItem,
+                        quantity= quantity
+                    )
+
 
             return JsonResponse({"success": True}, status=status.HTTP_200_OK)
 
