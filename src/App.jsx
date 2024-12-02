@@ -1,12 +1,23 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock, Sales, ProductUsage } from './pages/manager';
-import Cashiers from './pages/cashiers';
-import Customers from './pages/customers';
-import {Kitchen, KitchenOrders, RecentOrders} from './pages/kitchen';
-import Menu from './pages/menu';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  Manager,
+  EmployeeEdit,
+  MenuEdit,
+  InventoryEdit,
+  KitchenSettings,
+  Excess,
+  SellsTogether,
+  Restock,
+  Sales,
+  ProductUsage,
+} from "./pages/manager";
+import Cashiers from "./pages/cashier";
+import Customers from "./pages/customers";
+import { Kitchen, KitchenOrders, RecentOrders } from "./pages/kitchen";
+import Menu from "./pages/menu";
 import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";
-import NotFound from './pages/notfound';
-import './index.css'
+import NotFound from "./pages/notfound";
+import "./index.css";
 
 function App() {
   return (
@@ -32,7 +43,6 @@ function App() {
           <Route path="orders" element={<KitchenOrders />} />
           <Route path="recentorders" element={<RecentOrders />} />
         </Route>
-
 
         <Route path="/menu" element={<Menu />} />
 
