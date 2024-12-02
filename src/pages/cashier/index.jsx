@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./index.css";
+import { logout } from "../../utils/Auth";
 
 function Cashier() {
   // State Variables
@@ -11,21 +12,19 @@ function Cashier() {
   const [items, setItems] = useState(
     () => JSON.parse(localStorage.getItem("items")) || []
   );
+
   const [employee, setEmployee] = useState(
-    () => localStorage.getItem("employee") || "Default Employee"
+    () => sessionStorage.getItem("name") || "Error No Name"
   );
+
+  const [isManager, setIsManager] = useState(
+    () => (sessionStorage.getItem("isManager") === "true") || false
+  );
+
   const location = useLocation();
-  const { selection } = location.state || {};
-  const { employee: incomingEmployee } = location.state || {};
   const navigate = useNavigate();
 
-  // Sync employee on route change
-  useEffect(() => {
-    if (incomingEmployee) {
-      setEmployee(incomingEmployee);
-      localStorage.setItem("employee", incomingEmployee);
-    }
-  }, [incomingEmployee]);
+  const { selection } = location.state || {};
 
   // Handle incoming selection data
   useEffect(() => {
@@ -83,13 +82,14 @@ function Cashier() {
   };
 
   const handleManager = () => {
-    navigate("/manager");
+    if (isManager) {
+      navigate("/manager");
+    }
   };
 
   const handleLogout = () => {
     deleteCheckout();
-    localStorage.setEmployee("employee", "");
-    console.log("This activates");
+    logout()
     navigate("/login");
   };
 
@@ -112,7 +112,7 @@ function Cashier() {
         <h1 className="cshr_employeeLbl">Logged In: {employee}</h1>
         <h1 className="cshr_timeLbl">{time}</h1>
         <button className="cshr_managerBtn" onClick={handleManager}>
-          Manager
+        {isManager ? "Manager" : ""}
         </button>
         <button className="cshr_cateringBtn">Catering</button>
         <button className="cshr_inventoryBtn">Inventory</button>

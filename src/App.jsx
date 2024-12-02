@@ -12,7 +12,7 @@ import {
   Sales,
   ProductUsage,
 } from "./pages/manager";
-import Cashiers from './pages/cashiers';
+import Cashiers from './pages/cashier';
 import Customers from './pages/customers';
 import { Kitchen, KitchenOrders, RecentOrders } from './pages/kitchen';
 import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";

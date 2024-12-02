@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
         # Employees
         employee1 = Employee.objects.create(name='Bob China', password='ILovePandaExpress', is_manager=False, wage=12.00)
-        employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=False, wage=7.50)
+        employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=True, wage=7.50)
         employee3 = Employee.objects.create(name='kiosk', password='ILovePandas', is_manager=False, wage=0)
         
         # Food Items
@@ -102,7 +102,7 @@ class Command(BaseCommand):
         # Generate Dates
         timezone = pytz.timezone('America/Chicago')
         start_date = timezone.localize(datetime.datetime(2023, 1, 1))
-        end_date = timezone.localize(datetime.datetime(2023, 12, 31))
+        end_date = timezone.localize(datetime.datetime(2023, 3, 1))
         total_days = (end_date - start_date).days + 1
         dates = [start_date + datetime.timedelta(days=i) for i in range(total_days)]
         critical_date = dates[-1] # Orders before this date have been completed, otherwise pending

@@ -957,8 +957,6 @@ function Manager() {
                     <Link to="/manager/inventory" className='mngr-btn'>Inventory</Link>
                     <Link to="/manager/sales" className='mngr-btn'>Sales</Link>
                     <Link to="/manager/productusage" className='mngr-btn'>Product Usage</Link>
-                    <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
-                    <Link to="/manager/zreport" className='mngr-btn'>Z Report</Link>
                     <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
                     <Link to="/manager/excess" className='mngr-btn'>Excess Inventory</Link>
                     <Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together</Link>
