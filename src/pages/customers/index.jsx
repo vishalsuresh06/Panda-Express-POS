@@ -30,7 +30,6 @@ function Customers() {
             "employee": "kiosk",
             "orderItems": ItemList
         }
-        console.log(orderJSON);
         try {
             let response = await fetch(`${apiURL}/api/kiosk/`, {
                 method: "POST",
@@ -109,27 +108,31 @@ function Customers() {
         return () => clearInterval(intervalID);
     }, []);    
 
-    useEffect( () => async function updateOrders(){
+    async function updateOrders() {
         try {
-            let response = await fetch(`${apiURL}/api/kiosk_orders/`, {
-                method: "GET"
-            });
+            let response = await fetch(`${apiURL}/api/kiosk_orders/`);
 
             if (response.ok) {
-                const fetchedMenu = await response.json()
+                const fetchedMenu = await response.json();
+                console.log("FETCHED TYPES:")
+                console.log(fetchedMenu);
                 const menuWithNumbers = fetchedMenu.map(item => ({
                     ...item,
                     id: Number(item.id),
                     price: parseFloat(item.Base_price)
                 }));
-                setOrderTypes(menuWithNumbers)
+                setOrderTypes(menuWithNumbers);
             } else {
-                return false
+                return false;
             }
         } catch (error) {
             console.log(error);
             return false
         }
+    }
+
+    useEffect(() => {
+        updateOrders();
     }, [])
 
     
@@ -311,6 +314,7 @@ function Customers() {
 // }
 
 function OrderButtons({setSys, orderTypes}){
+    console.log("CONSTRUCTING BUTTONS WITH THE FOLLOWING TYPES:");
     console.log(orderTypes);
     const removeID = ["A La Carte (Side) (L)",
                       "A La Carte (Side) (S)",
