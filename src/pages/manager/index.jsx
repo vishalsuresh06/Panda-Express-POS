@@ -150,7 +150,7 @@ function EmployeeEdit() {
         } else {
             reqBody.action = "modify"
             reqBody.data = data
-            
+
             if (!reqBody?.data?.email.trim()) {
                 reqBody.data.email = null
             }
@@ -971,6 +971,7 @@ function Manager() {
             <div>
                 <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
+                    <Link to="/cashier" className='mngr-btn mngr-btn-ret'>Cashier</Link>
                     <Link to="/manager/employees" className='mngr-btn'>Employees</Link>
                     <Link to="/manager/menu" className='mngr-btn'>Menu</Link>
                     <Link to="/manager/inventory" className='mngr-btn'>Inventory</Link>

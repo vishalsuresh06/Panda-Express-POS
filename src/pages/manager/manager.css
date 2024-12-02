@@ -62,17 +62,19 @@
     display: inline-block;
     background-color: #f44336;
     color: #FFFFFF;
-    padding: 14px 25px;
+    padding: 14px 20px;
     text-align: center;
     text-decoration: none;
     font-size: 16px;
     opacity: 0.9;
 }
 
+.mngr-btn-ret {
+    background-color: #020406;
+}
+
 .mngr-btn:hover {
-    color: white;
     background-color: red;
-    opacity: 1;
 }
 
 
