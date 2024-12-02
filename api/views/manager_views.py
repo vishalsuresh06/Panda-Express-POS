@@ -149,13 +149,13 @@ class SellsTogetherView(APIView):
         try:
             startDate = datetime.strptime(request.GET.get("startDate"), '%Y-%m-%d')
             endDate = datetime.strptime(request.GET.get("endDate"), '%Y-%m-%d')
-
+            
             # Iterate through all orders in target window, counting food item pairs
             menuItemPairs = Counter()
             for order in Order.objects.filter(date_created__range=[startDate, endDate]):
                 for orderItem in order.order_items.all():
                     # Only considers entree & side food items
-                    foodItems = [foodItem for foodItem in orderItem.food_items.all() if foodItem.type in ["Entree", "Side"]]
+                    foodItems = [foodItem for foodItem in orderItem.food_items.all() if foodItem.type in ["entree", "side"]]
                     for index1 in range(len(foodItems)):
                         for index2 in range(index1+1, len(foodItems)):
 
