@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
 #TODO restrict food item types 
@@ -24,7 +25,8 @@ class Order(models.Model):
 
     customer_name = models.CharField(max_length=100)
     employee = models.ForeignKey('api.Employee', on_delete=models.RESTRICT)
-    date = models.DateTimeField()
+    date_created = models.DateTimeField() # When the order is first added to the database
+    date_processed = models.DateTimeField(null=True) # The most recent time the order was "completed" or "canceled"
     type = models.CharField(max_length=100, choices=TYPE_CHOICES, default='here')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     total_price = models.DecimalField(decimal_places=2, max_digits=10)
@@ -37,12 +39,14 @@ class Order(models.Model):
 
 
 
-class Employee(models.Model):
+class Employee(AbstractBaseUser):
     name = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    is_manager = models.BooleanField()
+    pin = models.CharField(max_length=6, default=1234)
+    is_manager = models.BooleanField(default=False)
     wage = models.DecimalField(decimal_places=2, max_digits=10)
 
+    USERNAME_FIELD='id'
+    
     def __str__(self):
         return self.name
 
@@ -123,3 +127,8 @@ class OrderFoodQuantity(models.Model):
 
     class Meta:
         unique_together = ('order_item', 'food_item')
+
+class SettingParameter(models.Model):
+    key = models.CharField(max_length=100, unique=True)
+    value = models.TextField()
+    default = models.TextField()

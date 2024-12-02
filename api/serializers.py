@@ -4,7 +4,7 @@ from api.models import *
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['id', 'name', 'is_manager', 'wage']
+        fields = ['id', 'name', 'pin', 'is_manager', 'wage']
 
 class OrderItemTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,7 +42,10 @@ class OrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ['id', 'date', 'type', 'total_price', 'employee', 'customer_name', 'order_items', 'status']
+        fields = ['id', 'date_created', 'type', 'total_price', 'employee', 'customer_name', 'order_items', 'status']
 
-
+class SettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SettingParameter
+        fields = ['key', 'value', 'default']
 

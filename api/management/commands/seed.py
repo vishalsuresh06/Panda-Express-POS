@@ -1,18 +1,40 @@
 from django.core.management.base import BaseCommand
-from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity
+from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity, SettingParameter
 from django.utils import timezone
 import datetime
 import random
+import pytz
+
+
+# IMPORTANT: Both fields must be STRINGS
+DEFAULT_SETTINGS = {
+    "kt_refreshRate": "5",
+    "kt_fullOrderCount": "2",
+    "kt_recentOrderCount": "10",
+    "kt_hereOrdersLeft": "true",
+    "kt_tempUnits": "F",
+    "kt_pendingColor": "#969696",
+    "kt_inprogressColor": "#ffff64",
+    "kt_completedColor": "#1dc871",
+    "kt_cancelledColor": "#b46471",
+}
 
 
 class Command(BaseCommand):
     help = 'Seed the database with initial data'
 
     def handle(self, *args, **kwargs):
+        
+        # Load default settings
+        for key,value in DEFAULT_SETTINGS.items():
+            SettingParameter.objects.create(key=key, value=value, default=value)
+
+
         # Employees
         employee1 = Employee.objects.create(name='Bob China', password='ILovePandaExpress', is_manager=False, wage=12.00)
         employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=False, wage=7.50)
         employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00)
+        employee4 = Employee.objects.create(name='kiosk', password='ILovePandas', is_manager=False, wage=0)
 
         food_items_data = [
             {'name': 'Orange Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/orangechicken.PNG', 'calories': 490, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},
@@ -38,6 +60,8 @@ class Command(BaseCommand):
             {'name': 'String Bean Chicken Breast', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/string_bean_chicken.PNG', 'calories': 190, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
             {'name': 'White Steamed Rice', 'type': "side", 'on_menu': True, 'alt_price': 5.00, 'upcharge': 0.00, 'image': 'food_images/white_rice.PNG', 'calories': 380, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
         ]
+        
+
 
         for food_item in food_items_data:
             FoodItem.objects.create(**food_item)
@@ -83,36 +107,46 @@ class Command(BaseCommand):
         for name, base_price in order_item_types:
             item_type = OrderItemType.objects.create(name=name, base_price=base_price)
 
-         # Generate Dates
-        start_date = datetime.datetime(2023, 1, 1)
-        end_date = datetime.datetime(2023, 12, 31)
+        # Generate Dates
+        timezone = pytz.timezone('America/Chicago')
+        start_date = timezone.localize(datetime.datetime(2023, 1, 1))
+        end_date = timezone.localize(datetime.datetime(2023, 3, 1))
         total_days = (end_date - start_date).days + 1
         dates = [start_date + datetime.timedelta(days=i) for i in range(total_days)]
+        critical_date = dates[-1] # Orders before this date have been completed, otherwise pending
+        print(critical_date)
 
         # Set peak days and sales targets
         peak_days = random.sample(dates, 2)
-        total_sales_target = 1_000_000
+        total_sales_target = 100_000
         uniform_sales = total_sales_target / total_days
         peak_sales = uniform_sales * 10
 
         # Generate Orders
         order_id = 0
-        current_sales = 0
 
         def create_order(date, sales_limit):
-            nonlocal order_id, current_sales
+            print(date, sales_limit)
+
+            nonlocal order_id
+
+            current_sales = 0
             while current_sales < sales_limit:
                 employee = random.choice([employee1, employee2])
                 order_total = round(random.uniform(10, 100), 2)
                 current_sales += order_total
 
                 # Create order
+                noisy_date = date + datetime.timedelta(hours=random.randint(0, 23),
+                                                        minutes=random.randint(0,59),
+                                                        seconds=random.randint(0,59))
                 order = Order.objects.create(
                     customer_name=f'Customer {order_id}',
                     employee=employee,
-                    date=date,
+                    date_created=noisy_date,
+                    date_processed=noisy_date,  # For now, all seeded orders process instantly
                     type=random.choice(['here', 'togo']),
-                    status=random.choices([Order.PENDING, Order.COMPLETED], [1, 10])[0],
+                    status=(Order.PENDING if noisy_date >= critical_date else Order.COMPLETED),
                     total_price=order_total
                 )
                 
@@ -152,3 +186,10 @@ class Command(BaseCommand):
 
 
         self.stdout.write(self.style.SUCCESS('Database seeded successfully'))
+
+
+
+        
+
+	
+
