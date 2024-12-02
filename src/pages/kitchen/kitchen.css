@@ -52,6 +52,14 @@
 	background-color: #757575;	
 }
 
+.kt-orderItemCard li {
+	font-size: 20px;
+}
+
+.kt-orderItemCard h3 {
+	font-size: 25px;
+}
+
 .kt-orderInfo {
 	margin-left:10px;
 }
@@ -70,16 +78,17 @@
 
 .kt-mainDiv button {
 	display: block;
-	width: 100px;
-	height: 50px;
 }
 
 .kt-buttons {
+	display: flex;
 	margin-left: auto;
 }
 
 .kt-buttons button {
-	font-size:16px;
+	font-size:30px;
+	width:150px;
+	height:75px;
 }
 
 .kt-cancel:hover {
@@ -93,27 +102,6 @@
 .kt-toggle:hover {
 	background-color: darkslategray;
 }
-
-.kt-inputsTable {
-	font-family: arial, sans-serif;
-	border-collapse: collapse;
-	width: 40%;
-	margin-top:10px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.kt-inputsTable td, th {
-	border: 1px solid #dddddd;
-	text-align: left;
-	padding: 8px;
-}
-
-tr:nth-child(even) {
-	background-color: #dddddd;
-}
-
-
 
 .kt-dftContainer {
     display: flex;

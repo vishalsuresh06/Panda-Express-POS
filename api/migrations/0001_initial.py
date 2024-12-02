@@ -53,6 +53,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='SettingParameter',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('key', models.CharField(max_length=100, unique=True)),
+                ('value', models.TextField()),
+                ('default', models.TextField()),
+            ],
+        ),
+        migrations.CreateModel(
             name='FoodInventoryQuantity',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
