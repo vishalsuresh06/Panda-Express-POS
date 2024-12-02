@@ -1,199 +1,350 @@
-// src/pages/menu/index.jsx
-import React from 'react';
-import './menu.css';
-import orangeChickenImg from './orangechicken.PNG';
-import blackPepperSteakImg from './black_pepper_steak.PNG';
-import honeyWalnutShrimpImg from './honey_walnut_shrimp.PNG';
-import teriyakiChickenImg from './teriyaki_chicken.PNG';
-import broccoliBeefImg from './broccoli_beef.PNG';
-import kungPaoChickenImg from './kung_pao_chicken.PNG';
-import honeySesameChickenImg from './honey_sesame_chicken.PNG';
-import beijingBeefImg from './beijing_beef.PNG';
-import mushroomChickenImg from './mushroom_chicken.PNG';
-import sweetfireChickenImg from './sweetfire_chicken.PNG';
-import stringBeanChickenImg from './string_bean_chicken.PNG';
-import blackPepperChickenImg from './black_pepper_chicken.PNG';
-import chowMeinImg from './chow_mein.PNG';
-import friedRiceImg from './fried_rice.PNG';
-import whiteRiceImg from './white_rice.PNG';
-import superGreensImg from './super_greens.PNG';
-import fountainDrinkImg from './fountain_drink.png';
-import waterImg from './water.png';
-import gatoradeImg from './gatorade.png';
-import veggieSpringRollImg from './veggie_spring_roll.PNG';
-import chickenEggRollImg from './chicken_egg_roll.PNG';
-import creamCheeseRangoonImg from './cream_cheese_rangoon.PNG';
-import applePieRollImg from './apple_pie_roll.png';
-import chickenFeetImg from './chickenfeet.jpg';
-import aLaCarteImg from './A_La_Carte.png';
-import biggerImg from './Bigger.png';
-import bowlImg from './Bowl.png';
-import cateringImg from './Catering.png';
-import cubImg from './cub.png';
-import plateImg from './Plate.png';
-import pandaImg from './panda.jpg';
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import Entrees from "./Entrees";
+import SidesDrinksAppetizers from "./SidesDrinksAppetizers";
+import SizesFeaturedPopular from "./SizesFeaturedPopular";
+import axios from "axios";
+import "./menu.css";
 
-// Data for each section
-const sizes = [
-  { name: 'Cub Meal', description: '$6.60+ • 1 Jr. entrée, 1 Jr. side', calories: '330-1000', image: cubImg },
-  { name: 'Bowl', description: '$8.30 • 1 entrée & 1 side', calories: '394 - 1,105', image: bowlImg },
-  { name: 'Plate', description: '$9.80+ • 2 entrées & 1 side', calories: '544 - 1,595', image: plateImg },
-  { name: 'Bigger Plate', description: '$11.30 • 3 entrées & 1 side', calories: '694 - 2,085', image: biggerImg },
-  { name: 'Catering', description: 'Large portions for events', calories: 'Varies', image: cateringImg },
-  { name: 'A La Carte', description: '$4.40+ • 1 entrée', calories: 'Varies', image: aLaCarteImg },
-];
+const Index = () => {
+  const [menuItems, setMenuItems] = useState([]);
+  const [editingItem, setEditingItem] = useState(null);
+  const [newItem, setNewItem] = useState({
+    name: "",
+    type: "entree", // default lowercase value
+    calories: "",
+    alt_price: "",
+    upcharge: "0.00",
+    image: null,
+    is_spicy: false,
+    is_premium: false,
+    is_gluten_free: false,
+    on_menu: true,
+  });
 
-const entrees = [
-  { name: 'Orange Chicken', calories: 490, image: orangeChickenImg, isSpicy: true },
-  { name: 'Black Pepper Sirloin Steak', calories: 400, image: blackPepperSteakImg, isSpicy: true, isPremium: true },
-  { name: 'Honey Walnut Shrimp', calories: 360, image: honeyWalnutShrimpImg, isPremium: true },
-  { name: 'Grilled Teriyaki Chicken', calories: 300, image: teriyakiChickenImg },
-  { name: 'Broccoli Beef', calories: 150, image: broccoliBeefImg, isGlutenFree: true },
-  { name: 'Kung Pao Chicken', calories: 290, image: kungPaoChickenImg, isSpicy: true },
-  { name: 'Honey Sesame Chicken Breast', calories: 420, image: honeySesameChickenImg },
-  { name: 'Beijing Beef', calories: 470, image: beijingBeefImg, isSpicy: true },
-  { name: 'Mushroom Chicken', calories: 170, image: mushroomChickenImg },
-  { name: 'Sweetfire Chicken Breast', calories: 380, image: sweetfireChickenImg, isSpicy: true },
-  { name: 'String Bean Chicken Breast', calories: 240, image: stringBeanChickenImg },
-  { name: 'Black Pepper Chicken', calories: 280, image: blackPepperChickenImg },
-];
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-const sides = [
-  { name: 'Chow Mein', calories: 510, image: chowMeinImg },
-  { name: 'Fried Rice', calories: 520, image: friedRiceImg },
-  { name: 'White Steamed Rice', calories: 380, image: whiteRiceImg },
-  { name: 'Super Greens', calories: 170, image: superGreensImg },
-];
+  // Fetch menu items
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/food-items/");
+        setMenuItems(response.data);
+      } catch (err) {
+        console.error("Error fetching menu items:", err);
+      }
+    };
 
-const drinks = [
-  { name: 'Fountain Drink', price: '$3.00', calories: 'Varies', image: fountainDrinkImg },
-  { name: 'Water', price: '$1.50', calories: 0, image: waterImg },
-  { name: 'Gatorade', price: '$3.00', calories: 140, image: gatoradeImg },
-];
+    fetchMenuItems();
+  }, []);
 
-const appetizers = [
-  { name: 'Veggie Spring Roll', price: '$2.00', calories: 190, image: veggieSpringRollImg },
-  { name: 'Chicken Egg Roll', price: '$2.00', calories: 200, image: chickenEggRollImg },
-  { name: 'Cream Cheese Rangoon', price: '$2.00', calories: 190, image: creamCheeseRangoonImg },
-  { name: 'Apple Pie Roll', price: '$2.00', calories: 300, image: applePieRollImg },
-];
+  // Handle form changes for both new and edit forms
+  const handleFormChange = (e, isEdit = false) => {
+    const { name, value, type, checked } = e.target;
+    const updatedItem = {
+      ...(isEdit ? editingItem : newItem),
+      [name]: type === "checkbox" ? checked : value,
+    };
 
-const featuredItems = [
-  { name: 'Chicken Feet', calories: 250, image: chickenFeetImg },
-];
+    if (isEdit) setEditingItem(updatedItem);
+    else setNewItem(updatedItem);
+  };
 
-const mostPopularItems = [
-  { name: 'Orange Chicken', calories: 490, image: orangeChickenImg, isSpicy: true },
-];
+  const handleFileChange = (e, isEdit = false) => {
+    const updatedItem = { ...(isEdit ? editingItem : newItem), image: e.target.files[0] };
+    if (isEdit) setEditingItem(updatedItem);
+    else setNewItem(updatedItem);
+  };
 
-function Menu() {
+  // Add new item
+  const handleAddItem = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    for (const key in newItem) {
+      const value = newItem[key];
+      if (value !== null && value !== "") {
+        formData.append(key, value);
+      }
+    }
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/food-items/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setSuccessMessage("Item added successfully!");
+      setErrorMessage("");
+      setNewItem({
+        name: "",
+        type: "entree",
+        calories: "",
+        alt_price: "",
+        upcharge: "0.00",
+        image: null,
+        is_spicy: false,
+        is_premium: false,
+        is_gluten_free: false,
+        on_menu: true,
+      });
+      const updatedMenu = await axios.get("http://127.0.0.1:8000/api/food-items/");
+      setMenuItems(updatedMenu.data);
+    } catch (err) {
+      console.error("Error adding item:", err.response?.data || err.message);
+      setErrorMessage("Error adding item. Please check required fields and try again.");
+    }
+  };
+
+  // Update an existing item
+  const handleUpdateItem = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    for (const key in editingItem) {
+      const value = editingItem[key];
+      if (value !== null && value !== "") {
+        formData.append(key, value);
+      }
+    }
+
+    try {
+      await axios.put(
+        `http://127.0.0.1:8000/api/food-items/${editingItem.id}/`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      setSuccessMessage("Item updated successfully!");
+      setErrorMessage("");
+      setEditingItem(null);
+      const updatedMenu = await axios.get("http://127.0.0.1:8000/api/food-items/");
+      setMenuItems(updatedMenu.data);
+    } catch (err) {
+      console.error("Error updating item:", err.response?.data || err.message);
+      setErrorMessage("Error updating item. Please try again.");
+    }
+  };
+
+  // Delete an item
+  const handleDeleteItem = async (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      try {
+        await axios.delete(`http://127.0.0.1:8000/api/food-items/${id}/`);
+        setSuccessMessage("Item deleted successfully!");
+        setMenuItems(menuItems.filter((menuItem) => menuItem.id !== id));
+      } catch (err) {
+        console.error("Error deleting item:", err.response?.data || err.message);
+        setErrorMessage("Error deleting item. Please try again.");
+      }
+    }
+  };
+
   return (
-    <div className="menu-container">
-      {/* Hero Section */}
-      <div className="menu-hero">
-        <img src={pandaImg} alt="Panda Express" className="menu-logo" />
-      </div>
+    <div className="menu-navigation">
+      <h1>Our Menu</h1>
+      <nav>
+        <ul className="menu-nav-list">
+          <li>
+            <Link to="entrees">Entrees</Link>
+          </li>
+          <li>
+            <Link to="sides-drinks-appetizers">Sides, Drinks & Appetizers</Link>
+          </li>
+          <li>
+            <Link to="sizes-featured-popular">Sizes, Featured & Popular</Link>
+          </li>
+        </ul>
+      </nav>
 
-      {/* Sizes Section */}
-      <h2 className="menu-section-title">Meal Sizes</h2>
-      <div className="menu-sizes">
-        {sizes.map((size, index) => (
-          <div key={index} className="menu-size-card">
-            <img src={size.image} alt={size.name} className="menu-card-image" />
-            <h3 className="menu-size-name">{size.name}</h3>
-            <p className="menu-size-description">{size.description}</p>
-            <p className="menu-size-calories">{size.calories} calories</p>
-          </div>
-        ))}
-      </div>
+      <Routes>
+        <Route path="entrees" element={<Entrees />} />
+        <Route path="sides-drinks-appetizers" element={<SidesDrinksAppetizers />} />
+        <Route path="sizes-featured-popular" element={<SizesFeaturedPopular />} />
+      </Routes>
 
-      {/* Entrée Section */}
-      <h2 className="menu-section-title">Entrée Choices</h2>
-      <div className="menu-grid">
-        {entrees.map((item, index) => (
-          <div key={index} className="menu-card">
-            <img src={item.image} alt={item.name} className="menu-card-image" />
-            <div className="menu-card-content">
-              <h3 className="menu-card-name">{item.name}</h3>
-              <p className="menu-card-calories">{item.calories} calories</p>
-              <div className="menu-card-tags">
-                {item.isSpicy && <span className="menu-tag spicy">Spicy 🌶️</span>}
-                {item.isGlutenFree && <span className="menu-tag gluten-free">Gluten-Free 🌾</span>}
-                {item.isPremium && <span className="menu-tag premium">Premium 💎</span>}
-              </div>
+      <div className="manager-menu-container">
+        <h2>Manage Menu</h2>
+        {successMessage && <p className="success-message">{successMessage}</p>}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+        <form onSubmit={handleAddItem} className="add-item-form">
+          <h3>Add New Menu Item</h3>
+          <input
+            type="text"
+            name="name"
+            placeholder="Name (required)"
+            value={newItem.name}
+            onChange={handleFormChange}
+            required
+          />
+          <select name="type" value={newItem.type} onChange={handleFormChange}>
+            <option value="entree">Entree</option>
+            <option value="side">Side</option>
+            <option value="drink">Drink</option>
+            <option value="appetizer">Appetizer</option>
+            <option value="dessert">Dessert</option>
+          </select>
+          <input
+            type="number"
+            name="alt_price"
+            placeholder="Price (required)"
+            value={newItem.alt_price}
+            onChange={handleFormChange}
+            required
+          />
+          <input
+            type="number"
+            name="upcharge"
+            placeholder="Upcharge"
+            value={newItem.upcharge}
+            onChange={handleFormChange}
+          />
+          <input
+            type="number"
+            name="calories"
+            placeholder="Calories"
+            value={newItem.calories}
+            onChange={handleFormChange}
+          />
+          <input type="file" name="image" onChange={handleFileChange} />
+          <label>
+            <input
+              type="checkbox"
+              name="is_spicy"
+              checked={newItem.is_spicy}
+              onChange={handleFormChange}
+            />
+            Spicy
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="is_premium"
+              checked={newItem.is_premium}
+              onChange={handleFormChange}
+            />
+            Premium
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="is_gluten_free"
+              checked={newItem.is_gluten_free}
+              onChange={handleFormChange}
+            />
+            Gluten-Free
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="on_menu"
+              checked={newItem.on_menu}
+              onChange={handleFormChange}
+            />
+            On Menu
+          </label>
+          <button type="submit">Add Item</button>
+        </form>
+
+        {editingItem && (
+          <form onSubmit={handleUpdateItem} className="edit-item-form">
+            <h3>Edit Menu Item</h3>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name (required)"
+              value={editingItem.name || ""}
+              onChange={(e) => handleFormChange(e, true)}
+              required
+            />
+            <select
+              name="type"
+              value={editingItem.type || "entree"}
+              onChange={(e) => handleFormChange(e, true)}
+            >
+              <option value="entree">Entree</option>
+              <option value="side">Side</option>
+              <option value="drink">Drink</option>
+              <option value="appetizer">Appetizer</option>
+              <option value="dessert">Dessert</option>
+            </select>
+            <input
+              type="number"
+              name="alt_price"
+              placeholder="Price (required)"
+              value={editingItem.alt_price || ""}
+              onChange={(e) => handleFormChange(e, true)}
+              required
+            />
+            <input
+              type="number"
+              name="upcharge"
+              placeholder="Upcharge"
+              value={editingItem.upcharge || ""}
+              onChange={(e) => handleFormChange(e, true)}
+            />
+            <input
+              type="number"
+              name="calories"
+              placeholder="Calories"
+              value={editingItem.calories || ""}
+              onChange={(e) => handleFormChange(e, true)}
+            />
+            <input type="file" name="image" onChange={(e) => handleFileChange(e, true)} />
+            <label>
+              <input
+                type="checkbox"
+                name="is_spicy"
+                checked={editingItem.is_spicy || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              Spicy
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="is_premium"
+                checked={editingItem.is_premium || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              Premium
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="is_gluten_free"
+                checked={editingItem.is_gluten_free || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              Gluten-Free
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="on_menu"
+                checked={editingItem.on_menu || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              On Menu
+            </label>
+            <button type="submit">Save Changes</button>
+            <button type="button" onClick={() => setEditingItem(null)}>
+              Cancel
+            </button>
+          </form>
+        )}
+
+        <div className="menu-list-container">
+          {menuItems.map((item) => (
+            <div key={item.id} className="menu-item">
+              <h3>{item.name}</h3>
+              <button onClick={() => setEditingItem(item)}>Edit</button>
+              <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Sides Section */}
-      <h2 className="menu-section-title">Side Choices</h2>
-      <div className="menu-sides">
-        {sides.map((side, index) => (
-          <div key={index} className="menu-side-card">
-            <img src={side.image} alt={side.name} />
-            <h3>{side.name}</h3>
-            <p>{side.calories} calories</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Drinks Section */}
-      <h2 className="menu-section-title">Drinks</h2>
-      <div className="menu-drinks">
-        {drinks.map((drink, index) => (
-          <div key={index} className="menu-drink-card">
-            <img src={drink.image} alt={drink.name} />
-            <h3>{drink.name}</h3>
-            <p>{drink.price}</p>
-            <p>{drink.calories} calories</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Appetizers Section */}
-      <h2 className="menu-section-title">Appetizers</h2>
-      <div className="menu-appetizers">
-        {appetizers.map((item, index) => (
-          <div key={index} className="menu-appetizer-card">
-            <img src={item.image} alt={item.name} />
-            <h3>{item.name}</h3>
-            <p>{item.price}</p>
-            <p>{item.calories} calories</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Featured Items Section */}
-      <h2 className="menu-section-title">Featured Items</h2>
-      <div className="menu-grid">
-        {featuredItems.map((item, index) => (
-          <div key={index} className="menu-card">
-            <img src={item.image} alt={item.name} className="menu-card-image" />
-            <div className="menu-card-content">
-              <h3 className="menu-card-name">{item.name}</h3>
-              <p className="menu-card-calories">{item.calories} calories</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Most Popular Items Section */}
-      <h2 className="menu-section-title">Most Popular Items</h2>
-      <div className="menu-grid">
-        {mostPopularItems.map((item, index) => (
-          <div key={index} className="menu-card">
-            <img src={item.image} alt={item.name} className="menu-card-image" />
-            <div className="menu-card-content">
-              <h3 className="menu-card-name">{item.name}</h3>
-              <p className="menu-card-calories">{item.calories} calories</p>
-              {item.isSpicy && <span className="menu-tag spicy">Spicy 🌶️</span>}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default Menu;
+export default Index;
