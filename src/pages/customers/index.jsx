@@ -1,41 +1,11 @@
 import { useState, useEffect } from 'react';
 import { apiURL, WEATHER_API_KEY } from '../../config.js';
 import CheckoutView from "./CheckoutView";
-
 import "./kiosk.css"
-
-
 const WEATHER_REFRESH_MIN = 10
 
+
 function Customers() {
-
-    const check = (name, togo) =>{
-        // try {
-        //     let response = await fetch(`${apiURL}/api/kiosk/`, {
-        //         method: "POST"
-        //     });
-
-        //     if (response.ok) {
-        //         const fetchedMenu = await response.json()
-        //         const menuWithNumbers = fetchedMenu.map(item => ({
-        //             ...item,
-        //             id: Number(item.id),
-        //             alt_price: parseFloat(item.alt_price)
-        //         }));
-        //         setMenu(menuWithNumbers)
-        //     } else {
-        //         return false
-        //     }
-        // } catch (error) {
-        //     console.log(error);
-        //     return false
-        // }
-        console.log(name)
-        console.log(togo)
-        clear()
-    }
-
-
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
@@ -43,6 +13,41 @@ function Customers() {
     const [orderTypes, setOrderTypes] = useState([])
     const [currTime, setTime] = useState(new Date().toLocaleTimeString())
     const [currWeather, setWeather] = useState({})
+    
+    const check = async (name, togo) => {
+        if (name == "" || ItemList.length == 0) {
+            return;
+        }
+
+        const total = Object.values(ItemList).flat().reduce((sum, item) => {
+            return sum + Number(item.price)
+        }, 0) * 1.08;
+
+        const orderJSON = {
+            "name": name,
+            "type": togo ? "togo" : "here",
+            "total": total,
+            "employee": "kiosk",
+            "orderItems": ItemList
+        }
+        console.log(orderJSON);
+        try {
+            let response = await fetch(`${apiURL}/api/kiosk/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderJSON),
+            });	
+
+            clear()
+			return response.ok;
+			
+        } catch (error) { return false; }
+    }
+
+
 
     useEffect(() => {
         const intervalID = setInterval(() => {
@@ -82,7 +87,6 @@ function Customers() {
 
     async function fetchWeather() {
         try {
-            console.log(WEATHER_API_KEY)
             let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&lon=-96.314445&units=imperial&appid=${WEATHER_API_KEY}`);
             if (response.ok) {
                 const data = await response.json();
@@ -177,7 +181,7 @@ function Customers() {
             }
         ]);
     
-        console.log("Item created with id ", currI, " items: ", itemList);
+        // console.log("Item created with id ", currI, " items: ", itemList);
         setCurr(currI + 1); // Increment the current item index
     };
 
@@ -323,7 +327,7 @@ function OrderButtons({setSys, orderTypes}){
         // {id: 3, name: 'Cub Meal', base_price: '6.60', price: NaN}
         // {id: 4, name: 'Family Feast', base_price: '43.00', price: NaN}
         // {id: 5, name: 'Bigger Plate'
-        console.log("change state: ", id)
+        //console.log("change state: ", id)
         setSys(id)
     }
 
@@ -429,7 +433,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     // console.log(numEntree)
     // console.log(menu)
     const [currOrder,setOrder] = useState([])
-    console.log("curr order: ", currOrder)
+    // console.log("curr order: ", currOrder)
     function Es(){
         if (numEntree === 1){
             return ("")
@@ -448,12 +452,12 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     }
 
     function completeOrder(){
-        console.log(typePrice)
+        //console.log(typePrice)
         const total = currOrder.reduce((sum, item) => {
-            console.log("add: ", item.upcharge, sum)
+            //console.log("add: ", item.upcharge, sum)
             return sum + (Number(item.upcharge) * Number(upMult));
         }, Number(typePrice));
-        console.log(total)
+        //console.log(total)
         addItem(typeID, total, currOrder)
         setSys("")
     }
@@ -508,7 +512,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
 function SinglePick({orderType, typeID, menu, addItem, setSys}){
     const [currOrder,setOrder] = useState([])
     function completeOrder(){
-        console.log(currOrder)
+        //console.log(currOrder)
         currOrder.map(item=> (
             addItem(typeID, item.alt_price, [item])
         ))
