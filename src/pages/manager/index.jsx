@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { apiURL } from '../../config.js';
 import './manager.css';
+import { OrbitProgress } from 'react-loading-indicators';
 
 ChartJS.register(
     CategoryScale,
@@ -503,14 +504,16 @@ function getToday() {
 }
 
 function Excess() {
-    const [targetTime, setTargetTime] = useState(getToday());
+    const [targetTime, setTargetTime] = useState("2023-01-01");
     const [excessItems, setExcessItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleTimeChange = (event) => {
         setTargetTime(event.target.value);
     }
 
     const queryExcess = async () => {
+        setLoading(true);
         try {
             let response = await fetch(`${apiURL}/api/manager/excess?timestamp=${targetTime}`);
 
@@ -524,6 +527,7 @@ function Excess() {
             console.log(error)
             setExcessItems([]);
         }
+        setLoading(false);
     }
 
     return (<div className="mngr-excess mngr-font">
@@ -532,24 +536,28 @@ function Excess() {
             <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime} />
             <button onClick={queryExcess}>QUERY</button>
         </div>
-        <table className="mngr-settingsTable">
-            <thead>
-                <tr>
-                    <td>Inventory Item</td>
-                    <td>Units Sold</td>
-                    <td>Percent of Quantity</td>
-                </tr>
-            </thead>
-            <tbody>
-                {excessItems.map((item, index) => (
-                    <tr key={index}>
-                        <td>{item.name}</td>
-                        <td>{item.quantitySold}</td>
-                        <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+
+        {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {excessItems.length > 0 && 
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <td>Inventory Item</td>
+                        <td>Units Sold</td>
+                        <td>Percent of Quantity</td>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {excessItems.map((item, index) => (
+                        <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.quantitySold}</td>
+                            <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }
     </div>)
 }
 
@@ -557,6 +565,7 @@ function SellsTogether() {
     const [startDate, setStartDate] = useState("2023-01-01");
     const [endDate, setEndDate] = useState("2023-12-31");
     const [foodPairs, setFoodPairs] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const changeStart = (event) => {
         setStartDate(event.target.value);
@@ -567,6 +576,7 @@ function SellsTogether() {
     }
 
     const queryPairs = async () => {
+        setLoading(true);
         try {
             let response = await fetch(`${apiURL}/api/manager/sellstogether?startDate=${startDate}&endDate=${endDate}`);
 
@@ -580,31 +590,36 @@ function SellsTogether() {
             console.log(error)
             setFoodPairs([]);
         }
+        setLoading(false);
     };
 
     return (<div className="mngr-sellstogether mngr-font">
         <h2>What Sells Together</h2>
-        <input type="date" defaultValue={startDate} key={startDate} onChange={changeStart} />
-        <input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd} />
+        <h5>Time Period</h5>
+        <input type="date" defaultValue={startDate} key={startDate} onChange={changeStart}/>
+        <input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd}/>
         <button onClick={queryPairs}>QUERY</button>
-        <table className="mngr-settingsTable">
-            <thead>
-                <tr>
-                    <td>Food Item 1</td>
-                    <td>Food Item 2</td>
-                    <td>Frequency</td>
-                </tr>
-            </thead>
-            <tbody>
-                {foodPairs.map((pair, index) => (
-                    <tr key={index}>
-                        <td>{pair.foodItem1}</td>
-                        <td>{pair.foodItem2}</td>
-                        <td>{pair.count}</td>
+        {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {foodPairs.length > 0 && 
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <td>Food Item 1</td>
+                        <td>Food Item 2</td>
+                        <td>Frequency</td>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {foodPairs.map((pair, index) => (
+                        <tr key={index}>
+                            <td>{pair.foodItem1}</td>
+                            <td>{pair.foodItem2}</td>
+                            <td>{pair.count}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }   
     </div>)
 }
 
