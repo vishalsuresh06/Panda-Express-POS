@@ -15,12 +15,12 @@ urlpatterns = [
     path('manager/inventory-query/<int:id>', manager_views.inventoryQueryView, name='inventoryquery'),
     path("kiosk/",   kiosk_views.KioskView.as_view(), name = "Kiosk_menu"),
     path("kiosk_orders/",   kiosk_views.OrderTypes.as_view(), name = "Kiosk_orders"),
-	  path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
-	  path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
-	  path("settings", general_views.SettingsView.as_view(), name="settings"),
-	  path("manager/excess", manager_views.ExcessView.as_view(), name="excess"),
-	  path("manager/sellstogether", manager_views.SellsTogetherView.as_view(), name="sellstogether"),
-	  path("manager/restock", manager_views.RestockView.as_view(), name="restock"),
+    path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
+    path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
+    path("settings", general_views.SettingsView.as_view(), name="settings"),
+    path("manager/excess", manager_views.ExcessView.as_view(), name="excess"),
+    path("manager/sellstogether", manager_views.SellsTogetherView.as_view(), name="sellstogether"),
+    path("manager/restock", manager_views.RestockView.as_view(), name="restock"),
 ]
 
 if settings.DEBUG:

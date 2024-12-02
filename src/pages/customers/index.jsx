@@ -311,6 +311,7 @@ function Customers() {
 // }
 
 function OrderButtons({setSys, orderTypes}){
+    console.log(orderTypes);
     const removeID = ["A La Carte (Side) (L)",
                       "A La Carte (Side) (S)",
                       "A La Carte (Entree) (S)",
