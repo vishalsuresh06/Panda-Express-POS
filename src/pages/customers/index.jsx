@@ -25,8 +25,39 @@ export default function Customers() {
     const [ItemList, setItems] = useState([]);
     const [orderTypes, setOrderTypes] = useState([])
     const [currWeather, setWeather] = useState({})
-
     
+    const check = async (name, togo) => {
+        if (name == "" || ItemList.length == 0) {
+            return;
+        }
+
+        const total = Object.values(ItemList).flat().reduce((sum, item) => {
+            return sum + Number(item.price)
+        }, 0) * 1.08;
+
+        const orderJSON = {
+            "name": name,
+            "type": togo ? "togo" : "here",
+            "total": total,
+            "employee": "kiosk",
+            "orderItems": ItemList
+        }
+        try {
+            let response = await fetch(`${apiURL}/api/kiosk/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderJSON),
+            });	
+
+            clear()
+			return response.ok;
+			
+        } catch (error) { return false; }
+    }
+
 
     var translateWidgetAdded = false;
     const googleTranslateElementInit = () => {
@@ -82,33 +113,34 @@ export default function Customers() {
 
     async function updateOrders(){
         try {
-            let response = await fetch(`${apiURL}/api/kiosk_orders/`, {
-                method: "GET"
-            });
+            let response = await fetch(`${apiURL}/api/kiosk_orders/`);
 
             if (response.ok) {
-                const fetchedMenu = await response.json()
+                const fetchedMenu = await response.json();
+                console.log("FETCHED TYPES:")
+                console.log(fetchedMenu);
                 const menuWithNumbers = fetchedMenu.map(item => ({
                     ...item,
                     id: Number(item.id),
                     price: parseFloat(item.Base_price)
                 }));
-                setOrderTypes(menuWithNumbers)
+                setOrderTypes(menuWithNumbers);
             } else {
-                return false
+                return false;
             }
         } catch (error) {
             console.log(error);
             return false
         }
     }
-    useEffect( () => {updateOrders();},[])
+
+    useEffect(() => {
+        updateOrders();
+    }, [])
 
     async function updateMenu(){
         try {
-            let response = await fetch(`${apiURL}/api/kiosk/`, {
-                method: "GET"
-            });
+            let response = await fetch(`${apiURL}/api/kiosk/`);
 
             if (response.ok) {
                 const fetchedMenu = await response.json()
@@ -127,8 +159,9 @@ export default function Customers() {
         }
     }
 
-    useEffect( () => {updateMenu(); 
-    }, [])
+    useEffect( () => {
+        updateMenu();
+    }, []);
 
     const remove_item = (id_to_remove)=>{
         setItems(items => 
@@ -284,6 +317,8 @@ export default function Customers() {
 // }
 
 function OrderButtons({setSys, orderTypes}){
+    console.log("CONSTRUCTING BUTTONS WITH THE FOLLOWING TYPES:");
+    console.log(orderTypes);
     const removeID = ["A La Carte (Side) (L)",
                       "A La Carte (Side) (S)",
                       "A La Carte (Entree) (S)",

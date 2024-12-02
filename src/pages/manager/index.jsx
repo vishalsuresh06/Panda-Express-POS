@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { apiURL } from '../../config.js';
 import './manager.css';
+import { OrbitProgress } from 'react-loading-indicators';
 
 ChartJS.register(
     CategoryScale,
@@ -104,7 +105,7 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
                     {items.map((menuItem, index) => (
                         <tr key={index}>
                             {Object.values(items[index]).map((entry, index2) => (
-                                <td className='mngr-font' key={index2}>{entry.toString()}</td>
+                                <td className='mngr-font' key={index2}>{entry?.toString() || ""}</td>
                             ))}
                             <td>
                                 <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
@@ -149,6 +150,10 @@ function EmployeeEdit() {
         } else {
             reqBody.action = "modify"
             reqBody.data = data
+
+            if (!reqBody?.data?.email.trim()) {
+                reqBody.data.email = null
+            }
         }
 
         try {
@@ -332,23 +337,23 @@ function InventoryEdit() {
     )
 }
 
-function SettingsInput({name, desc, field, type}) {
-    const {settings, setSettings} = useContext(KitchenSettingsContext);
+function SettingsInput({ name, desc, field, type }) {
+    const { settings, setSettings } = useContext(KitchenSettingsContext);
     const [color, setColor] = useState(type == "color" ? settings[field] : "");
 
-	const changeSettings = async (event) => {
-		const settingsCopy = {...settings};
+    const changeSettings = async (event) => {
+        const settingsCopy = { ...settings };
         var data;
-		if (type == "text") {
-            
-			settingsCopy[field] = event.target.value; 
-		} else if (type == "checkbox") {
-			settingsCopy[field] = (event.target.checked ? "true" : "false"); 
-		} else if (type == "color") {
-			setColor(event.hex);
-			settingsCopy[field] = event.hex;
-		}
-		setSettings(settingsCopy);
+        if (type == "text") {
+
+            settingsCopy[field] = event.target.value;
+        } else if (type == "checkbox") {
+            settingsCopy[field] = (event.target.checked ? "true" : "false");
+        } else if (type == "color") {
+            setColor(event.hex);
+            settingsCopy[field] = event.hex;
+        }
+        setSettings(settingsCopy);
 
         let reqBody = { action: "set", field: field, data: settingsCopy[field] };
         try {
@@ -359,62 +364,62 @@ function SettingsInput({name, desc, field, type}) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });	
-        } catch (error) { 
+            });
+        } catch (error) {
             console.log(error);
         }
-	}
+    }
 
     // Prevents while DB settings are still being loaded in
 
-	var inputComponent;
-	if (type == "text") {
-		inputComponent = <input type="text" value={settings[field]} onChange={changeSettings}/>;
-	} else if (type == "checkbox") {
-		inputComponent = <input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings}/>;
-	} else if (type == "color") {
-		inputComponent = <Compact color={color} onChange={changeSettings}/>
-	}
+    var inputComponent;
+    if (type == "text") {
+        inputComponent = <input type="text" value={settings[field]} onChange={changeSettings} />;
+    } else if (type == "checkbox") {
+        inputComponent = <input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings} />;
+    } else if (type == "color") {
+        inputComponent = <Compact color={color} onChange={changeSettings} />
+    }
 
-	return (
-		<tr>
-			<td>{name}</td>
-			<td>{desc}</td>
-			<td>{inputComponent}</td>
-		</tr>
-	)
-}	
+    return (
+        <tr>
+            <td>{name}</td>
+            <td>{desc}</td>
+            <td>{inputComponent}</td>
+        </tr>
+    )
+}
 
 function KitchenSettings() {
     const [settings, setSettings] = useState({});
     const [loading, setLoading] = useState(true);
 
     // Fetch the current settings from the database
-	useEffect(() => {
-		async function fetchSettings() {
-			try {
-				let response = await fetch(`${apiURL}/api/settings`);
+    useEffect(() => {
+        async function fetchSettings() {
+            try {
+                let response = await fetch(`${apiURL}/api/settings`);
 
-				if (response.ok) {
-					const data = await response.json();
-					setSettings(data);
+                if (response.ok) {
+                    const data = await response.json();
+                    setSettings(data);
                     setLoading(false);
-				} else {
-					setSettings({});
+                } else {
+                    setSettings({});
                     setLoading(true);
-				}
-			} catch (error) {
-				console.log(error)
-				setSettings({});
+                }
+            } catch (error) {
+                console.log(error)
+                setSettings({});
                 setLoading(true);
-			}
-		}
+            }
+        }
 
-		fetchSettings();
-	}, []);
+        fetchSettings();
+    }, []);
 
     const restoreDefaults = async () => {
-        let reqBody = { action: "restoredefaults"};
+        let reqBody = { action: "restoredefaults" };
         try {
             await fetch(`${apiURL}/api/settings`, {
                 method: "POST",
@@ -423,8 +428,8 @@ function KitchenSettings() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });	
-        } catch (error) { 
+            });
+        } catch (error) {
             console.log(error);
         }
         window.location.reload();
@@ -434,57 +439,57 @@ function KitchenSettings() {
         return <></>;
     }
 
-	return (<KitchenSettingsContext.Provider value={{settings, setSettings}}>
+    return (<KitchenSettingsContext.Provider value={{ settings, setSettings }}>
         <div className="mngr-kitchensettings">
             <h2 className="mngr-font">KITCHEN CUSTOMIZER</h2>
             <table className="mngr-settingsTable">
                 <thead>
-                    <tr>   
+                    <tr>
                         <td className="mngr-font">Setting</td>
                         <td className="mngr-font">Description</td>
                         <td className="mngr-font">Value</td>
                     </tr>
                 </thead>
                 <tbody>
-                    <SettingsInput 	name="Order Refresh Rate (s)"
-                                    desc="How pages will refresh with newly entered orders."
-                                    field="kt_refreshRate"
-                                    type="text"/>
-                    
-                    <SettingsInput 	name="Full Order Render Count"
-                                    desc="How many order cards are automatically expanded in the HERE/TOGO columns."
-                                    field="kt_fullOrderCount"
-                                    type="text"/>
+                    <SettingsInput name="Order Refresh Rate (s)"
+                        desc="How pages will refresh with newly entered orders."
+                        field="kt_refreshRate"
+                        type="text" />
 
-                    <SettingsInput 	name="Recent Order Count"
-                                    desc="How many of the most recent orders will be displayed."
-                                    field="kt_recentOrderCount"
-                                    type="text"/>
+                    <SettingsInput name="Full Order Render Count"
+                        desc="How many order cards are automatically expanded in the HERE/TOGO columns."
+                        field="kt_fullOrderCount"
+                        type="text" />
 
-                    <SettingsInput 	name="Here Orders on Left"
-                                    desc="Alters which of the two order columns is displayed."
-                                    field="kt_hereOrdersLeft"
-                                    type="checkbox"/>
-                    
-                    <SettingsInput  name="Temperature in Fahrenheit"
-                                    field="kt_tempUnits"
-                                    type="checkbox"/>
+                    <SettingsInput name="Recent Order Count"
+                        desc="How many of the most recent orders will be displayed."
+                        field="kt_recentOrderCount"
+                        type="text" />
 
-                    <SettingsInput  name="Pending Order Color"
-                                    field="kt_pendingColor"
-                                    type="color"/>
+                    <SettingsInput name="Here Orders on Left"
+                        desc="Alters which of the two order columns is displayed."
+                        field="kt_hereOrdersLeft"
+                        type="checkbox" />
 
-                    <SettingsInput  name="In Progress Order Color"
-                                    field="kt_inprogressColor"
-                                    type="color"/>
+                    <SettingsInput name="Temperature in Fahrenheit"
+                        field="kt_tempUnits"
+                        type="checkbox" />
 
-                    <SettingsInput  name="Completed Order Color"
-                                    field="kt_completedColor"
-                                    type="color"/>
-                    
-                    <SettingsInput  name="Canceled Order Color"
-                                    field="kt_cancelledColor"
-                                    type="color"/>
+                    <SettingsInput name="Pending Order Color"
+                        field="kt_pendingColor"
+                        type="color" />
+
+                    <SettingsInput name="In Progress Order Color"
+                        field="kt_inprogressColor"
+                        type="color" />
+
+                    <SettingsInput name="Completed Order Color"
+                        field="kt_completedColor"
+                        type="color" />
+
+                    <SettingsInput name="Canceled Order Color"
+                        field="kt_cancelledColor"
+                        type="color" />
 
                 </tbody>
             </table>
@@ -499,14 +504,16 @@ function getToday() {
 }
 
 function Excess() {
-    const [targetTime, setTargetTime] = useState(getToday());
+    const [targetTime, setTargetTime] = useState("2023-01-01");
     const [excessItems, setExcessItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleTimeChange = (event) => {
         setTargetTime(event.target.value);
     }
 
     const queryExcess = async () => {
+        setLoading(true);
         try {
             let response = await fetch(`${apiURL}/api/manager/excess?timestamp=${targetTime}`);
 
@@ -520,32 +527,37 @@ function Excess() {
             console.log(error)
             setExcessItems([]);
         }
+        setLoading(false);
     }
 
     return (<div className="mngr-excess mngr-font">
         <h2>Excess Inventory</h2>
         <div className="mngr-excessQuery">
-            <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime}/>
+            <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime} />
             <button onClick={queryExcess}>QUERY</button>
         </div>
-        <table className="mngr-settingsTable">
-            <thead>
-                <tr>
-                    <td>Inventory Item</td>
-                    <td>Units Sold</td>
-                    <td>Percent of Quantity</td>
-                </tr>
-            </thead>
-            <tbody>
-                {excessItems.map((item, index) => (
-                    <tr key={index}>
-                        <td>{item.name}</td>
-                        <td>{item.quantitySold}</td>
-                        <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+
+        {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {excessItems.length > 0 && 
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <td>Inventory Item</td>
+                        <td>Units Sold</td>
+                        <td>Percent of Quantity</td>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {excessItems.map((item, index) => (
+                        <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.quantitySold}</td>
+                            <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }
     </div>)
 }
 
@@ -553,6 +565,7 @@ function SellsTogether() {
     const [startDate, setStartDate] = useState("2023-01-01");
     const [endDate, setEndDate] = useState("2023-12-31");
     const [foodPairs, setFoodPairs] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const changeStart = (event) => {
         setStartDate(event.target.value);
@@ -563,6 +576,7 @@ function SellsTogether() {
     }
 
     const queryPairs = async () => {
+        setLoading(true);
         try {
             let response = await fetch(`${apiURL}/api/manager/sellstogether?startDate=${startDate}&endDate=${endDate}`);
 
@@ -576,31 +590,36 @@ function SellsTogether() {
             console.log(error)
             setFoodPairs([]);
         }
+        setLoading(false);
     };
 
     return (<div className="mngr-sellstogether mngr-font">
         <h2>What Sells Together</h2>
+        <h5>Time Period</h5>
         <input type="date" defaultValue={startDate} key={startDate} onChange={changeStart}/>
         <input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd}/>
         <button onClick={queryPairs}>QUERY</button>
-        <table className="mngr-settingsTable">
-            <thead>
-                <tr>
-                    <td>Food Item 1</td>
-                    <td>Food Item 2</td>
-                    <td>Frequency</td>
-                </tr>
-            </thead>
-            <tbody>
-                {foodPairs.map((pair, index) => (
-                    <tr key={index}>
-                        <td>{pair.foodItem1}</td>
-                        <td>{pair.foodItem2}</td>
-                        <td>{pair.count}</td>
+        {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {foodPairs.length > 0 && 
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <td>Food Item 1</td>
+                        <td>Food Item 2</td>
+                        <td>Frequency</td>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {foodPairs.map((pair, index) => (
+                        <tr key={index}>
+                            <td>{pair.foodItem1}</td>
+                            <td>{pair.foodItem2}</td>
+                            <td>{pair.count}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }   
     </div>)
 }
 
@@ -633,11 +652,11 @@ function Restock() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });	
+            });
 
             queryRestock();
-			return response.ok;
-			
+            return response.ok;
+
         } catch (error) { return false; }
     };
 
@@ -952,6 +971,7 @@ function Manager() {
             <div>
                 <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
+                    <Link to="/cashier" className='mngr-btn mngr-btn-ret'>Cashier</Link>
                     <Link to="/manager/employees" className='mngr-btn'>Employees</Link>
                     <Link to="/manager/menu" className='mngr-btn'>Menu</Link>
                     <Link to="/manager/inventory" className='mngr-btn'>Inventory</Link>

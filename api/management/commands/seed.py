@@ -33,7 +33,7 @@ class Command(BaseCommand):
         # Employees
         employee1 = Employee.objects.create(name='Bob China', password='ILovePandaExpress', is_manager=False, wage=12.00)
         employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=False, wage=7.50)
-        employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00)
+        employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00, email='nkodali@tamu.edu')
         employee4 = Employee.objects.create(name='kiosk', password='ILovePandas', is_manager=False, wage=0)
 
         food_items_data = [

@@ -44,6 +44,7 @@ class Employee(AbstractBaseUser):
     pin = models.CharField(max_length=6, default=1234)
     is_manager = models.BooleanField(default=False)
     wage = models.DecimalField(decimal_places=2, max_digits=10)
+    email = models.EmailField(unique=True, null=True)
 
     USERNAME_FIELD='id'
     
