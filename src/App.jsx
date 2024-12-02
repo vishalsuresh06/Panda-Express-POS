@@ -17,6 +17,9 @@ import Customers from './pages/customers';
 import { Kitchen, KitchenOrders, RecentOrders } from './pages/kitchen';
 import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";
 import Menu from './pages/menu';
+import SizesFeaturedPopular from './pages/menu/SizesFeaturedPopular';
+import Entrees from './pages/menu/Entrees';
+import SidesDrinksAppetizers from './pages/menu/SidesDrinksAppetizers';
 import NotFound from './pages/notfound';
 import { LoginRoute } from './utils/Auth'
 import './index.css'
@@ -57,9 +60,11 @@ function App() {
           <Route path="recentorders" element={<RecentOrders />} />
         </Route>
 
-        <Route path="/menu" element={<Menu />} />
+        <Route path="/menu/*" element={<Menu />} />
+        <Route path="/menu/sizes-featured-popular" element={<SizesFeaturedPopular />} />
+        <Route path="/menu/entrees" element={<Entrees />} />
+        <Route path="/menu/sides-drinks-appetizers" element={<SidesDrinksAppetizers />} />
 
-        {/* Fallback for 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import *
+from api.models import *
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +12,11 @@ class OrderItemTypeSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'base_price']
 
 class FoodItemSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True, required=False)
+    
     class Meta:
         model = FoodItem
-        fields = ['id', 'name', 'type', 'alt_price', 'upcharge', 'on_menu']
+        fields = ['id', 'name', 'type', 'alt_price', 'upcharge', 'on_menu', 'image', 'calories', 'is_spicy', 'is_premium', 'is_gluten_free']
 
 class OrderFoodQuantitySerializer(serializers.ModelSerializer):
     food_item = serializers.ReadOnlyField(source='food_item.name')
