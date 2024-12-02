@@ -121,3 +121,8 @@ class OrderFoodQuantity(models.Model):
 
     class Meta:
         unique_together = ('order_item', 'food_item')
+
+class SettingParameter(models.Model):
+    key = models.CharField(max_length=100, unique=True)
+    value = models.TextField()
+    default = models.TextField()
