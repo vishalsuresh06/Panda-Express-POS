@@ -1,0 +1,106 @@
+/* General container for Item Selection */
+.cshr_itemSelectionContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+/* Header for each item type */
+.cshr_itemSelectionTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Buttons for selection */
+.cshr_itemSelectionBtn {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.cshr_itemSelectionBtn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Confirm Button */
+.cshr_confirmBtn {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.cshr_confirmBtn:hover {
+  background-color: #777;
+}
+
+/* Style for the different sections (e.g., sides, entrees) */
+.cshr_sectionContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.cshr_sectionTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.cshr_sectionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cshr_sectionItemBtn {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cshr_sectionItemBtn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Price display */
+.cshr_priceContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cshr_priceLabel {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+.cshr_priceValue {
+  font-size: 18px;
+  color: #333;
+}

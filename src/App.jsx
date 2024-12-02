@@ -4,6 +4,7 @@ import Cashiers from './pages/cashiers';
 import Customers from './pages/customers';
 import {Kitchen, KitchenOrders, RecentOrders} from './pages/kitchen';
 import Menu from './pages/menu';
+import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";
 import NotFound from './pages/notfound';
 import './index.css'
 
@@ -24,6 +25,7 @@ function App() {
         </Route>
 
         <Route path="/cashier" element={<Cashiers />} />
+        <Route path="/itemSelection" element={<ItemSelection />} />
         <Route path="/customer" element={<Customers />} />
 
         <Route path="/kitchen" element={<Kitchen />}>
@@ -33,10 +35,12 @@ function App() {
 
 
         <Route path="/menu" element={<Menu />} />
+
+        {/* Fallback for 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
