@@ -74,3 +74,50 @@
     background-color: red;
     opacity: 1;
 }
+
+
+.mngr-settingsTable {
+	font-family: Verdana, sans-serif;
+	border-collapse: collapse;
+	width: 40%;
+	margin-top:10px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.mngr-settingsTable td, th {
+	text-align: left;
+	padding: 8px;
+}
+
+.mngr-settingsTable thead tr {
+    background-color: #dd4545;
+    color: #ffffff;
+    text-align: center;
+}
+
+.mngr-kitchensettings, .mngr-excess, .mngr-sellstogether, .mngr-restockReport {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;     
+    justify-content: center; 
+}
+
+.mngr-excessItem {
+    background-color: #ff00007f;
+}
+
+.mngr-normalItem {
+    background-color: rgba(0, 128, 0, 0.507);
+}
+
+.mngr-settingsTable tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+.mngr-salescontainer {
+    display: flex;
+}
+
+.mngr-salescol {
+    width: 50%;
+}

@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiURL, WEATHER_API_KEY } from '../../config.js';
 import CheckoutView from "./CheckoutView";
-
 import "./kiosk.css"
-
-
 const WEATHER_REFRESH_MIN = 10
 
 function Time(){
@@ -20,7 +17,8 @@ function Time(){
     return(<h4 className="notranslate">{currTime}</h4>)
 }
 
-function Customers() {
+
+export default function Customers() {
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
@@ -60,7 +58,6 @@ function Customers() {
 
     async function fetchWeather() {
         try {
-            console.log(WEATHER_API_KEY)
             let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&lon=-96.314445&units=imperial&appid=${WEATHER_API_KEY}`);
             if (response.ok) {
                 const data = await response.json();
@@ -83,7 +80,7 @@ function Customers() {
         return () => clearInterval(intervalID);
     }, []);    
 
-    useEffect( () => async function updateOrders(){
+    async function updateOrders(){
         try {
             let response = await fetch(`${apiURL}/api/kiosk_orders/`, {
                 method: "GET"
@@ -104,11 +101,10 @@ function Customers() {
             console.log(error);
             return false
         }
-    }, [])
+    }
+    useEffect( () => {updateOrders();},[])
 
-    
-
-    useEffect( () => async function updateMenu(){
+    async function updateMenu(){
         try {
             let response = await fetch(`${apiURL}/api/kiosk/`, {
                 method: "GET"
@@ -129,6 +125,9 @@ function Customers() {
             console.log(error);
             return false
         }
+    }
+
+    useEffect( () => {updateMenu(); 
     }, [])
 
     const remove_item = (id_to_remove)=>{
@@ -155,7 +154,7 @@ function Customers() {
             }
         ]);
     
-        console.log("Item created with id ", currI, " items: ", itemList);
+        // console.log("Item created with id ", currI, " items: ", itemList);
         setCurr(currI + 1); // Increment the current item index
     };
 
@@ -301,7 +300,7 @@ function OrderButtons({setSys, orderTypes}){
         // {id: 3, name: 'Cub Meal', base_price: '6.60', price: NaN}
         // {id: 4, name: 'Family Feast', base_price: '43.00', price: NaN}
         // {id: 5, name: 'Bigger Plate'
-        console.log("change state: ", id)
+        //console.log("change state: ", id)
         setSys(id)
     }
 
@@ -407,7 +406,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     // console.log(numEntree)
     // console.log(menu)
     const [currOrder,setOrder] = useState([])
-    console.log("curr order: ", currOrder)
+    // console.log("curr order: ", currOrder)
     function Es(){
         if (numEntree === 1){
             return ("")
@@ -426,12 +425,12 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     }
 
     function completeOrder(){
-        console.log(typePrice)
+        //console.log(typePrice)
         const total = currOrder.reduce((sum, item) => {
-            console.log("add: ", item.upcharge, sum)
+            //console.log("add: ", item.upcharge, sum)
             return sum + (Number(item.upcharge) * Number(upMult));
         }, Number(typePrice));
-        console.log(total)
+        //console.log(total)
         addItem(typeID, total, currOrder)
         setSys("")
     }
@@ -460,7 +459,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         <h5>Pick {numEntree} entree{Es()}</h5>
         <ul className="CK-entrees">
             
-            {menu.filter(item => item.type === "Entree").map((item) => (
+            {menu.filter(item => item.type === "entree").map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} max={numEntree} setOrd={setOrder} ord={currOrder} />
                 </li>
@@ -469,7 +468,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         <h3>Side</h3>
         <h5>Pick {numSide} side{Ss()}</h5>
         <ul className="CK-sides">
-            {menu.filter(item => item.type === "Side").map((item) => (
+            {menu.filter(item => item.type === "side").map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} max={numSide} setOrd={setOrder} ord={currOrder} />
                 </li>
@@ -486,7 +485,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
 function SinglePick({orderType, typeID, menu, addItem, setSys}){
     const [currOrder,setOrder] = useState([])
     function completeOrder(){
-        console.log(currOrder)
+        //console.log(currOrder)
         currOrder.map(item=> (
             addItem(typeID, item.alt_price, [item])
         ))
@@ -496,7 +495,7 @@ function SinglePick({orderType, typeID, menu, addItem, setSys}){
     <div className = "CK-singlePick">
         <button onClick={() => setSys(-1)} className="CK-cancelOrder">Back</button>
         <ul className="CK-singlePickList CK-sides">
-            {menu.filter(item => item.type === orderType).map((item) => (
+            {menu.filter(item => item.type === orderType.tolowercase()).map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} setOrd={setOrder} ord={currOrder} max={1}/>
                 </li>
@@ -510,10 +509,3 @@ function SinglePick({orderType, typeID, menu, addItem, setSys}){
     </div>
     )
 }
-
-
-
-export default Customers
-
-
-

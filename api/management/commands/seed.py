@@ -1,43 +1,70 @@
 from django.core.management.base import BaseCommand
-from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity
+from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity, SettingParameter
 from django.utils import timezone
 import datetime
 import random
 import pytz
 
 
+# IMPORTANT: Both fields must be STRINGS
+DEFAULT_SETTINGS = {
+    "kt_refreshRate": "5",
+    "kt_fullOrderCount": "2",
+    "kt_recentOrderCount": "10",
+    "kt_hereOrdersLeft": "true",
+    "kt_tempUnits": "F",
+    "kt_pendingColor": "#969696",
+    "kt_inprogressColor": "#ffff64",
+    "kt_completedColor": "#1dc871",
+    "kt_cancelledColor": "#b46471",
+}
+
+
 class Command(BaseCommand):
     help = 'Seed the database with initial data'
 
     def handle(self, *args, **kwargs):
+        
+        # Load default settings
+        for key,value in DEFAULT_SETTINGS.items():
+            SettingParameter.objects.create(key=key, value=value, default=value)
+
+
         # Employees
         employee1 = Employee.objects.create(name='Bob China', password='ILovePandaExpress', is_manager=False, wage=12.00)
         employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=False, wage=7.50)
         employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00)
+        employee4 = Employee.objects.create(name='kiosk', password='ILovePandas', is_manager=False, wage=0)
 
-        # Food Items
-        FoodItem.objects.create(name='Orange Chicken', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Beijing Beef', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Broccoli Beef', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Egg Roll', type="Appetizer", on_menu=True, alt_price=2.00, upcharge=0.00)
-        FoodItem.objects.create(name='Kung Pao Chicken', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Honey Walnut Shrimp', type="Entree", on_menu=True, alt_price=6.00, upcharge=1.50)
-        FoodItem.objects.create(name='Fried Rice', type="Side", on_menu=True, alt_price=0.00, upcharge=0.00)
-        FoodItem.objects.create(name='Chow Mein', type="Side", on_menu=True, alt_price=0.00, upcharge=0.00)
-        FoodItem.objects.create(name='Teriyaki Chicken', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Super Greens', type="Side", on_menu=True, alt_price=0.00, upcharge=0.00)
-        FoodItem.objects.create(name='Rangoons', type="Appetizer", on_menu=True, alt_price=2.00, upcharge=0.00)
-        FoodItem.objects.create(name='Fountain Drink', type="Drink", on_menu=True, alt_price=0.00, upcharge=0.00)
-        FoodItem.objects.create(name='Bottled Water', type="Drink", on_menu=True, alt_price=1.50, upcharge=0.00)
-        FoodItem.objects.create(name='Gatorade', type="Drink", on_menu=True, alt_price=3.00, upcharge=0.00)
-        FoodItem.objects.create(name='Apple Pie Roll', type="Appetizer", on_menu=True, alt_price=2.00, upcharge=0.00)
-        FoodItem.objects.create(name='Black Pepper Sirloin Steak', type="Entree", on_menu=True, alt_price=6.00, upcharge=1.50)
-        FoodItem.objects.create(name='Honey Sesame Chicken Breast', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Mushroom Chicken', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='Sweetfire Chicken Breast', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='String Bean Chicken Breast', type="Entree", on_menu=True, alt_price=6.00, upcharge=0.00)
-        FoodItem.objects.create(name='White Steamed Rice', type="Side", on_menu=True, alt_price=5.00, upcharge=0.00)
+        food_items_data = [
+            {'name': 'Orange Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/orangechicken.PNG', 'calories': 490, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Beijing Beef', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/beijing_beef.PNG', 'calories': 470, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Broccoli Beef', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/broccoli_beef.PNG', 'calories': 150, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+            {'name': 'Egg Roll', 'type': "appetizer", 'on_menu': True, 'alt_price': 2.00, 'upcharge': 0.00, 'image': 'food_images/chicken_egg_roll.PNG', 'calories': 200, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Kung Pao Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/kung_pao_chicken.PNG', 'calories': 290, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Honey Walnut Shrimp', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 1.50, 'image': 'food_images/honey_walnut_shrimp.PNG', 'calories': 360, 'is_spicy': False, 'is_premium': True, 'is_gluten_free': False},
+            {'name': 'Chow Mein', 'type': "side", 'on_menu': True, 'alt_price': 3.50, 'upcharge': 0.00, 'image': 'food_images/chow_mein.PNG', 'calories': 510, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Fried Rice', 'type': "side", 'on_menu': True, 'alt_price': 3.50, 'upcharge': 0.00, 'image': 'food_images/fried_rice.PNG', 'calories': 520, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Super Greens', 'type': "side", 'on_menu': True, 'alt_price': 3.50, 'upcharge': 0.00, 'image': 'food_images/super_greens.PNG', 'calories': 170, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+            {'name': 'Veggie Spring Roll', 'type': "appetizer", 'on_menu': True, 'alt_price': 2.00, 'upcharge': 0.00, 'image': 'food_images/veggie_spring_roll.PNG', 'calories': 190, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Sweetfire Chicken Breast', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/sweetfire_chicken.PNG', 'calories': 380, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Grilled Teriyaki Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/teriyaki_chicken.PNG', 'calories': 300, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Black Pepper Steak', 'type': "entree", 'on_menu': True, 'alt_price': 7.00, 'upcharge': 1.50, 'image': 'food_images/black_pepper_steak.PNG', 'calories': 400, 'is_spicy': True, 'is_premium': True, 'is_gluten_free': False},
+            {'name': 'Rangoons', 'type': "appetizer", 'on_menu': True, 'alt_price': 2.00, 'upcharge': 0.00, 'image': 'food_images/cream_cheese_rangoon.PNG', 'calories': 190, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Fountain Drink', 'type': "drink", 'on_menu': True, 'alt_price': 0.00, 'upcharge': 0.00, 'image': 'food_images/fountain_drink.png', 'calories': 0, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+            {'name': 'Bottled Water', 'type': "drink", 'on_menu': True, 'alt_price': 1.50, 'upcharge': 0.00, 'image': 'food_images/water.png', 'calories': 0, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+            {'name': 'Gatorade', 'type': "drink", 'on_menu': True, 'alt_price': 3.00, 'upcharge': 0.00, 'image': 'food_images/gatorade.png', 'calories': 140, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+            {'name': 'Apple Pie Roll', 'type': "appetizer", 'on_menu': True, 'alt_price': 2.00, 'upcharge': 0.00, 'image': 'food_images/apple_pie_roll.png', 'calories': 300, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Honey Sesame Chicken Breast', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/honey_sesame_chicken.PNG', 'calories': 420, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'Mushroom Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/mushroom_chicken.PNG', 'calories': 170, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': False},
+            {'name': 'String Bean Chicken Breast', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/string_bean_chicken.PNG', 'calories': 190, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+            {'name': 'White Steamed Rice', 'type': "side", 'on_menu': True, 'alt_price': 5.00, 'upcharge': 0.00, 'image': 'food_images/white_rice.PNG', 'calories': 380, 'is_spicy': False, 'is_premium': False, 'is_gluten_free': True},
+        ]
+        
 
+
+        for food_item in food_items_data:
+            FoodItem.objects.create(**food_item)
 
         #inventory
         breadedchicken = InventoryItem.objects.create(name='Breaded Chicken', is_food=True, stock=1000, restock_threshold=500, restock_amount = 1000)
@@ -74,6 +101,7 @@ class Command(BaseCommand):
             ("Cub Meal", 6.60),
             ("Family Feast", 43.00),
             ("Bigger Plate", 11.30),
+            ("A La Carte", 7.40),
             
         ]
         for name, base_price in order_item_types:
@@ -82,7 +110,7 @@ class Command(BaseCommand):
         # Generate Dates
         timezone = pytz.timezone('America/Chicago')
         start_date = timezone.localize(datetime.datetime(2023, 1, 1))
-        end_date = timezone.localize(datetime.datetime(2023, 12, 31))
+        end_date = timezone.localize(datetime.datetime(2023, 3, 1))
         total_days = (end_date - start_date).days + 1
         dates = [start_date + datetime.timedelta(days=i) for i in range(total_days)]
         critical_date = dates[-1] # Orders before this date have been completed, otherwise pending
@@ -102,7 +130,7 @@ class Command(BaseCommand):
 
             nonlocal order_id
 
-            current_sales = 0;
+            current_sales = 0
             while current_sales < sales_limit:
                 employee = random.choice([employee1, employee2])
                 order_total = round(random.uniform(10, 100), 2)
@@ -158,3 +186,10 @@ class Command(BaseCommand):
 
 
         self.stdout.write(self.style.SUCCESS('Database seeded successfully'))
+
+
+
+        
+
+	
+
