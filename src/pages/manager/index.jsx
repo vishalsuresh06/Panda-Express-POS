@@ -104,7 +104,7 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
                     {items.map((menuItem, index) => (
                         <tr key={index}>
                             {Object.values(items[index]).map((entry, index2) => (
-                                <td className='mngr-font' key={index2}>{entry.toString()}</td>
+                                <td className='mngr-font' key={index2}>{entry?.toString() || ""}</td>
                             ))}
                             <td>
                                 <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
