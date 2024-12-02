@@ -37,7 +37,7 @@ function Subtotal(items){
 }
 
 export default function CheckoutView({ItemList, removeAll, remove_Item, checkout}) {
-    console.log(ItemList)
+    // console.log(ItemList)
 return (
     <div className="CK_checkoutContainer">
     <div className="CK_itemListContainer">

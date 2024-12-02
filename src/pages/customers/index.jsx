@@ -8,7 +8,8 @@ import "./kiosk.css"
 const WEATHER_REFRESH_MIN = 10
 
 function Customers() {
-
+    
+    const [ItemList, setItems] = useState([]);
     const check = (name, togo) =>{
         // try {
         //     let response = await fetch(`${apiURL}/api/kiosk/`, {
@@ -30,8 +31,15 @@ function Customers() {
         //     console.log(error);
         //     return false
         // }
-        console.log(name)
-        console.log(togo)
+        const subtotal = Object.values(ItemList).flat().reduce((sum, item) => {
+            return sum + Number(item.price)
+            
+        }, 0)
+        const total = subtotal * 1.08
+        console.log("name: ",name)
+        console.log("togo: ", togo)
+        console.log("totalCost: ", total)
+        console.log("employee: " , "Kiosk")
         clear()
     }
 
@@ -39,7 +47,6 @@ function Customers() {
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
-    const [ItemList, setItems] = useState([]);
     const [orderTypes, setOrderTypes] = useState([])
     const [currTime, setTime] = useState(new Date().toLocaleTimeString())
     const [currWeather, setWeather] = useState({})
