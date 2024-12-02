@@ -471,7 +471,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     }
 
     function CompleteButton(){
-        if (numEntree === currOrder.filter(item => item.type === "Entree").length && numSide === currOrder.filter(item => item.type === "Side").length){
+        if (numEntree === currOrder.filter(item => item.type === "entree").length && numSide === currOrder.filter(item => item.type === "side").length){
             return (
                 <button className= "CK-CompleteButton" onClick={completeOrder}>
                     Complete
