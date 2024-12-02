@@ -7,50 +7,8 @@ import "./kiosk.css"
 
 const WEATHER_REFRESH_MIN = 10
 
-function Customers() {
-    
-    const [ItemList, setItems] = useState([]);
-    const check = (name, togo) =>{
-        // try {
-        //     let response = await fetch(`${apiURL}/api/kiosk/`, {
-        //         method: "POST"
-        //     });
-
-        //     if (response.ok) {
-        //         const fetchedMenu = await response.json()
-        //         const menuWithNumbers = fetchedMenu.map(item => ({
-        //             ...item,
-        //             id: Number(item.id),
-        //             alt_price: parseFloat(item.alt_price)
-        //         }));
-        //         setMenu(menuWithNumbers)
-        //     } else {
-        //         return false
-        //     }
-        // } catch (error) {
-        //     console.log(error);
-        //     return false
-        // }
-        const subtotal = Object.values(ItemList).flat().reduce((sum, item) => {
-            return sum + Number(item.price)
-            
-        }, 0)
-        const total = subtotal * 1.08
-        console.log("name: ",name)
-        console.log("togo: ", togo)
-        console.log("totalCost: ", total)
-        console.log("employee: " , "Kiosk")
-        clear()
-    }
-
-
-    const [currI, setCurr] = useState(0)
-    const [sysState, setState] = useState("")
-    const [menu, setMenu] = useState([])
-    const [orderTypes, setOrderTypes] = useState([])
+function Time(){
     const [currTime, setTime] = useState(new Date().toLocaleTimeString())
-    const [currWeather, setWeather] = useState({})
-
     useEffect(() => {
         const intervalID = setInterval(() => {
             setTime(new Date().toLocaleTimeString());
@@ -58,6 +16,19 @@ function Customers() {
 
         return () => clearInterval(intervalID);
     }, []);
+
+    return(<h4 className="notranslate">{currTime}</h4>)
+}
+
+function Customers() {
+    const [currI, setCurr] = useState(0)
+    const [sysState, setState] = useState("")
+    const [menu, setMenu] = useState([])
+    const [ItemList, setItems] = useState([]);
+    const [orderTypes, setOrderTypes] = useState([])
+    const [currWeather, setWeather] = useState({})
+
+    
 
     var translateWidgetAdded = false;
     const googleTranslateElementInit = () => {
@@ -293,7 +264,7 @@ function Customers() {
     
     return (
         <>
-            <h4 className="notranslate">{currTime}</h4>
+            <Time/>
             <div id="google_translate_element"></div>
             {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
@@ -344,11 +315,11 @@ function OrderButtons({setSys, orderTypes}){
                     </button>
             </div>
         ))}
-        <div className='CK-subMenuOptionsItem' key={8}>
+        {/* <div className='CK-subMenuOptionsItem' key={8}>
             <button onClick={() => buttonPressAction("A La Carte")}>
                 <div>A La Carte</div>
             </button>
-        </div>
+        </div> */}
         </ul>
     );
 }
