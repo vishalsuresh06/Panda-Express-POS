@@ -599,6 +599,7 @@ function SellsTogether() {
         <input type="date" defaultValue={startDate} key={startDate} onChange={changeStart}/>
         <input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd}/>
         <button onClick={queryPairs}>QUERY</button>
+
         {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
         {foodPairs.length > 0 && 
             <table className="mngr-settingsTable">
@@ -664,8 +665,8 @@ function Restock() {
         queryRestock();
     }, [])
 
-    return (<div className="mngr-restockReport">
-        <h2>RESTOCK REPORT</h2>
+    return (<div className="mngr-restockReport mngr-font">
+        <h2>Restock Report</h2>
         <button onClick={queryRestock}>Refresh</button>
         <table className="mngr-settingsTable">
             <thead>
@@ -964,6 +965,142 @@ function ProductUsage() {
     )
 }
 
+/*
+X & Z Reports:
+X - Gives a sales per hour of the current day, not saved
+Z - Provides an overview of sales for the entire sales day thus far. Saved for later viewing
+*/
+
+function XReport() {
+    const [loading, setLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalSales, setTotalSales] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/manager/xzreports?type=x`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const color = `rgba($10, 10, 10, 0.7)`;
+
+                let newDataset = {
+                    label: "Today's Sales ($)",
+                    backgroundColor: color,
+                    borderColor: color,
+                    data: [],
+                }
+
+                data.hourlySales.forEach((datapoint) => {
+                    newChartData.labels.push(datapoint.hour)
+                    newDataset.data.push(datapoint.sales)
+                }); 
+                
+                setTotalSales(data.totalSales);
+                setTotalOrders(data.totalOrders);
+                newChartData.datasets.push(newDataset)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+        setChartData(newChartData);
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    return (<div className="mngr-xreport mngr-font">
+        <h2>X Report</h2>
+        <button onClick={fetchData}>Refresh</button>
+        <br></br>
+        <p>Sales So Far ($): {Number(totalSales).toFixed(2)}</p>
+        <p>Orders So Far: {totalOrders}</p>
+        <div className='mngr-salescol'>
+                {(chartData && !loading) ? (
+                    <Line data={chartData} />
+                ) : (
+                    <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+                )}
+        </div>
+    </div>)
+}
+
+function ZReport() {
+    const [loading, setLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalSales, setTotalSales] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/manager/xzreports?type=z`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const color = `rgba($10, 10, 10, 0.7)`;
+
+                let newDataset = {
+                    label: "Today's Sales ($)",
+                    backgroundColor: color,
+                    borderColor: color,
+                    data: [],
+                }
+
+                data.hourlySales.forEach((datapoint) => {
+                    newChartData.labels.push(datapoint.hour)
+                    newDataset.data.push(datapoint.sales)
+                }); 
+                
+                setTotalSales(data.totalSales);
+                setTotalOrders(data.totalOrders);
+                newChartData.datasets.push(newDataset)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+        setChartData(newChartData);
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    return (<div className="mngr-zreport mngr-font">
+        <h2>Z Report</h2>
+        <button onClick={fetchData}>Refresh</button>
+        <br></br>
+        <p>Todays Sales ($): {Number(totalSales).toFixed(2)}</p>
+        <p>Total Orders: {totalOrders}</p>  
+        <div className='mngr-salescol'>
+                {(chartData && !loading) ? (
+                    <Line data={chartData} />
+                ) : (
+                    <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+                )}
+        </div>
+    </div>)
+}
+
 function Manager() {
     return (
         <>
@@ -978,9 +1115,13 @@ function Manager() {
                     <Link to="/manager/sales" className='mngr-btn'>Sales</Link>
                     <Link to="/manager/productusage" className='mngr-btn'>Product Usage</Link>
                     <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
+                </div>
+                <div className='mngr-nav'>
                     <Link to="/manager/excess" className='mngr-btn'>Excess Inventory</Link>
                     <Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together</Link>
                     <Link to="/manager/restock" className='mngr-btn'>Restock Report</Link>
+                    <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
+                    <Link to="/manager/zreport" className='mngr-btn'>Z Reports</Link>
                 </div>
                 <Outlet />
             </div>
@@ -988,4 +1129,6 @@ function Manager() {
     )
 }
 
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock, Sales, ProductUsage }
+export {    Manager, EmployeeEdit, MenuEdit, InventoryEdit, 
+            KitchenSettings, Excess, SellsTogether, Restock, 
+            Sales, ProductUsage, XReport, ZReport }

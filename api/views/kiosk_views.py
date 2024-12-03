@@ -6,6 +6,7 @@ from api.serializers import *
 from api.models import *
 from datetime import datetime
 from collections import Counter
+import pytz
 
 
 class KioskView(APIView):
@@ -19,10 +20,11 @@ class KioskView(APIView):
             orderData = request.data
             print(orderData)
 
+            timezone = pytz.timezone('America/Chicago')
             newOrder = Order.objects.create(
                 customer_name       = orderData["name"],
                 employee            = Employee.objects.get(name=orderData["employee"]),
-                date_created        = datetime.now(),
+                date_created        = timezone.localize(datetime.now()),
                 date_processed      = None,  
                 type                = orderData["type"],
                 status              = Order.PENDING,
