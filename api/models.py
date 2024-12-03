@@ -37,8 +37,6 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id}"
 
-
-
 class Employee(AbstractBaseUser):
     name = models.CharField(max_length=100)
     pin = models.CharField(max_length=6, default=1234)
@@ -50,7 +48,6 @@ class Employee(AbstractBaseUser):
     
     def __str__(self):
         return self.name
-
 
 class OrderItemType(models.Model):
     name = models.CharField(max_length=100)
@@ -133,3 +130,4 @@ class SettingParameter(models.Model):
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField()
     default = models.TextField()
+

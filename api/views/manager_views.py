@@ -1,15 +1,15 @@
 from django.http import JsonResponse
 from django.core import serializers
 from django.db.models import F, Sum, Count, Q
-from django.db.models.functions import TruncDay
+from django.db.models.functions import TruncDay, ExtractHour
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from api.serializers import *
 from api.models import *
-from collections import Counter
 from datetime import datetime, timedelta
+import pytz
 
 class EmployeeView(APIView):
     def get(self, request):
@@ -296,3 +296,80 @@ def inventoryQueryView(request, id):
     })
 
     return Response(final_results, status=status.HTTP_200_OK)
+
+class XZReports(APIView):
+    def getSalesToday(self):
+        timezone = pytz.timezone('America/Chicago')
+        today = timezone.localize(datetime.now())
+        startOfDay= today.replace(hour=0, minute=0, second=0, microsecond=0)
+        currentTime = timezone.localize(datetime.now());
+
+        return today, (
+            Order.objects.filter(
+                date_created__range=[startOfDay, currentTime],
+            )
+            .annotate(hour=ExtractHour("date_created"))
+            .values("hour")
+            .annotate(
+                hourlySales=Sum("total_price"),
+                hourlyOrders=Count("id")
+            )
+            .order_by("hour")
+        )
+
+    def generateXReport(self):
+        today, results = self.getSalesToday()
+
+        response = {
+            "date": today,
+            "totalSales": 0,
+            "totalOrders": 0,
+            "hourlySales": [{"hour": hour, "sales":0} for hour in range(today.hour+1)]
+        }
+        for result in results:
+            response["totalSales"] += result["hourlySales"]
+            response["totalOrders"] += result["hourlyOrders"]
+            response["hourlySales"][result["hour"]]["sales"] = float(result["hourlySales"])
+        
+        return JsonResponse(response, status=status.HTTP_200_OK)
+
+    def generateZReport(self):
+        today, results = self.getSalesToday()
+
+        response = {
+            "date": today,
+            "totalSales": 0,
+            "totalOrders": 0,
+            "hourlySales": [{"hour": hour, "sales":0} for hour in range(24)]
+        }
+        for result in results:
+            response["totalSales"] += result["hourlySales"]
+            response["totalOrders"] += result["hourlyOrders"]
+            response["hourlySales"][result["hour"]]["sales"] = float(result["hourlySales"])
+        
+        return JsonResponse(response, status=status.HTTP_200_OK)
+    
+    def get(self, request):
+        try:
+            reportType = request.GET.get("type")
+            if reportType == "x":
+                return self.generateXReport()
+            elif reportType == "z":
+                return self.generateZReport()
+            else:
+                raise Exception("Invalid Report Type")
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        pass
+
+
+
+
+
+
+
+    
