@@ -15,6 +15,15 @@ function ItemSelection() {
     apps: [],
   });
 
+  const [itemPrices, setItemPrices] = useState({
+    bowl: 0,
+    plate: 0,
+    cub_meal: 0,
+    family_feast: 0,
+    bigger_plate: 0,
+    a_la_carte: 0,
+  });
+
   const [selection, setSelection] = useState({
     type: "",
     sides: [],
@@ -30,6 +39,7 @@ function ItemSelection() {
 
   useEffect(() => {
     fetchMenuItems();
+    fetchOrderTypes();
   }, []);
 
   const setSelectionType = (type) => {
@@ -65,6 +75,39 @@ function ItemSelection() {
     }
   };
 
+  const fetchOrderTypes = async () => {
+    try {
+      const response = await fetch(`${apiURL}/api/kiosk_orders`);
+      if (response.ok) {
+        const data = await response.json();
+        setItemPrices({
+          bowl: Number(
+            data.find((item) => item.name === "Bowl")?.base_price || 0
+          ),
+          plate: Number(
+            data.find((item) => item.name === "Plate")?.base_price || 0
+          ),
+          cub_meal: Number(
+            data.find((item) => item.name === "Cub Meal")?.base_price || 0
+          ),
+          family_feast: Number(
+            data.find((item) => item.name === "Family Feast")?.base_price || 0
+          ),
+          bigger_plate: Number(
+            data.find((item) => item.name === "Bigger Plate")?.base_price || 0
+          ),
+          a_la_carte: Number(
+            data.find((item) => item.name === "A La Carte")?.base_price || 0
+          ),
+        });
+      } else {
+        console.error("Failed to fetch orderTypes items.");
+      }
+    } catch (error) {
+      console.error("Error fetching orderTypes items:", error);
+    }
+  };
+
   const handleSelection = (type, item) => {
     setSelection((prev) => ({
       ...prev,
@@ -81,12 +124,18 @@ function ItemSelection() {
     let drinkPrice = getDrinkPrice();
     let appPrice = getAppPrice();
 
-    return (basePrice + upcharge + drinkPrice + appPrice).toFixed(2);
+    return Number(basePrice + upcharge + drinkPrice + appPrice).toFixed(2);
   };
 
   const getBasePrice = (type) => {
-    const prices = [8.6, 9.8, 11.3, 6.6, 35.0];
-    return prices[type] || 0;
+    const prices = [
+      itemPrices.bowl,
+      itemPrices.plate,
+      itemPrices.bigger_plate,
+      itemPrices.cub_meal,
+      itemPrices.family_feast,
+    ];
+    return Number(prices[type]);
   };
 
   const calculateUpcharges = () => {

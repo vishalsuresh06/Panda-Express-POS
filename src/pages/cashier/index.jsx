@@ -65,7 +65,18 @@ function Cashier() {
     setItems((prevItems) => {
       const itemToRemove = prevItems[index];
       const updatedItems = prevItems.filter((_, i) => i !== index);
-      setTotal((prevTotal) => prevTotal - itemToRemove.price); // Update total separately
+
+      // Update total by subtracting the price of the item removed
+      const updatedTotal = updatedItems.reduce(
+        (total, item) => total + item.price,
+        0
+      );
+
+      // Update both state and localStorage immediately
+      setTotal(updatedTotal);
+      localStorage.setItem("items", JSON.stringify(updatedItems));
+      localStorage.setItem("total", String(updatedTotal));
+
       return updatedItems;
     });
   };
@@ -87,12 +98,13 @@ function Cashier() {
   };
 
   const handleInventory = () => {
-    navigate("/manager/inventory");
+    navigate("/manager/inventory", { state: { isManager } });
   };
 
   const deleteCheckout = () => {
     setItems([]);
     setTotal(0);
+
     localStorage.setItem("items", JSON.stringify([]));
     localStorage.setItem("total", "0");
   };
