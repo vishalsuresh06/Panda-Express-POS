@@ -19,6 +19,7 @@ import Cashiers from "./pages/cashier";
 import Customers from "./pages/customers";
 import { Kitchen, KitchenOrders, RecentOrders } from "./pages/kitchen";
 import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";
+import CateringItemSelection from "./pages/cashier/components/cateringItemSelection.jsx";
 import Menu from "./pages/menu";
 import SizesFeaturedPopular from "./pages/menu/SizesFeaturedPopular";
 import Entrees from "./pages/menu/Entrees";
@@ -62,6 +63,7 @@ function App() {
 
         <Route path="/itemSelection" element={<ItemSelection />} />
         <Route path="/catering" element={<Catering />} />
+        <Route path="/cateringSelection" element={<CateringItemSelection />} />
 
         <Route path="/customer" element={<Customers />} />
 

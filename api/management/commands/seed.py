@@ -106,10 +106,11 @@ class Command(BaseCommand):
             ("Party Size Side", 16.00),
             ("Party Size Entree", 41.00),
             ("Party Size Appetizer", 41.00),
-            ("1216 Bundle", 108.00),
-            ("1812 Bundle", 154.00),
-            ("2630 Bundle", 194.00),
+            ("Bundle One", 108.00),
+            ("Bundle Two", 154.00),
+            ("Bundle Three", 194.00),
         ]
+        
         for name, base_price in order_item_types:
             item_type = OrderItemType.objects.create(name=name, base_price=base_price)
 

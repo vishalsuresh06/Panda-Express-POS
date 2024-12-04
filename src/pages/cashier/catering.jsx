@@ -45,9 +45,8 @@ function Catering() {
     navigate("/cashier");
   };
 
-  const handleButtonAction = (action) => {
-    console.log(`Button ${action} clicked`);
-    // Add navigation or action logic here
+  const handleButtonAction = (itemType) => {
+    navigate("/cateringSelection", { state: { itemType } });
   };
 
   return (
@@ -74,7 +73,7 @@ function Catering() {
           <button
             key={index}
             className="cshr_largeBtn"
-            onClick={() => handleButtonAction(action)}
+            onClick={() => handleButtonAction(index)}
           >
             {action}
           </button>
