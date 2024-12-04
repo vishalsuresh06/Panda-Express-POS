@@ -39,6 +39,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True, read_only=True)
+    employee = EmployeeSerializer()
     
     class Meta:
         model = Order

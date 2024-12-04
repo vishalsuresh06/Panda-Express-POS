@@ -499,10 +499,6 @@ function KitchenSettings() {
     </KitchenSettingsContext.Provider>)
 }
 
-function getToday() {
-    return new Date().toISOString().split('T')[0];
-}
-
 function Excess() {
     const [targetTime, setTargetTime] = useState("2023-01-01");
     const [excessItems, setExcessItems] = useState([]);
@@ -965,12 +961,6 @@ function ProductUsage() {
     )
 }
 
-/*
-X & Z Reports:
-X - Gives a sales per hour of the current day, not saved
-Z - Provides an overview of sales for the entire sales day thus far. Saved for later viewing
-*/
-
 function XReport() {
     const [loading, setLoading] = useState(false);
     const [chartData, setChartData] = useState(null);
@@ -1101,6 +1091,114 @@ function ZReport() {
     </div>)
 }
 
+function getToday() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
+
+function OrderItemCard({orderItem}) {
+	return (<div className="mngr-orderItemCard">
+		<h3> {orderItem.order_item_type.name} </h3>
+		<ul> {
+			
+			orderItem.food_items.map((food_item, index) => (
+				<li className="notranslate" key={index}>&ensp; {food_item.quantity} x {food_item.food_item} </li>
+			))
+
+		} </ul>
+	</div>)
+}
+
+function OrderCard({order, handleDelete}) {
+    return (<div className="mngr-orderCard">
+		<div className="mngr-orderCardHeaders">	
+			<h3 className="mngr-orderInfo"> #{order.id} for "{order.customer_name}" </h3>
+            <h3>{new Date(order.date_created).toDateString()} {new Date(order.date_created).toLocaleTimeString()}</h3>
+            <h3>Employee: {order.employee.name}</h3>
+            <h3 className="mngr-orderTotal">${order.total_price}</h3>
+		</div>
+
+        <div className="mngr-orderCardBody">
+            <ul className="mngr-orderItemList"> 
+                {
+                    order.order_items.map((orderItem, index) => (
+                        <li key={index}> <OrderItemCard orderItem={orderItem}/> </li>
+                    ))
+                } 
+            </ul>
+
+            <div className="mngr-cardButtons">
+                <button className="kt-cancel" onClick={() => handleDelete(order)}> Delete </button>
+		    </div>
+        </div>
+
+	</div>)
+}
+
+function OrderHistory() {
+    const [date, setDate] = useState(getToday());
+    const [orders, setOrders] = useState([]);
+
+    const changeDate = (event) => {
+        setDate(event.target.value);
+    }
+
+    const fetchOrders = async () => {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/orderhistory?date=${date}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrders(data);
+            } else {
+                setOrders([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setOrders([]);
+        }
+    }
+
+    const handleDelete = async (order) => {
+		let reqBody = { orderID: order.id }
+        try {
+            let response = await fetch(`${apiURL}/api/manager/orderhistory`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
+
+            fetchOrders();
+			return response.ok;
+			
+        } catch (error) { return false; }
+    }
+
+    useEffect(() => {
+        fetchOrders();
+    }, [])
+
+    return (<div className="mngr-orderhist mngr-font">
+        <h2>Order History</h2>
+        <input type="date" defaultValue={date} key={date} onChange={changeDate}/>
+        <button onClick={fetchOrders}>Query Date</button>
+        <ul className="mngr-orderList">
+            {orders.map((order, index) => (
+				<li key={index}> 
+					<OrderCard order={order} handleDelete={handleDelete}/> 
+				</li>
+			))}
+        </ul>
+    </div>)
+}
+
 function Manager() {
     return (
         <>
@@ -1122,6 +1220,7 @@ function Manager() {
                     <Link to="/manager/restock" className='mngr-btn'>Restock Report</Link>
                     <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
                     <Link to="/manager/zreport" className='mngr-btn'>Z Reports</Link>
+                    <Link to="/manager/orderhistory" className='mngr-btn'>Order History</Link>
                 </div>
                 <Outlet />
             </div>
@@ -1129,6 +1228,6 @@ function Manager() {
     )
 }
 
-export {    Manager, EmployeeEdit, MenuEdit, InventoryEdit, 
-            KitchenSettings, Excess, SellsTogether, Restock, 
-            Sales, ProductUsage, XReport, ZReport }
+export {Manager, EmployeeEdit, MenuEdit, InventoryEdit, 
+        KitchenSettings, Excess, SellsTogether, Restock, 
+        Sales, ProductUsage, XReport, ZReport, OrderHistory}
