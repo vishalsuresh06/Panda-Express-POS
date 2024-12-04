@@ -1,185 +1,180 @@
-/* General container for Item Selection */
-.cshr_itemSelectionContainer {
+/* General container */
+.cshr_itemContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
   max-width: 600px;
+  border: 2px solid #c8102e;
 }
 
-/* Header for each item type */
-.cshr_itemSelectionTitle {
+/* Labels */
+.cshr_typeLbl {
   font-size: 24px;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-/* Buttons for selection */
-.cshr_itemSelectionBtn {
-  width: 100%;
-  padding: 12px;
-  font-size: 18px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: center;
-  cursor: pointer;
+  color: #c8102e;
   margin-bottom: 10px;
 }
 
-.cshr_itemSelectionBtn:hover {
-  background-color: #e0e0e0;
+.cshr_detailsContainer h3,
+.cshr_sidesLbl,
+.cshr_entreesLbl {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+  margin: 10px 0 5px;
 }
 
-/* Confirm Button */
-.cshr_confirmBtn {
-  width: 100%;
-  padding: 12px;
-  font-size: 18px;
-  background-color: #333;
-  color: #fff;
+.cshr_sideList,
+.cshr_entreeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cshr_sideItem,
+.cshr_entreeItem {
+  font-size: 16px;
+  color: #333;
+  margin: 5px 0;
+}
+
+/* Button */
+.cshr_deleteBtn {
+  align-self: flex-end;
+  background-color: #c8102e;
+  color: #ff0000;
+  font-size: 16px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   margin-top: 20px;
 }
 
-.cshr_confirmBtn:hover {
-  background-color: #777;
+.cshr_deleteBtn:hover {
+  background-color: #a60d22;
 }
 
-/* Style for the different sections (e.g., sides, entrees) */
-.cshr_sectionContainer {
+/* General Container */
+.cshr_itemsContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  background-color: #fff5e6; /* Subtle background */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #c8102e; /* Accent color */
+}
+
+/* Section Labels */
+.cshr_bowlLabel,
+.cshr_plateLabel,
+.cshr_bPlateLabel,
+.cshr_bowlLabel,
+.cshr_ffLabel,
+.cshr_acLabel {
+  font-size: 28px;
+  font-weight: bold;
+  color: #c8102e;
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.cshr_sectionTitle {
-  font-size: 18px;
-  font-weight: bold;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-.cshr_sectionList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.cshr_sectionItemBtn {
-  padding: 10px 15px;
+.cshr_confirmBtn {
+  background-color: #c8102e; /* Panda Express red */
+  color: white;
   font-size: 16px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-}
-
-.cshr_sectionItemBtn:hover {
-  background-color: #e0e0e0;
-}
-
-/* Price display */
-.cshr_priceContainer {
-  display: flex;
-  justify-content: space-between;
+  transition: background-color 0.3s ease;
   margin-top: 20px;
 }
 
-.cshr_priceLabel {
-  font-size: 18px;
-  font-weight: bold;
-  color: #555;
-}
-
-.cshr_priceValue {
-  font-size: 18px;
-  color: #333;
-}
-
-button {
-  font-family: Arial, sans-serif;
-  padding: 10px 15px;
-  margin: 10px;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-}
-
-button:hover {
-  background-color: #0056b3;
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.cshr_sideBtn {
-  background-color: #f0ad4e;
-  color: white;
-}
-
-.cshr_sideBtn:hover {
-  background-color: #ec971f;
-}
-
-.cshr_entreeBtn {
-  background-color: #5bc0de;
-  color: white;
-}
-
-.cshr_entreeBtn:hover {
-  background-color: #31b0d5;
-}
-
-.cshr_appBtn {
-  background-color: #d9534f;
-  color: white;
-}
-
-.cshr_appBtn:hover {
-  background-color: #c9302c;
-}
-
-.cshr_confirmBtn {
-  background-color: #5cb85c;
-  color: white;
-  padding: 12px 20px;
-  font-size: 1.1rem;
-}
-
 .cshr_confirmBtn:hover {
-  background-color: #4cae4c;
+  background-color: #a60d22; /* Darker red */
 }
 
-.cshr_sideBtnContainer,
-.cshr_drinkBtnContainer,
-.cshr_famFeastSideContainer,
-.cshr_appaLCContainer {
+/* Section Layout */
+.cshr_bowlContainer,
+.cshr_plateContainer,
+.cshr_bPlateContainer,
+.cshr_ffContainer,
+.cshr_drinkContainer,
+.cshr_acContainer,
+.cshr_saContainer {
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.selected {
-  background-color: #4caf50; /* Green */
-  color: white;
+.cshr_bowlContainer h1,
+.cshr_plateContainer h1,
+.cshr_bPlateContainer h1,
+.cshr_ffContainer h1,
+.cshr_drinkContainer h1,
+.cshr_acContainer h1,
+.cshr_saContainer h1 {
+  color: #c8102e;
+}
+
+/* Buttons for Items */
+.cshr_sidesBtn,
+.cshr_entreesBtn,
+.cshr_drinkBtn,
+.cshr_appBtn {
+  background-color: #f0f0f0; /* Neutral background */
+  border: 2px solid #c8102e; /* Accent border */
+  color: #333;
+  font-size: 16px;
   font-weight: bold;
+  padding: 12px;
+  margin: 10px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.greyed-out {
-  background-color: #d3d3d3;
-  color: #a9a9a9;
-  pointer-events: none;
-  opacity: 0.6;
+.cshr_sidesBtn:hover,
+.cshr_entreesBtn:hover,
+.cshr_drinkBtn:hover,
+.cshr_appBtn:hover {
+  background-color: #fcebb6;
+  transform: scale(1.05);
+}
+
+.cshr_sidesBtn.selected,
+.cshr_entreesBtn.selected,
+.cshr_drinkBtn.selected,
+.cshr_appBtn.selected {
+  background-color: #c8102e;
+  color: white;
+}
+
+/* Buttons Layout */
+.cshr_bowlContainer button,
+.cshr_plateContainer button,
+.cshr_bPlateContainer button,
+.cshr_ffContainer button,
+.cshr_drinkContainer button,
+.cshr_acContainer button,
+.cshr_saContainer button {
+  display: inline-block;
+  width: calc(33.33% - 20px);
+  margin: 10px;
+  text-align: center;
+  word-wrap: break-word;
+  white-space: normal;
 }

@@ -19,7 +19,6 @@ function Cashier() {
   const [isManager, setIsManager] = useState(
     sessionStorage.getItem("isManager") === "true" || false
   );
-  const [isTogo, setIsTogo] = useState(false); // New state for to-go checkbox
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,40 +63,10 @@ function Cashier() {
     return () => clearInterval(interval);
   }, []);
 
-  const check = async (name, togo) => {
-    if (name === "" || items.length === 0) {
-      return;
-    }
-
-    const totalWithTax = total * 1.08;
-
-    const orderJSON = {
-      name: name,
-      type: togo ? "togo" : "here",
-      total: totalWithTax,
-      employee: "kiosk",
-      orderItems: items,
-    };
-    try {
-      let response = await fetch(`${apiURL}/api/kiosk/`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderJSON),
-      });
-
-      clear();
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  };
-
   // Handlers
   const handleDeleteItem = (index) => {
     setItems((prevItems) => {
+      const itemToRemove = prevItems[index];
       const updatedItems = prevItems.filter((_, i) => i !== index);
 
       // Update total by subtracting the price of the item removed
@@ -139,10 +108,6 @@ function Cashier() {
     navigate("/catering");
   };
 
-  const handleCheckout = () => {
-    check(employee, isTogo); // Pass isTogo state
-  };
-
   const deleteCheckout = () => {
     setItems([]);
     setTotal(0);
@@ -166,11 +131,8 @@ function Cashier() {
       <CheckoutSection
         items={items}
         total={total}
-        isTogo={isTogo}
-        setIsTogo={setIsTogo} // Pass setIsTogo handler
         handleDeleteItem={handleDeleteItem}
         deleteCheckout={deleteCheckout}
-        handleCheckout={handleCheckout}
       />
 
       <OrderingSection handleNavigation={handleNavigation} />
@@ -209,15 +171,7 @@ function NavBar({
 }
 
 // CheckoutSection Component
-function CheckoutSection({
-  items,
-  total,
-  isTogo,
-  setIsTogo,
-  handleDeleteItem,
-  deleteCheckout,
-  handleCheckout,
-}) {
+function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
   return (
     <div className="cshr_checkoutSection">
       <div className="cshr_itemDisplay">
@@ -235,25 +189,11 @@ function CheckoutSection({
         <h1 className="cshr_totalLbl">Total: </h1>
         <p className="cshr_total">{(total * 1.08).toFixed(2)}</p>
       </div>
-      <div className="cshr_togoContainer">
-        <input
-          type="checkbox"
-          id="togoCheckbox"
-          className="cshr_togoCheckbox"
-          checked={isTogo} // Bind to state
-          onChange={(e) => setIsTogo(e.target.checked)} // Update state
-        />
-        <label htmlFor="togoCheckbox" className="cshr_togoLabel">
-          To-Go
-        </label>
-      </div>
       <div className="cshr_chckAndClearBtnContainer">
         <button className="clrBtn" onClick={deleteCheckout}>
           Clear
         </button>
-        <button className="chkbtn" onClick={handleCheckout}>
-          Checkout
-        </button>
+        <button className="chkbtn">Checkout</button>
       </div>
     </div>
   );
@@ -299,33 +239,45 @@ function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
             <p className="cshr_priceValue">${price}</p>
           </>
         )}
-        {entrees?.length > 0 && (
-          <>
-            <h3 className="cshr_entreesLbl">Entrees:</h3>
-            <p className="cshr_entreesValue">{entrees.join(", ")}</p>
-          </>
-        )}
-        {sides?.length > 0 && (
-          <>
-            <h3 className="cshr_sidesLbl">Sides:</h3>
-            <p className="cshr_sidesValue">{sides.join(", ")}</p>
-          </>
-        )}
-        {drink && (
-          <>
-            <h3 className="cshr_drinkLbl">Drink:</h3>
-            <p className="cshr_drinkValue">{drink}</p>
-          </>
-        )}
-        {app && (
-          <>
-            <h3 className="cshr_appLbl">Appetizer:</h3>
-            <p className="cshr_appValue">{app}</p>
-          </>
-        )}
       </div>
-      <button className="cshr_deleteItemBtn" onClick={onDelete}>
-        Delete
+      {sides[0] !== "" && (
+        <div className="cshr_sidesContainer">
+          <h3 className="cshr_sidesLbl">Sides:</h3>
+          <ul className="cshr_sideList">
+            {sides.map((side, index) => (
+              <li key={index} className="cshr_sideItem">
+                {side}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {entrees[0] !== "" && (
+        <div className="cshr_entreesContainer">
+          <h3 className="cshr_entreesLbl">Entrees:</h3>
+          <ul className="cshr_entreeList">
+            {entrees.map((entree, index) => (
+              <li key={index} className="cshr_entreeItem">
+                {entree}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {drink && (
+        <div>
+          <h3>Drinks: </h3>
+          <p className="cshr_drinkValue">{drink}</p>
+        </div>
+      )}
+      {app && (
+        <div>
+          <h3>Appetizers: </h3>
+          <p className="cshr_drinkValue">{app}</p>
+        </div>
+      )}
+      <button className="cshr_deleteBtn" onClick={onDelete}>
+        X
       </button>
     </div>
   );

@@ -123,7 +123,7 @@ function CateringItemSelection() {
 
       return {
         ...prev,
-        [type]: prev[type] === item.name ? "" : item.name,
+        app: item.name,
       };
     });
   };
@@ -173,17 +173,29 @@ function CateringItemSelection() {
   );
 
   const renderTypeSpecificItems = () => {
+    const renderConfirmButton = () => (
+      <button className="cshr_confirmBtn" onClick={handleConfirm}>
+        Confirm
+      </button>
+    );
+
     switch (itemType) {
       case 0:
+        return renderBundle(1, 0);
       case 1:
+        return renderBundle(0, 1);
       case 2:
-        return renderSection(
-          "Choose Item",
-          menuItems[
-            itemType === 0 ? "sides" : itemType === 1 ? "entrees" : "apps"
-          ],
-          itemType === 0 ? "sides" : itemType === 1 ? "entrees" : "app"
-        );
+        return (
+          <div className="cshr_appContainer">
+            {renderSection(
+              "Select Your Appetizer",
+              menuItems.apps,
+              "apps",
+              "app"
+            )}
+            {renderConfirmButton()}
+          </div>
+        ); // Appetizer
       case 3:
         return renderBundle(2, 2);
       case 4:
