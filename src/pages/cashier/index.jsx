@@ -104,6 +104,10 @@ function Cashier() {
     navigate("/manager/inventory", { state: { isManager } });
   };
 
+  const handleCatering = () => {
+    navigate("/catering");
+  };
+
   const deleteCheckout = () => {
     setItems([]);
     setTotal(0);
@@ -121,6 +125,7 @@ function Cashier() {
         handleLogout={handleLogout}
         handleManager={handleManager}
         handleInventory={handleInventory}
+        handleCatering={handleCatering}
       />
 
       <CheckoutSection
@@ -128,6 +133,7 @@ function Cashier() {
         total={total}
         handleDeleteItem={handleDeleteItem}
         deleteCheckout={deleteCheckout}
+        handleCheckout={handleCheckout}
       />
 
       <OrderingSection handleNavigation={handleNavigation} />
@@ -143,6 +149,7 @@ function NavBar({
   handleLogout,
   handleManager,
   handleInventory,
+  handleCatering,
 }) {
   return (
     <div className="cshr_navBar">
@@ -154,7 +161,9 @@ function NavBar({
       <button className="cshr_managerBtn" onClick={handleManager}>
         {isManager ? "Manager" : ""}
       </button>
-      <button className="cshr_cateringBtn">Catering</button>
+      <button className="cshr_cateringBtn" onClick={handleCatering}>
+        Catering
+      </button>
       <button className="cshr_inventoryBtn" onClick={handleInventory}>
         Inventory
       </button>
@@ -163,7 +172,13 @@ function NavBar({
 }
 
 // CheckoutSection Component
-function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
+function CheckoutSection({
+  items,
+  total,
+  handleDeleteItem,
+  deleteCheckout,
+  handleCheckout,
+}) {
   return (
     <div className="cshr_checkoutSection">
       <div className="cshr_itemDisplay">
@@ -185,7 +200,9 @@ function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
         <button className="clrBtn" onClick={deleteCheckout}>
           Clear
         </button>
-        <button className="chkbtn">Checkout</button>
+        <button className="chkbtn" onClick={handleCheckout}>
+          Checkout
+        </button>
       </div>
     </div>
   );
