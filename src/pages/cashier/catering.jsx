@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./index.css";
 import { logout } from "../../utils/Auth";
+import "./stylesheets/catering.css";
 
 // Main Cashier Component
 function Catering() {

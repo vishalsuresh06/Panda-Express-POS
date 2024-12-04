@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { apiURL } from "../../../config";
-import "./components.css";
+import "../stylesheets/itemSelection.css";
 
 function ItemSelection() {
   const location = useLocation();
