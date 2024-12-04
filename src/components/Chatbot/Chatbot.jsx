@@ -8,8 +8,12 @@ const Chatbot = () => {
   const handleSend = async () => {
     if (!userInput.trim()) return;
 
+    // Add user's input to the messages array (shown as-is)
     const newMessages = [...messages, { text: userInput, sender: "user" }];
     setMessages(newMessages);
+
+    // Append " from Panda Express" to the query sent to the backend
+    const formattedQuery = `${userInput} from Panda Express`;
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/chatbot/", {
@@ -17,7 +21,7 @@ const Chatbot = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: userInput }),
+        body: JSON.stringify({ query: formattedQuery }), // Send formatted query
       });
 
       const data = await response.json();
@@ -29,6 +33,7 @@ const Chatbot = () => {
       console.error("Error communicating with chatbot:", error);
     }
 
+    // Clear input field
     setUserInput("");
   };
 
@@ -60,3 +65,4 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
