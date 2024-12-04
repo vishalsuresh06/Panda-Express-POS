@@ -154,22 +154,25 @@ function CateringItemSelection() {
 
   const renderButtons = (items, type, slot = "") =>
     items.map((item, index) => (
-      <button
-        key={index}
-        className={`cshr_${type}Btn ${
-          slot ? selection[slot] === item.name : selection[type] === item.name
-        }`}
-        onClick={() => handleSelection(type, item, slot)}
-      >
-        {item.name}
-      </button>
+      <div className="cshr_cateringRenderBtnContainer" key={index}>
+        <button
+          className={`cshr_${type}Btn ${
+            slot
+              ? selection[slot] === item.name && "highlighted"
+              : selection[type] === item.name && "highlighted"
+          }`}
+          onClick={() => handleSelection(type, item, slot)}
+        >
+          {item.name}
+        </button>
+      </div>
     ));
 
   const renderSection = (label, items, type, slot = "") => (
-    <>
+    <div className="cshr_cateringRenderSectionContainer">
       <h1>{label}</h1>
       {renderButtons(items, type, slot)}
-    </>
+    </div>
   );
 
   const renderTypeSpecificItems = () => {
@@ -220,13 +223,17 @@ function CateringItemSelection() {
           `entree${i + 1}`
         )
       )}
-      <button className="cshr_confirmBtn" onClick={handleConfirm}>
+      <button className="cshr_cateringConfirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
     </div>
   );
 
-  return <div className="cshr_itemsContainer">{renderTypeSpecificItems()}</div>;
+  return (
+    <div className="cshr_cateringItemsContainer">
+      {renderTypeSpecificItems()}
+    </div>
+  );
 }
 
 export default CateringItemSelection;

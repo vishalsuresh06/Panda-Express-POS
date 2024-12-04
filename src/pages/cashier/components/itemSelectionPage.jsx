@@ -185,27 +185,29 @@ function ItemSelection() {
 
   const renderButtons = (items, type, slot = "") => {
     return items.map((item, index) => (
-      <button
-        key={index}
-        className={`cshr_${type}Btn ${
-          (
-            slot
-              ? selection[slot] === item.name
-              : selection[type].includes(item.name)
-          )
-            ? "selected"
-            : ""
-        }`}
-        onClick={() => handleSelection(type, item, slot)}
-      >
-        {item.name}
-      </button>
+      <div className="cshr_renderBtnContainer">
+        <button
+          key={index}
+          className={`cshr_${type}Btn ${
+            (
+              slot
+                ? selection[slot] === item.name
+                : selection[type].includes(item.name)
+            )
+              ? "selected"
+              : ""
+          }`}
+          onClick={() => handleSelection(type, item, slot)}
+        >
+          {item.name}
+        </button>
+      </div>
     ));
   };
 
   const renderSection = (label, items, type, slot = "") => (
     <>
-      <h1>{label}</h1>
+      <h1 className="cshr_renderSectionLabel">{label}</h1>
       {renderButtons(items, type, slot)}
     </>
   );
