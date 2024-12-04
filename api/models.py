@@ -1,5 +1,6 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 #TODO restrict food item types 
 
@@ -39,14 +40,17 @@ class Order(models.Model):
 
 
 
-class Employee(AbstractBaseUser):
+class Employee(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
-    pin = models.CharField(max_length=6, default=1234)
+    pin = models.CharField(max_length=6, default="1234")
     is_manager = models.BooleanField(default=False)
     wage = models.DecimalField(decimal_places=2, max_digits=10)
+    is_active = models.BooleanField(default=True)  # Required for AbstractBaseUser
+    is_staff = models.BooleanField(default=False)  # Required for admin access
 
-    USERNAME_FIELD='id'
-    
+    USERNAME_FIELD = 'id'  # Field to use as the unique identifier
+    REQUIRED_FIELDS = ['name']  # Other required fields during user creation
+
     def __str__(self):
         return self.name
 

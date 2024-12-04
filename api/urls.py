@@ -1,9 +1,10 @@
 from django.urls import path, include
-from api.views import cashier_views, kiosk_views, kitchen_views, manager_views, menu_views, auth_views, general_views
+from api.views import cashier_views, chatbot_views, kiosk_views, kitchen_views, manager_views, menu_views, auth_views, general_views
 from django.conf import settings
 from django.conf.urls.static import static
 from api.views.menu_views import MenuView
-  
+from api.views.chatbot_views import ChatBotView
+
 urlpatterns = [
     path('login/', auth_views.pinLogin),
     path("food-items/", MenuView.as_view(), name="food_items"),
@@ -21,6 +22,7 @@ urlpatterns = [
 	  path("manager/excess", manager_views.ExcessView.as_view(), name="excess"),
 	  path("manager/sellstogether", manager_views.SellsTogetherView.as_view(), name="sellstogether"),
 	  path("manager/restock", manager_views.RestockView.as_view(), name="restock"),
+      path("chatbot/", ChatBotView.as_view(), name="chatbot"),
 ]
 
 if settings.DEBUG:

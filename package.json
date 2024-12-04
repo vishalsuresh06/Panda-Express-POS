@@ -11,8 +11,8 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
+    "@uiw/react-color": "^2.3.3",
     "axios": "^1.7.7",
-    "@uiw/react-color": "^2.3.2",
     "chart.js": "^4.4.6",
     "dotenv": "^16.4.5",
     "pg": "^8.13.1",

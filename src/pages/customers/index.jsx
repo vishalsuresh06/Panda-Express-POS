@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiURL, WEATHER_API_KEY } from '../../config.js';
 import CheckoutView from "./CheckoutView";
+import Chatbot from '@components/Chatbot/Chatbot';
 import "./kiosk.css"
 const WEATHER_REFRESH_MIN = 10
 
@@ -296,6 +297,10 @@ function Customers() {
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
             {/* <WaterButton menu= {menu} addItem = {addItem}/> */}
             {Order()}
+            {/* Chatbot Integration */}
+            <div className="chatbot-container">
+                <Chatbot menu={menu} />
+            </div>
         </>
     );
 }
