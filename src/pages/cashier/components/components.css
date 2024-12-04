@@ -104,3 +104,74 @@
   font-size: 18px;
   color: #333;
 }
+
+button {
+  font-family: Arial, sans-serif;
+  padding: 10px 15px;
+  margin: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cshr_sideBtn {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.cshr_sideBtn:hover {
+  background-color: #ec971f;
+}
+
+.cshr_entreeBtn {
+  background-color: #5bc0de;
+  color: white;
+}
+
+.cshr_entreeBtn:hover {
+  background-color: #31b0d5;
+}
+
+.cshr_appBtn {
+  background-color: #d9534f;
+  color: white;
+}
+
+.cshr_appBtn:hover {
+  background-color: #c9302c;
+}
+
+.cshr_confirmBtn {
+  background-color: #5cb85c;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1.1rem;
+}
+
+.cshr_confirmBtn:hover {
+  background-color: #4cae4c;
+}
+
+.cshr_sideBtnContainer,
+.cshr_drinkBtnContainer,
+.cshr_famFeastSideContainer,
+.cshr_appaLCContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}

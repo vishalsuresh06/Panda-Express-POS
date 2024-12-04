@@ -140,6 +140,8 @@
   border-radius: 8px;
   text-align: center;
   cursor: pointer;
+  position: relative;
+  left: -140px;
 }
 
 .cshr_typeBtn:hover {
@@ -205,26 +207,4 @@
 
 .cshr_deleteBtn:hover {
   background-color: #c0392b;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .cshr_itemContainer {
-    padding: 15px;
-  }
-
-  .cshr_typeLbl {
-    font-size: 20px;
-  }
-
-  .cshr_detailsContainer h3,
-  .cshr_sidesLbl,
-  .cshr_entreesLbl {
-    font-size: 16px;
-  }
-
-  .cshr_deleteBtn {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
 }
