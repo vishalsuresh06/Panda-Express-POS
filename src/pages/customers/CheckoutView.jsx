@@ -1,5 +1,10 @@
 import "./checkoutView.css"
 
+/**
+ * 
+ * @param {JSON, function} param0 
+ * @returns HTML list of order items with removal functionality
+ */
 function OrderItems({ItemList, remove_Item}) {
     return(
         <ul>
@@ -22,6 +27,11 @@ function OrderItems({ItemList, remove_Item}) {
     );
 }
 
+/**
+ * 
+ * @param {JSON} items 
+ * @returns An HTML float of the subtotal
+ */
 function Subtotal(items){
     const total = Object.values(items).flat().reduce((sum, item) => {
         return sum + Number(item.price)
@@ -36,6 +46,11 @@ function Subtotal(items){
     );
 }
 
+/**
+ * links all needed helper functions to the buttons made here, creates the left checkout sidebar
+ * @param {JSON, function, function, function} param0 
+ * @returns HTML for the left current order sidebar
+ */
 export default function CheckoutView({ItemList, removeAll, remove_Item, checkout}) {
     // console.log(ItemList)
 return (
@@ -59,7 +74,11 @@ return (
 }
 
 
-
+/**
+ * 
+ * @param {JSON} items 
+ * @returns HTML float of the final total
+ */
 function getTotal(items={ItemList}){
     // console.log(Object.values(items).flat())
     const total = Object.values(items).flat().reduce((sum, item) => {
