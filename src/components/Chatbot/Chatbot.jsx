@@ -1,10 +1,29 @@
+/**
+ * @module Chatbot
+ */
+
 import React, { useState } from "react";
 import "./Chatbot.css"; // Optional: Create a CSS file for chatbot styling
 
+/**
+ * A functional component that serves as a chatbot interface.
+ *
+ * @function Chatbot
+ * @returns {JSX.Element} The rendered chatbot component.
+ */
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
 
+  /**
+   * Handles sending a message to the chatbot backend.
+   * Formats the user's query by appending " from Panda Express" before sending.
+   * Updates the chat UI with both user input and bot responses.
+   *
+   * @async
+   * @function handleSend
+   */
+  
   const handleSend = async () => {
     if (!userInput.trim()) return;
 

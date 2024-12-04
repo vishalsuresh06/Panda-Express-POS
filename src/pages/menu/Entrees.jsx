@@ -1,6 +1,17 @@
+/**
+ * @module Menu
+ */
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./menu.css";
+
+/**
+ * A component that fetches and displays a list of entrees from the backend.
+ *
+ * @function Entrees
+ * @returns {JSX.Element} The rendered Entrees component.
+ */
 
 const Entrees = () => {
   // State to store entrees data, error messages, and loading status
@@ -8,7 +19,13 @@ const Entrees = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch entrees from the backend
+  /**
+   * Fetches entrees from the backend API.
+   *
+   * @async
+   * @function fetchEntrees
+   */
+  
   useEffect(() => {
     const fetchEntrees = async () => {
       try {

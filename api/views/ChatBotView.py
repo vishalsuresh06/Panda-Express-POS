@@ -1,3 +1,7 @@
+"""
+@module Views
+"""
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -5,12 +9,18 @@ from ..ai_model import get_response  # Import your AI model function
 
 class ChatBotView(APIView):
     """
-    View for handling chatbot interactions.
+    A Django Rest Framework API view to handle chatbot interactions.
+
+    @class ChatBotView
     """
 
     def post(self, request):
         """
-        Handle POST requests to process user queries and return chatbot responses.
+        Handles POST requests to process user queries and return chatbot responses.
+
+        @method post
+        @param {Request} request The HTTP request object containing the user query.
+        @returns {Response} JSON response containing the chatbot's reply or error details.
         """
         try:
             user_query = request.data.get("query", "")
