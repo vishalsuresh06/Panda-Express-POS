@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./index.css";
 import { logout } from "../../utils/Auth";
+import "./stylesheets/index.css";
 
 // Main Cashier Component
 function Cashier() {
@@ -30,9 +30,20 @@ function Cashier() {
     if (selection && selection.type) {
       const newItem = {
         type: selection.type,
-        sides: [selection.side1, selection.side2] || [],
+        sides:
+          [
+            selection.side1,
+            selection.side2,
+            selection.side3,
+            selection.side4,
+          ] || [],
         entrees:
-          [selection.entree1, selection.entree2, selection.entree3] || [],
+          [
+            selection.entree1,
+            selection.entree2,
+            selection.entree3,
+            selection.entree4,
+          ] || [],
         price: selection.price || 0,
         drink: selection.drink || "",
         app: selection.app || "",
