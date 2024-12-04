@@ -33,8 +33,9 @@ class Command(BaseCommand):
         # Employees
         employee1 = Employee.objects.create(name='Bob China', password='ILovePandaExpress', is_manager=False, wage=12.00)
         employee2 = Employee.objects.create(name='John America', password='ILoveAmerica', is_manager=False, wage=7.50)
-        employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00)
+        employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00, email='nkodali@tamu.edu')
         employee4 = Employee.objects.create(name='kiosk', password='ILovePandas', is_manager=False, wage=0)
+        employee5 = Employee.objects.create(name="Viscous", password="password", is_manager=True, wage=100.00, email="rpomullan@tamu.edu")
 
         food_items_data = [
             {'name': 'Orange Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/orangechicken.PNG', 'calories': 490, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},

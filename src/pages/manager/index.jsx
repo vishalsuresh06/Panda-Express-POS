@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { apiURL } from '../../config.js';
 import './manager.css';
+import { OrbitProgress } from 'react-loading-indicators';
 
 ChartJS.register(
     CategoryScale,
@@ -104,7 +105,7 @@ function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
                     {items.map((menuItem, index) => (
                         <tr key={index}>
                             {Object.values(items[index]).map((entry, index2) => (
-                                <td className='mngr-font' key={index2}>{entry.toString()}</td>
+                                <td className='mngr-font' key={index2}>{entry?.toString() || ""}</td>
                             ))}
                             <td>
                                 <button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}</button>
@@ -149,6 +150,10 @@ function EmployeeEdit() {
         } else {
             reqBody.action = "modify"
             reqBody.data = data
+
+            if (!reqBody?.data?.email.trim()) {
+                reqBody.data.email = null
+            }
         }
 
         try {
@@ -332,23 +337,23 @@ function InventoryEdit() {
     )
 }
 
-function SettingsInput({name, desc, field, type}) {
-    const {settings, setSettings} = useContext(KitchenSettingsContext);
+function SettingsInput({ name, desc, field, type }) {
+    const { settings, setSettings } = useContext(KitchenSettingsContext);
     const [color, setColor] = useState(type == "color" ? settings[field] : "");
 
-	const changeSettings = async (event) => {
-		const settingsCopy = {...settings};
+    const changeSettings = async (event) => {
+        const settingsCopy = { ...settings };
         var data;
-		if (type == "text") {
-            
-			settingsCopy[field] = event.target.value; 
-		} else if (type == "checkbox") {
-			settingsCopy[field] = (event.target.checked ? "true" : "false"); 
-		} else if (type == "color") {
-			setColor(event.hex);
-			settingsCopy[field] = event.hex;
-		}
-		setSettings(settingsCopy);
+        if (type == "text") {
+
+            settingsCopy[field] = event.target.value;
+        } else if (type == "checkbox") {
+            settingsCopy[field] = (event.target.checked ? "true" : "false");
+        } else if (type == "color") {
+            setColor(event.hex);
+            settingsCopy[field] = event.hex;
+        }
+        setSettings(settingsCopy);
 
         let reqBody = { action: "set", field: field, data: settingsCopy[field] };
         try {
@@ -359,62 +364,62 @@ function SettingsInput({name, desc, field, type}) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });	
-        } catch (error) { 
+            });
+        } catch (error) {
             console.log(error);
         }
-	}
+    }
 
     // Prevents while DB settings are still being loaded in
 
-	var inputComponent;
-	if (type == "text") {
-		inputComponent = <input type="text" value={settings[field]} onChange={changeSettings}/>;
-	} else if (type == "checkbox") {
-		inputComponent = <input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings}/>;
-	} else if (type == "color") {
-		inputComponent = <Compact color={color} onChange={changeSettings}/>
-	}
+    var inputComponent;
+    if (type == "text") {
+        inputComponent = <input type="text" value={settings[field]} onChange={changeSettings} />;
+    } else if (type == "checkbox") {
+        inputComponent = <input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings} />;
+    } else if (type == "color") {
+        inputComponent = <Compact color={color} onChange={changeSettings} />
+    }
 
-	return (
-		<tr>
-			<td>{name}</td>
-			<td>{desc}</td>
-			<td>{inputComponent}</td>
-		</tr>
-	)
-}	
+    return (
+        <tr>
+            <td>{name}</td>
+            <td>{desc}</td>
+            <td>{inputComponent}</td>
+        </tr>
+    )
+}
 
 function KitchenSettings() {
     const [settings, setSettings] = useState({});
     const [loading, setLoading] = useState(true);
 
     // Fetch the current settings from the database
-	useEffect(() => {
-		async function fetchSettings() {
-			try {
-				let response = await fetch(`${apiURL}/api/settings`);
+    useEffect(() => {
+        async function fetchSettings() {
+            try {
+                let response = await fetch(`${apiURL}/api/settings`);
 
-				if (response.ok) {
-					const data = await response.json();
-					setSettings(data);
+                if (response.ok) {
+                    const data = await response.json();
+                    setSettings(data);
                     setLoading(false);
-				} else {
-					setSettings({});
+                } else {
+                    setSettings({});
                     setLoading(true);
-				}
-			} catch (error) {
-				console.log(error)
-				setSettings({});
+                }
+            } catch (error) {
+                console.log(error)
+                setSettings({});
                 setLoading(true);
-			}
-		}
+            }
+        }
 
-		fetchSettings();
-	}, []);
+        fetchSettings();
+    }, []);
 
     const restoreDefaults = async () => {
-        let reqBody = { action: "restoredefaults"};
+        let reqBody = { action: "restoredefaults" };
         try {
             await fetch(`${apiURL}/api/settings`, {
                 method: "POST",
@@ -423,8 +428,8 @@ function KitchenSettings() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });	
-        } catch (error) { 
+            });
+        } catch (error) {
             console.log(error);
         }
         window.location.reload();
@@ -434,57 +439,57 @@ function KitchenSettings() {
         return <></>;
     }
 
-	return (<KitchenSettingsContext.Provider value={{settings, setSettings}}>
+    return (<KitchenSettingsContext.Provider value={{ settings, setSettings }}>
         <div className="mngr-kitchensettings">
             <h2 className="mngr-font">KITCHEN CUSTOMIZER</h2>
             <table className="mngr-settingsTable">
                 <thead>
-                    <tr>   
+                    <tr>
                         <td className="mngr-font">Setting</td>
                         <td className="mngr-font">Description</td>
                         <td className="mngr-font">Value</td>
                     </tr>
                 </thead>
                 <tbody>
-                    <SettingsInput 	name="Order Refresh Rate (s)"
-                                    desc="How pages will refresh with newly entered orders."
-                                    field="kt_refreshRate"
-                                    type="text"/>
-                    
-                    <SettingsInput 	name="Full Order Render Count"
-                                    desc="How many order cards are automatically expanded in the HERE/TOGO columns."
-                                    field="kt_fullOrderCount"
-                                    type="text"/>
+                    <SettingsInput name="Order Refresh Rate (s)"
+                        desc="How pages will refresh with newly entered orders."
+                        field="kt_refreshRate"
+                        type="text" />
 
-                    <SettingsInput 	name="Recent Order Count"
-                                    desc="How many of the most recent orders will be displayed."
-                                    field="kt_recentOrderCount"
-                                    type="text"/>
+                    <SettingsInput name="Full Order Render Count"
+                        desc="How many order cards are automatically expanded in the HERE/TOGO columns."
+                        field="kt_fullOrderCount"
+                        type="text" />
 
-                    <SettingsInput 	name="Here Orders on Left"
-                                    desc="Alters which of the two order columns is displayed."
-                                    field="kt_hereOrdersLeft"
-                                    type="checkbox"/>
-                    
-                    <SettingsInput  name="Temperature in Fahrenheit"
-                                    field="kt_tempUnits"
-                                    type="checkbox"/>
+                    <SettingsInput name="Recent Order Count"
+                        desc="How many of the most recent orders will be displayed."
+                        field="kt_recentOrderCount"
+                        type="text" />
 
-                    <SettingsInput  name="Pending Order Color"
-                                    field="kt_pendingColor"
-                                    type="color"/>
+                    <SettingsInput name="Here Orders on Left"
+                        desc="Alters which of the two order columns is displayed."
+                        field="kt_hereOrdersLeft"
+                        type="checkbox" />
 
-                    <SettingsInput  name="In Progress Order Color"
-                                    field="kt_inprogressColor"
-                                    type="color"/>
+                    <SettingsInput name="Temperature in Fahrenheit"
+                        field="kt_tempUnits"
+                        type="checkbox" />
 
-                    <SettingsInput  name="Completed Order Color"
-                                    field="kt_completedColor"
-                                    type="color"/>
-                    
-                    <SettingsInput  name="Canceled Order Color"
-                                    field="kt_cancelledColor"
-                                    type="color"/>
+                    <SettingsInput name="Pending Order Color"
+                        field="kt_pendingColor"
+                        type="color" />
+
+                    <SettingsInput name="In Progress Order Color"
+                        field="kt_inprogressColor"
+                        type="color" />
+
+                    <SettingsInput name="Completed Order Color"
+                        field="kt_completedColor"
+                        type="color" />
+
+                    <SettingsInput name="Canceled Order Color"
+                        field="kt_cancelledColor"
+                        type="color" />
 
                 </tbody>
             </table>
@@ -494,19 +499,17 @@ function KitchenSettings() {
     </KitchenSettingsContext.Provider>)
 }
 
-function getToday() {
-    return new Date().toISOString().split('T')[0];
-}
-
 function Excess() {
-    const [targetTime, setTargetTime] = useState(getToday());
+    const [targetTime, setTargetTime] = useState("2023-01-01");
     const [excessItems, setExcessItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleTimeChange = (event) => {
         setTargetTime(event.target.value);
     }
 
     const queryExcess = async () => {
+        setLoading(true);
         try {
             let response = await fetch(`${apiURL}/api/manager/excess?timestamp=${targetTime}`);
 
@@ -520,32 +523,37 @@ function Excess() {
             console.log(error)
             setExcessItems([]);
         }
+        setLoading(false);
     }
 
     return (<div className="mngr-excess mngr-font">
         <h2>Excess Inventory</h2>
         <div className="mngr-excessQuery">
-            <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime}/>
+            <input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime} />
             <button onClick={queryExcess}>QUERY</button>
         </div>
-        <table className="mngr-settingsTable">
-            <thead>
-                <tr>
-                    <td>Inventory Item</td>
-                    <td>Units Sold</td>
-                    <td>Percent of Quantity</td>
-                </tr>
-            </thead>
-            <tbody>
-                {excessItems.map((item, index) => (
-                    <tr key={index}>
-                        <td>{item.name}</td>
-                        <td>{item.quantitySold}</td>
-                        <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+
+        {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {excessItems.length > 0 && 
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <td>Inventory Item</td>
+                        <td>Units Sold</td>
+                        <td>Percent of Quantity</td>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {excessItems.map((item, index) => (
+                        <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.quantitySold}</td>
+                            <td className={item.percentSold < 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }
     </div>)
 }
 
@@ -553,6 +561,7 @@ function SellsTogether() {
     const [startDate, setStartDate] = useState("2023-01-01");
     const [endDate, setEndDate] = useState("2023-12-31");
     const [foodPairs, setFoodPairs] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const changeStart = (event) => {
         setStartDate(event.target.value);
@@ -563,6 +572,7 @@ function SellsTogether() {
     }
 
     const queryPairs = async () => {
+        setLoading(true);
         try {
             let response = await fetch(`${apiURL}/api/manager/sellstogether?startDate=${startDate}&endDate=${endDate}`);
 
@@ -576,31 +586,37 @@ function SellsTogether() {
             console.log(error)
             setFoodPairs([]);
         }
+        setLoading(false);
     };
 
     return (<div className="mngr-sellstogether mngr-font">
         <h2>What Sells Together</h2>
+        <h5>Time Period</h5>
         <input type="date" defaultValue={startDate} key={startDate} onChange={changeStart}/>
         <input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd}/>
         <button onClick={queryPairs}>QUERY</button>
-        <table className="mngr-settingsTable">
-            <thead>
-                <tr>
-                    <td>Food Item 1</td>
-                    <td>Food Item 2</td>
-                    <td>Frequency</td>
-                </tr>
-            </thead>
-            <tbody>
-                {foodPairs.map((pair, index) => (
-                    <tr key={index}>
-                        <td>{pair.foodItem1}</td>
-                        <td>{pair.foodItem2}</td>
-                        <td>{pair.count}</td>
+
+        {loading && <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {foodPairs.length > 0 && 
+            <table className="mngr-settingsTable">
+                <thead>
+                    <tr>
+                        <td>Food Item 1</td>
+                        <td>Food Item 2</td>
+                        <td>Frequency</td>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {foodPairs.map((pair, index) => (
+                        <tr key={index}>
+                            <td>{pair.foodItem1}</td>
+                            <td>{pair.foodItem2}</td>
+                            <td>{pair.count}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }   
     </div>)
 }
 
@@ -633,11 +649,11 @@ function Restock() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(reqBody),
-            });	
+            });
 
             queryRestock();
-			return response.ok;
-			
+            return response.ok;
+
         } catch (error) { return false; }
     };
 
@@ -645,8 +661,8 @@ function Restock() {
         queryRestock();
     }, [])
 
-    return (<div className="mngr-restockReport">
-        <h2>RESTOCK REPORT</h2>
+    return (<div className="mngr-restockReport mngr-font">
+        <h2>Restock Report</h2>
         <button onClick={queryRestock}>Refresh</button>
         <table className="mngr-settingsTable">
             <thead>
@@ -945,6 +961,244 @@ function ProductUsage() {
     )
 }
 
+function XReport() {
+    const [loading, setLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalSales, setTotalSales] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/manager/xzreports?type=x`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const color = `rgba($10, 10, 10, 0.7)`;
+
+                let newDataset = {
+                    label: "Today's Sales ($)",
+                    backgroundColor: color,
+                    borderColor: color,
+                    data: [],
+                }
+
+                data.hourlySales.forEach((datapoint) => {
+                    newChartData.labels.push(datapoint.hour)
+                    newDataset.data.push(datapoint.sales)
+                }); 
+                
+                setTotalSales(data.totalSales);
+                setTotalOrders(data.totalOrders);
+                newChartData.datasets.push(newDataset)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+        setChartData(newChartData);
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    return (<div className="mngr-xreport mngr-font">
+        <h2>X Report</h2>
+        <button onClick={fetchData}>Refresh</button>
+        <br></br>
+        <p>Sales So Far ($): {Number(totalSales).toFixed(2)}</p>
+        <p>Orders So Far: {totalOrders}</p>
+        <div className='mngr-salescol'>
+                {(chartData && !loading) ? (
+                    <Line data={chartData} />
+                ) : (
+                    <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+                )}
+        </div>
+    </div>)
+}
+
+function ZReport() {
+    const [loading, setLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalSales, setTotalSales] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/manager/xzreports?type=z`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const color = `rgba($10, 10, 10, 0.7)`;
+
+                let newDataset = {
+                    label: "Today's Sales ($)",
+                    backgroundColor: color,
+                    borderColor: color,
+                    data: [],
+                }
+
+                data.hourlySales.forEach((datapoint) => {
+                    newChartData.labels.push(datapoint.hour)
+                    newDataset.data.push(datapoint.sales)
+                }); 
+                
+                setTotalSales(data.totalSales);
+                setTotalOrders(data.totalOrders);
+                newChartData.datasets.push(newDataset)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+        setChartData(newChartData);
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    return (<div className="mngr-zreport mngr-font">
+        <h2>Z Report</h2>
+        <button onClick={fetchData}>Refresh</button>
+        <br></br>
+        <p>Todays Sales ($): {Number(totalSales).toFixed(2)}</p>
+        <p>Total Orders: {totalOrders}</p>  
+        <div className='mngr-salescol'>
+                {(chartData && !loading) ? (
+                    <Line data={chartData} />
+                ) : (
+                    <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+                )}
+        </div>
+    </div>)
+}
+
+function getToday() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
+
+function OrderItemCard({orderItem}) {
+	return (<div className="mngr-orderItemCard">
+		<h3> {orderItem.order_item_type.name} </h3>
+		<ul> {
+			
+			orderItem.food_items.map((food_item, index) => (
+				<li className="notranslate" key={index}>&ensp; {food_item.quantity} x {food_item.food_item} </li>
+			))
+
+		} </ul>
+	</div>)
+}
+
+function OrderCard({order, handleDelete}) {
+    return (<div className="mngr-orderCard">
+		<div className="mngr-orderCardHeaders">	
+			<h3 className="mngr-orderInfo"> #{order.id} for "{order.customer_name}" </h3>
+            <h3>{new Date(order.date_created).toDateString()} {new Date(order.date_created).toLocaleTimeString()}</h3>
+            <h3>Employee: {order.employee.name}</h3>
+            <h3 className="mngr-orderTotal">${order.total_price}</h3>
+		</div>
+
+        <div className="mngr-orderCardBody">
+            <ul className="mngr-orderItemList"> 
+                {
+                    order.order_items.map((orderItem, index) => (
+                        <li key={index}> <OrderItemCard orderItem={orderItem}/> </li>
+                    ))
+                } 
+            </ul>
+
+            <div className="mngr-cardButtons">
+                <button className="kt-cancel" onClick={() => handleDelete(order)}> Delete </button>
+		    </div>
+        </div>
+
+	</div>)
+}
+
+function OrderHistory() {
+    const [date, setDate] = useState(getToday());
+    const [orders, setOrders] = useState([]);
+
+    const changeDate = (event) => {
+        setDate(event.target.value);
+    }
+
+    const fetchOrders = async () => {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/orderhistory?date=${date}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrders(data);
+            } else {
+                setOrders([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setOrders([]);
+        }
+    }
+
+    const handleDelete = async (order) => {
+		let reqBody = { orderID: order.id }
+        try {
+            let response = await fetch(`${apiURL}/api/manager/orderhistory`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
+
+            fetchOrders();
+			return response.ok;
+			
+        } catch (error) { return false; }
+    }
+
+    useEffect(() => {
+        fetchOrders();
+    }, [])
+
+    return (<div className="mngr-orderhist mngr-font">
+        <h2>Order History</h2>
+        <input type="date" defaultValue={date} key={date} onChange={changeDate}/>
+        <button onClick={fetchOrders}>Query Date</button>
+        <ul className="mngr-orderList">
+            {orders.map((order, index) => (
+				<li key={index}> 
+					<OrderCard order={order} handleDelete={handleDelete}/> 
+				</li>
+			))}
+        </ul>
+    </div>)
+}
+
 function Manager() {
     return (
         <>
@@ -952,15 +1206,21 @@ function Manager() {
             <div>
                 <h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard</h1>
                 <div className='mngr-nav'>
+                    <Link to="/cashier" className='mngr-btn mngr-btn-ret'>Cashier</Link>
                     <Link to="/manager/employees" className='mngr-btn'>Employees</Link>
                     <Link to="/manager/menu" className='mngr-btn'>Menu</Link>
                     <Link to="/manager/inventory" className='mngr-btn'>Inventory</Link>
                     <Link to="/manager/sales" className='mngr-btn'>Sales</Link>
                     <Link to="/manager/productusage" className='mngr-btn'>Product Usage</Link>
                     <Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings</Link>
+                </div>
+                <div className='mngr-nav'>
                     <Link to="/manager/excess" className='mngr-btn'>Excess Inventory</Link>
                     <Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together</Link>
                     <Link to="/manager/restock" className='mngr-btn'>Restock Report</Link>
+                    <Link to="/manager/xreport" className='mngr-btn'>X Report</Link>
+                    <Link to="/manager/zreport" className='mngr-btn'>Z Reports</Link>
+                    <Link to="/manager/orderhistory" className='mngr-btn'>Order History</Link>
                 </div>
                 <Outlet />
             </div>
@@ -968,4 +1228,6 @@ function Manager() {
     )
 }
 
-export { Manager, EmployeeEdit, MenuEdit, InventoryEdit, KitchenSettings, Excess, SellsTogether, Restock, Sales, ProductUsage }
+export {Manager, EmployeeEdit, MenuEdit, InventoryEdit, 
+        KitchenSettings, Excess, SellsTogether, Restock, 
+        Sales, ProductUsage, XReport, ZReport, OrderHistory}
