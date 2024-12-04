@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './pages/login'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Login } from "./pages/login";
 import {
   Manager,
   EmployeeEdit,
@@ -13,19 +13,21 @@ import {
   ProductUsage,
   XReport,
   ZReport,
-  OrderHistory
+  OrderHistory,
 } from "./pages/manager";
-import Cashiers from './pages/cashier';
-import Customers from './pages/customers';
-import { Kitchen, KitchenOrders, RecentOrders } from './pages/kitchen';
+import Cashiers from "./pages/cashier";
+import Customers from "./pages/customers";
+import { Kitchen, KitchenOrders, RecentOrders } from "./pages/kitchen";
 import ItemSelection from "./pages/cashier/components/itemSelectionPage.jsx";
-import Menu from './pages/menu';
-import SizesFeaturedPopular from './pages/menu/SizesFeaturedPopular';
-import Entrees from './pages/menu/Entrees';
-import SidesDrinksAppetizers from './pages/menu/SidesDrinksAppetizers';
-import NotFound from './pages/notfound';
-import { LoginRoute } from './utils/Auth'
-import './index.css'
+import CateringItemSelection from "./pages/cashier/components/cateringItemSelection.jsx";
+import Menu from "./pages/menu";
+import SizesFeaturedPopular from "./pages/menu/SizesFeaturedPopular";
+import Entrees from "./pages/menu/Entrees";
+import SidesDrinksAppetizers from "./pages/menu/SidesDrinksAppetizers";
+import Catering from "./pages/cashier/catering.jsx";
+import NotFound from "./pages/notfound";
+import { LoginRoute } from "./utils/Auth";
+import "./index.css";
 
 function App() {
   return (
@@ -50,14 +52,18 @@ function App() {
           <Route path="orderhistory" element={<OrderHistory />} />
         </Route>
 
-        <Route path="/cashier" element={
-          <LoginRoute>
-            <Cashiers />
-          </LoginRoute>
-        }
+        <Route
+          path="/cashier"
+          element={
+            <LoginRoute>
+              <Cashiers />
+            </LoginRoute>
+          }
         />
 
         <Route path="/itemSelection" element={<ItemSelection />} />
+        <Route path="/catering" element={<Catering />} />
+        <Route path="/cateringSelection" element={<CateringItemSelection />} />
 
         <Route path="/customer" element={<Customers />} />
 
@@ -67,9 +73,15 @@ function App() {
         </Route>
 
         <Route path="/menu/*" element={<Menu />} />
-        <Route path="/menu/sizes-featured-popular" element={<SizesFeaturedPopular />} />
+        <Route
+          path="/menu/sizes-featured-popular"
+          element={<SizesFeaturedPopular />}
+        />
         <Route path="/menu/entrees" element={<Entrees />} />
-        <Route path="/menu/sides-drinks-appetizers" element={<SidesDrinksAppetizers />} />
+        <Route
+          path="/menu/sides-drinks-appetizers"
+          element={<SidesDrinksAppetizers />}
+        />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
