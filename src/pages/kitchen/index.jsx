@@ -55,12 +55,13 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 
 	// 1s timer to update the TOS on every card
 	useEffect(() => {
+		setTOS(calcTOS());
 		const intervalID = setInterval(() => {
 			setTOS(calcTOS());
 		}, 1000);
 		
 		return () => clearInterval(intervalID);
-	}, []);	
+	}, [order.date_created]);	
 
 	
 	const cardColors = {

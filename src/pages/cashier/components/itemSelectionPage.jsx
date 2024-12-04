@@ -50,10 +50,10 @@ function ItemSelection() {
         if (response.ok) {
           const data = await response.json();
           setMenuItems({
-            sides: data.filter((item) => item.type === "Side"),
-            entrees: data.filter((item) => item.type === "Entree"),
-            drinks: data.filter((item) => item.type === "Drink"),
-            apps: data.filter((item) => item.type === "Appetizer"),
+            sides: data.filter((item) => item.type === "side"),
+            entrees: data.filter((item) => item.type === "entree"),
+            drinks: data.filter((item) => item.type === "drink"),
+            apps: data.filter((item) => item.type === "appetizer"),
           });
           console.log(data);
         } else {
@@ -96,7 +96,6 @@ function ItemSelection() {
 
   const calculatePrice = () => {
     let basePrice = 0;
-    console.log("activates");
 
     // Set base price based on itemType
     switch (itemType) {
