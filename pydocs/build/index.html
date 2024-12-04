@@ -1,0 +1,684 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PandaPOS Backend Documentation &mdash; PandaPOS  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            PandaPOS
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">PandaPOS Backend Documentation</a><ul>
+<li><a class="reference internal" href="#api.models.Employee"><code class="docutils literal notranslate"><span class="pre">Employee</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.Employee.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Employee.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.Employee.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Employee.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.FoodInventoryQuantity"><code class="docutils literal notranslate"><span class="pre">FoodInventoryQuantity</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.FoodInventoryQuantity.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">FoodInventoryQuantity.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.FoodInventoryQuantity.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">FoodInventoryQuantity.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.FoodItem"><code class="docutils literal notranslate"><span class="pre">FoodItem</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.FoodItem.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">FoodItem.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.FoodItem.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">FoodItem.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.InventoryItem"><code class="docutils literal notranslate"><span class="pre">InventoryItem</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.InventoryItem.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">InventoryItem.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.InventoryItem.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">InventoryItem.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.Order"><code class="docutils literal notranslate"><span class="pre">Order</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.Order.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Order.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.Order.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Order.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.OrderFoodQuantity"><code class="docutils literal notranslate"><span class="pre">OrderFoodQuantity</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.OrderFoodQuantity.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">OrderFoodQuantity.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.OrderFoodQuantity.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">OrderFoodQuantity.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.OrderItem"><code class="docutils literal notranslate"><span class="pre">OrderItem</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.OrderItem.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">OrderItem.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.OrderItem.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">OrderItem.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.OrderItemType"><code class="docutils literal notranslate"><span class="pre">OrderItemType</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.OrderItemType.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">OrderItemType.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.OrderItemType.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">OrderItemType.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.models.SettingParameter"><code class="docutils literal notranslate"><span class="pre">SettingParameter</span></code></a><ul>
+<li><a class="reference internal" href="#api.models.SettingParameter.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">SettingParameter.DoesNotExist</span></code></a></li>
+<li><a class="reference internal" href="#api.models.SettingParameter.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">SettingParameter.MultipleObjectsReturned</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.manager_views.EmployeeView"><code class="docutils literal notranslate"><span class="pre">EmployeeView</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.ExcessView"><code class="docutils literal notranslate"><span class="pre">ExcessView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.manager_views.ExcessView.get"><code class="docutils literal notranslate"><span class="pre">ExcessView.get()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.manager_views.InventoryView"><code class="docutils literal notranslate"><span class="pre">InventoryView</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.MenuView"><code class="docutils literal notranslate"><span class="pre">MenuView</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.OrderHistoryView"><code class="docutils literal notranslate"><span class="pre">OrderHistoryView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.manager_views.OrderHistoryView.get"><code class="docutils literal notranslate"><span class="pre">OrderHistoryView.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.OrderHistoryView.post"><code class="docutils literal notranslate"><span class="pre">OrderHistoryView.post()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.manager_views.RestockView"><code class="docutils literal notranslate"><span class="pre">RestockView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.manager_views.RestockView.get"><code class="docutils literal notranslate"><span class="pre">RestockView.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.RestockView.post"><code class="docutils literal notranslate"><span class="pre">RestockView.post()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.manager_views.SellsTogetherView"><code class="docutils literal notranslate"><span class="pre">SellsTogetherView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.manager_views.SellsTogetherView.get"><code class="docutils literal notranslate"><span class="pre">SellsTogetherView.get()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.manager_views.XZReports"><code class="docutils literal notranslate"><span class="pre">XZReports</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.manager_views.XZReports.generateXReport"><code class="docutils literal notranslate"><span class="pre">XZReports.generateXReport()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.XZReports.generateZReport"><code class="docutils literal notranslate"><span class="pre">XZReports.generateZReport()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.XZReports.get"><code class="docutils literal notranslate"><span class="pre">XZReports.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.XZReports.getSalesToday"><code class="docutils literal notranslate"><span class="pre">XZReports.getSalesToday()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.manager_views.inventoryQueryView"><code class="docutils literal notranslate"><span class="pre">inventoryQueryView()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.manager_views.menuQueryView"><code class="docutils literal notranslate"><span class="pre">menuQueryView()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.menu_views.MenuView"><code class="docutils literal notranslate"><span class="pre">MenuView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.menu_views.MenuView.delete"><code class="docutils literal notranslate"><span class="pre">MenuView.delete()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.menu_views.MenuView.get"><code class="docutils literal notranslate"><span class="pre">MenuView.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.menu_views.MenuView.post"><code class="docutils literal notranslate"><span class="pre">MenuView.post()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.menu_views.MenuView.put"><code class="docutils literal notranslate"><span class="pre">MenuView.put()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.kitchen_views.KitchenOrders"><code class="docutils literal notranslate"><span class="pre">KitchenOrders</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.kitchen_views.KitchenOrders.get"><code class="docutils literal notranslate"><span class="pre">KitchenOrders.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.kitchen_views.KitchenOrders.post"><code class="docutils literal notranslate"><span class="pre">KitchenOrders.post()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.kitchen_views.RecentOrdersView"><code class="docutils literal notranslate"><span class="pre">RecentOrdersView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.kitchen_views.RecentOrdersView.get"><code class="docutils literal notranslate"><span class="pre">RecentOrdersView.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.kitchen_views.RecentOrdersView.post"><code class="docutils literal notranslate"><span class="pre">RecentOrdersView.post()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.kiosk_views.KioskView"><code class="docutils literal notranslate"><span class="pre">KioskView</span></code></a></li>
+<li><a class="reference internal" href="#api.views.kiosk_views.OrderTypes"><code class="docutils literal notranslate"><span class="pre">OrderTypes</span></code></a></li>
+<li><a class="reference internal" href="#api.views.general_views.SettingsView"><code class="docutils literal notranslate"><span class="pre">SettingsView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.general_views.SettingsView.get"><code class="docutils literal notranslate"><span class="pre">SettingsView.get()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.general_views.SettingsView.post"><code class="docutils literal notranslate"><span class="pre">SettingsView.post()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.auth_views.googleLogin"><code class="docutils literal notranslate"><span class="pre">googleLogin()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.auth_views.pinLogin"><code class="docutils literal notranslate"><span class="pre">pinLogin()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">PandaPOS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">PandaPOS Backend Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pandapos-backend-documentation">
+<h1>PandaPOS Backend Documentation<a class="headerlink" href="#pandapos-backend-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class" id="module-api.models">
+<dt class="sig sig-object py" id="api.models.Employee">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">Employee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.Employee" title="Link to this definition"></a></dt>
+<dd><p>Model representing a single Panda Express employee</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the employee</p></li>
+<li><p><strong>pin</strong> – The PIN assigned to the employee for authentication, stored as a CharField</p></li>
+<li><p><strong>is_manager</strong> – A boolean flag indicating if the employee is a manager</p></li>
+<li><p><strong>wage</strong> – The wage rate of the employee</p></li>
+<li><p><strong>email</strong> – The employee’s email address, stored as an EmailField and must be unique, can be null</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.Employee.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.Employee.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.Employee.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.Employee.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.FoodInventoryQuantity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">FoodInventoryQuantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.FoodInventoryQuantity" title="Link to this definition"></a></dt>
+<dd><p>A through model that associates how much of each inventory item a given food
+item uses when cooked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>food_item</strong> – The food item associated with the inventory item</p></li>
+<li><p><strong>inventory_item</strong> – The inventory item associated with the food item</p></li>
+<li><p><strong>quantity</strong> – The quantity of the inventory item required for the corresponding food item</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.FoodInventoryQuantity.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.FoodInventoryQuantity.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.FoodInventoryQuantity.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.FoodInventoryQuantity.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.FoodItem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">FoodItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.FoodItem" title="Link to this definition"></a></dt>
+<dd><p>A model representing individual edible items on the menu (e.g. Orange Chicken, Beijing Beef, etc)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the food item</p></li>
+<li><p><strong>type</strong> – The type of the food item, with choices like “Entree”, “Side”, “Appetizer”, “Dessert”, or “Drink”</p></li>
+<li><p><strong>alt_price</strong> – The alternative price for the food item which overrides any base price</p></li>
+<li><p><strong>upcharge</strong> – The upcharge associated with the food item for premium items</p></li>
+<li><p><strong>on_menu</strong> – A boolean flag indicating whether the food item is currently on the menu</p></li>
+<li><p><strong>image</strong> – An image of the food item, uploaded to the ‘food_images/’ directory</p></li>
+<li><p><strong>calories</strong> – The calorie count of the food item</p></li>
+<li><p><strong>is_spicy</strong> – A boolean flag indicating if the food item is spicy</p></li>
+<li><p><strong>is_premium</strong> – A boolean flag indicating if the food item is considered premium</p></li>
+<li><p><strong>is_gluten_free</strong> – A boolean flag indicating if the food item is gluten-fre</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.FoodItem.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.FoodItem.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.FoodItem.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.FoodItem.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.InventoryItem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">InventoryItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.InventoryItem" title="Link to this definition"></a></dt>
+<dd><p>A model representing all different inventories items tracked by the restaurant.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the inventory item</p></li>
+<li><p><strong>is_food</strong> – A boolean flag indicating whether the inventory item is edible</p></li>
+<li><p><strong>stock</strong> – The number of units of the inventory item currently in stock</p></li>
+<li><p><strong>restock_threshold</strong> – The stock level at which the inventory item should be restocked</p></li>
+<li><p><strong>restock_amount</strong> – The amount to be restocked when the inventory item reaches the restock threshold</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.InventoryItem.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.InventoryItem.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.InventoryItem.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.InventoryItem.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.Order">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">Order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.Order" title="Link to this definition"></a></dt>
+<dd><p>Model representing a single customer transaction/order</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>customer_name</strong> – Name of the customer</p></li>
+<li><p><strong>employee</strong> – The employee who processed the order</p></li>
+<li><p><strong>date_created</strong> – The date and time when the order was first added to the database</p></li>
+<li><p><strong>date_processed</strong> – The date and time when the order was last processed (completed or cancelled), can be null</p></li>
+<li><p><strong>type</strong> – The type of order, either “Here” or “Togo”</p></li>
+<li><p><strong>status</strong> – The current status of the order, with possible values like “Pending”, “In Progress”, “Completed”, or “Cancelled”</p></li>
+<li><p><strong>total_price</strong> – The total price of the order</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.Order.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.Order.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.Order.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.Order.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.OrderFoodQuantity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">OrderFoodQuantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.OrderFoodQuantity" title="Link to this definition"></a></dt>
+<dd><p>A through model which associates an order item with a variable quantity of 
+a single food item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order_item</strong> – The order item associated with the food item</p></li>
+<li><p><strong>food_item</strong> – The food item included in the order item</p></li>
+<li><p><strong>quantity</strong> – The quantity of the food item in the order item, default is 1</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.OrderFoodQuantity.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.OrderFoodQuantity.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.OrderFoodQuantity.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.OrderFoodQuantity.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.OrderItem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">OrderItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.OrderItem" title="Link to this definition"></a></dt>
+<dd><p>A model representing a single order item from an order (e.g. a bowl w/ food, a drink)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>order</strong> – The order to which the item belongs</p></li>
+<li><p><strong>order_item_type</strong> – The type of the order item</p></li>
+<li><p><strong>food_items</strong> – A many-to-many relationship with FoodItem, through the OrderFoodQuantity model</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.OrderItem.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.OrderItem.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.OrderItem.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.OrderItem.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.OrderItemType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">OrderItemType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.OrderItemType" title="Link to this definition"></a></dt>
+<dd><p>A model representing a specific type of order item (e.g. bowl)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the order item type</p></li>
+<li><p><strong>base_price</strong> – The base price of the order item type</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.OrderItemType.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.OrderItemType.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.OrderItemType.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.OrderItemType.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.models.SettingParameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.models.</span></span><span class="sig-name descname"><span class="pre">SettingParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.models.SettingParameter" title="Link to this definition"></a></dt>
+<dd><p>A model representing different page settings and their values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The key name of the setting parameter, must be unique</p></li>
+<li><p><strong>value</strong> – The current value of the setting parameter</p></li>
+<li><p><strong>default</strong> – The default value of the setting parameter</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.SettingParameter.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#api.models.SettingParameter.DoesNotExist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="api.models.SettingParameter.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#api.models.SettingParameter.MultipleObjectsReturned" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-api.views.manager_views">
+<dt class="sig sig-object py" id="api.views.manager_views.EmployeeView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">EmployeeView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.EmployeeView" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.ExcessView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">ExcessView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.ExcessView" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles API requests to generate excess reports</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.ExcessView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.ExcessView.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON of all inventory items sorted by the percent of quantity that
+was used in all orders since the given timestamp. Sorted in increasing order.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.InventoryView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">InventoryView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.InventoryView" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.MenuView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">MenuView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.MenuView" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.OrderHistoryView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">OrderHistoryView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.OrderHistoryView" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles all backend API requests regarding managing order history</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.OrderHistoryView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.OrderHistoryView.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON of all orders from a target day and returns them sorted by
+their date created with most recent first.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.OrderHistoryView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.OrderHistoryView.post" title="Link to this definition"></a></dt>
+<dd><p>Processes requests to delete a target order (specified by id) from the order history.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.RestockView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">RestockView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.RestockView" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles generating information for a restock report and 
+restocking inventory items.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.RestockView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.RestockView.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON response with all inventory items whose stock is less than
+their designated restock threshold.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.RestockView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.RestockView.post" title="Link to this definition"></a></dt>
+<dd><p>Accepts incoming inventory item id and restocks that item by its designated 
+restock amount.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.SellsTogetherView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">SellsTogetherView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.SellsTogetherView" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles API calls to query for which food items sell best together.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.SellsTogetherView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.SellsTogetherView.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON containing pair of different SIDE and ENTREE food items sorted by the 
+frequency in which they are ordered together in the same container. Ordered by most
+frequent to least frequent. Only processes orders dated in between the two argument dates.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.manager_views.XZReports">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">XZReports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.XZReports" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles all API requests involving querying that days sales numbers for X and Z reports</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.XZReports.generateXReport">
+<span class="sig-name descname"><span class="pre">generateXReport</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.XZReports.generateXReport" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON response with todays sales numbers and hourly sales numbers for an X report.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.XZReports.generateZReport">
+<span class="sig-name descname"><span class="pre">generateZReport</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.XZReports.generateZReport" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON response with todays sales numbers and hourly sales numbers for an Z report.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.XZReports.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.XZReports.get" title="Link to this definition"></a></dt>
+<dd><p>Processes incoming API calls and returns the desired report type (X or Z).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.manager_views.XZReports.getSalesToday">
+<span class="sig-name descname"><span class="pre">getSalesToday</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.XZReports.getSalesToday" title="Link to this definition"></a></dt>
+<dd><p>Helper method that queries the database for the hourly sales of the current day.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.views.manager_views.inventoryQueryView">
+<span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">inventoryQueryView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.inventoryQueryView" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.views.manager_views.menuQueryView">
+<span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">menuQueryView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.menuQueryView" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class" id="module-api.views.menu_views">
+<dt class="sig sig-object py" id="api.views.menu_views.MenuView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.menu_views.</span></span><span class="sig-name descname"><span class="pre">MenuView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.menu_views.MenuView" title="Link to this definition"></a></dt>
+<dd><p>View to manage food items on the menu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.menu_views.MenuView.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.menu_views.MenuView.delete" title="Link to this definition"></a></dt>
+<dd><p>Remove a food item from the menu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.menu_views.MenuView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.menu_views.MenuView.get" title="Link to this definition"></a></dt>
+<dd><p>Fetch all food items that are currently on the menu, filtered by type or name if provided.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.menu_views.MenuView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.menu_views.MenuView.post" title="Link to this definition"></a></dt>
+<dd><p>Add a new food item to the menu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.menu_views.MenuView.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.menu_views.MenuView.put" title="Link to this definition"></a></dt>
+<dd><p>Update an existing food item.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-api.views.kitchen_views">
+<dt class="sig sig-object py" id="api.views.kitchen_views.KitchenOrders">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.kitchen_views.</span></span><span class="sig-name descname"><span class="pre">KitchenOrders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kitchen_views.KitchenOrders" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles all API request involving the pending order in
+the kitchen interface.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.kitchen_views.KitchenOrders.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kitchen_views.KitchenOrders.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON containing two lists of currently pending orders (here and togo). The lists
+are sorted such that the oldest orders are listed first and they contain all kitchen-relavent 
+information about the order.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.kitchen_views.KitchenOrders.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kitchen_views.KitchenOrders.post" title="Link to this definition"></a></dt>
+<dd><p>Accepts an order id and an action to perform on that order that involves
+changing the status of the order to COMPLETED, CANCELLED, or IN_PROGRESS</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.kitchen_views.RecentOrdersView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.kitchen_views.</span></span><span class="sig-name descname"><span class="pre">RecentOrdersView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kitchen_views.RecentOrdersView" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles all API operations involving the recent orders page 
+on the kitchen interface.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.kitchen_views.RecentOrdersView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kitchen_views.RecentOrdersView.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a sorted JSON of the last X COMPLETED or CANCELLED orders sorted so that the
+most recent orders come first where X is the count passed in the HTTP request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.kitchen_views.RecentOrdersView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kitchen_views.RecentOrdersView.post" title="Link to this definition"></a></dt>
+<dd><p>Takes a given orderID and restores the corresponding CANCELLED or COMPLETED order
+to pending.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-api.views.kiosk_views">
+<dt class="sig sig-object py" id="api.views.kiosk_views.KioskView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.kiosk_views.</span></span><span class="sig-name descname"><span class="pre">KioskView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kiosk_views.KioskView" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.kiosk_views.OrderTypes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.kiosk_views.</span></span><span class="sig-name descname"><span class="pre">OrderTypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.kiosk_views.OrderTypes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class" id="module-api.views.general_views">
+<dt class="sig sig-object py" id="api.views.general_views.SettingsView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.general_views.</span></span><span class="sig-name descname"><span class="pre">SettingsView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.general_views.SettingsView" title="Link to this definition"></a></dt>
+<dd><p>Django view that handles all API request for page settings.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.general_views.SettingsView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.general_views.SettingsView.get" title="Link to this definition"></a></dt>
+<dd><p>Returns a JSON containing all the page settings in the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.general_views.SettingsView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.general_views.SettingsView.post" title="Link to this definition"></a></dt>
+<dd><p>Suppots two actions: set and restore. Set sets the target page setting to a passed argument. 
+Restore resets all page settings in the database to their designated default values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function" id="module-api.views.auth_views">
+<span id="module-api.views.cashier_views"></span><dt class="sig sig-object py" id="api.views.auth_views.googleLogin">
+<span class="sig-prename descclassname"><span class="pre">api.views.auth_views.</span></span><span class="sig-name descname"><span class="pre">googleLogin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.auth_views.googleLogin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.views.auth_views.pinLogin">
+<span class="sig-prename descclassname"><span class="pre">api.views.auth_views.</span></span><span class="sig-name descname"><span class="pre">pinLogin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.auth_views.pinLogin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Team 14.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

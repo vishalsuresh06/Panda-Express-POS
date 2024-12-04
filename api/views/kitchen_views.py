@@ -10,9 +10,17 @@ import datetime
 
 
 class RecentOrdersView(APIView):
+    """
+    Django view that handles all API operations involving the recent orders page 
+    on the kitchen interface.
+    """
     
     # Sends the last X completed or canceled orders
     def get(self, request):
+        """
+        Returns a sorted JSON of the last X COMPLETED or CANCELLED orders sorted so that the
+        most recent orders come first where X is the count passed in the HTTP request.
+        """
 
         # Django querysets are lazy so the list comprehension doesn't actually query for the entire database first
         count = int(request.query_params.get("count"));
@@ -22,6 +30,11 @@ class RecentOrdersView(APIView):
     
     # Used to move an order back to the main screen (pending)
     def post(self, request):
+        """
+        Takes a given orderID and restores the corresponding CANCELLED or COMPLETED order
+        to pending.
+        """
+
         orderID = request.data['orderID']
 
         try:
@@ -33,9 +46,19 @@ class RecentOrdersView(APIView):
             return JsonResponse({"success": True}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 class KitchenOrders(APIView):
+    """
+    Django view that handles all API request involving the pending order in
+    the kitchen interface.
+    """
     
     # Sends pending orders to the kitchen display
     def get(self, request):
+        """
+        Returns a JSON containing two lists of currently pending orders (here and togo). The lists
+        are sorted such that the oldest orders are listed first and they contain all kitchen-relavent 
+        information about the order.
+        """
+
         statusQuery = Q(status='pending') | Q(status='in_progress')
 
         hereOrderData = Order.objects.filter(statusQuery, type='here').order_by('date_created')
@@ -52,6 +75,11 @@ class KitchenOrders(APIView):
 
     # Allows kitchen to cancel or complete a target order
     def post(self, request):
+        """
+        Accepts an order id and an action to perform on that order that involves
+        changing the status of the order to COMPLETED, CANCELLED, or IN_PROGRESS
+        """
+
         action = request.data['action']
         orderID = request.data['orderID']
         

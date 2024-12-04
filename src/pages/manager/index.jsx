@@ -27,7 +27,16 @@ ChartJS.register(
     Legend,
 );
 
+/**
+ * @module Manager
+ */
+
+/**
+ * A React context object used by the kitchen settings page to pass
+ * the current settings to each subcomponent.
+ */
 const KitchenSettingsContext = createContext(null);
+
 
 function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
     const [items, setItems] = useState([]);
@@ -337,6 +346,15 @@ function InventoryEdit() {
     )
 }
 
+/**
+ * A helper component which constructs a custom settings input field 
+ * based on the arguments.
+ * @param {string} name The display name of the setting
+ * @param {string} desc A brief description of the setting
+ * @param {string} field The db name of the setting
+ * @param {string} type The type of input the setting uses
+ * @returns An editable settings component connected to the DB
+ */
 function SettingsInput({ name, desc, field, type }) {
     const { settings, setSettings } = useContext(KitchenSettingsContext);
     const [color, setColor] = useState(type == "color" ? settings[field] : "");
@@ -390,6 +408,10 @@ function SettingsInput({ name, desc, field, type }) {
     )
 }
 
+/**
+ * A component which allows the manager to edit different settings regarding the kitchen UI. These
+ * settings are saved to the database.
+ */
 function KitchenSettings() {
     const [settings, setSettings] = useState({});
     const [loading, setLoading] = useState(true);
@@ -499,6 +521,10 @@ function KitchenSettings() {
     </KitchenSettingsContext.Provider>)
 }
 
+/**
+ * A component which generates a report of the usage of all inventory items from an editable date 
+ * until the current date. It highlights those which fall below 10% usage.
+ */
 function Excess() {
     const [targetTime, setTargetTime] = useState("2023-01-01");
     const [excessItems, setExcessItems] = useState([]);
@@ -557,6 +583,10 @@ function Excess() {
     </div>)
 }
 
+/**
+ * A component which generates a report of which Sides & Entrees sell well together, displaying their
+ * frequency together over order in a editable time window.
+ */
 function SellsTogether() {
     const [startDate, setStartDate] = useState("2023-01-01");
     const [endDate, setEndDate] = useState("2023-12-31");
@@ -620,6 +650,10 @@ function SellsTogether() {
     </div>)
 }
 
+/**
+ * A component which generates a restock report of all inventory items, display those 
+ * which have less than their designated threshold and adds button to restock.
+ */
 function Restock() {
     const [restockList, setRestockList] = useState([]);
 
@@ -961,6 +995,11 @@ function ProductUsage() {
     )
 }
 
+/**
+ * A component that summerizes that days total sales and total number of orders THUS FAR, 
+ * and compiles the hourly sales THUS FAR.
+ * @returns The X report HTML
+ */
 function XReport() {
     const [loading, setLoading] = useState(false);
     const [chartData, setChartData] = useState(null);
@@ -1026,6 +1065,11 @@ function XReport() {
     </div>)
 }
 
+/**
+ * A component that summerizes that days total sales, total number of orders, and hourly sales
+ * together into a single report.
+ * @returns The Z report HTML
+ */
 function ZReport() {
     const [loading, setLoading] = useState(false);
     const [chartData, setChartData] = useState(null);
@@ -1091,6 +1135,11 @@ function ZReport() {
     </div>)
 }
 
+/**
+ * A helper method used to set the default date of date inputs to the current date. The extra
+ * formatting is specific to input components.
+ * @returns Todays date formatted in YYYY-MM_DD
+ */
 function getToday() {
     const today = new Date();
     const year = today.getFullYear();
@@ -1100,6 +1149,10 @@ function getToday() {
     return `${year}-${month}-${day}`;
 }
 
+/**
+ * A list displaying order item type name and all contained food items
+ * @param {JSON} orderItem The data of a single order item from an order
+ */
 function OrderItemCard({orderItem}) {
 	return (<div className="mngr-orderItemCard">
 		<h3> {orderItem.order_item_type.name} </h3>
@@ -1113,6 +1166,11 @@ function OrderItemCard({orderItem}) {
 	</div>)
 }
 
+/**
+ * A card displaying all relevent information of the specified order.
+ * @param {JSON} order The data of a single order
+ * @param {Method} handleDelete Called whenever the delete button on the order card is pressed
+ */
 function OrderCard({order, handleDelete}) {
     return (<div className="mngr-orderCard">
 		<div className="mngr-orderCardHeaders">	
@@ -1139,6 +1197,9 @@ function OrderCard({order, handleDelete}) {
 	</div>)
 }
 
+/**
+ * A component displays order information for a target day with the ability to delete specific orders
+ */
 function OrderHistory() {
     const [date, setDate] = useState(getToday());
     const [orders, setOrders] = useState([]);
@@ -1199,6 +1260,9 @@ function OrderHistory() {
     </div>)
 }
 
+/**
+ * The main manager nav bar with an outlet component to contain the subpanels
+ */
 function Manager() {
     return (
         <>
