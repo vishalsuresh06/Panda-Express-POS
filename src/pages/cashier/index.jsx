@@ -1,12 +1,21 @@
+/**
+ * @module Cashier
+ */
+
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../utils/Auth";
 import "./stylesheets/index.css";
 
-// Main Cashier Component
+/**
+ * Main Cashier Component that displays the checkout process and handles item selections, total, and checkout.
+ *
+ * @component
+ */
 function Cashier() {
   // State Variables
   const [time, setTime] = useState(new Date().toLocaleTimeString());
+  const [currI, setCurr] = useState(0);
   const [total, setTotal] = useState(
     Number(localStorage.getItem("total")) || 0
   );
@@ -119,6 +128,46 @@ function Cashier() {
     navigate("/catering");
   };
 
+  const handleCheckout = () => {
+    const check = async (name, togo) => {
+      if (name == "" || items.length == 0) {
+        return;
+      }
+
+      const total =
+        Object.values(items)
+          .flat()
+          .reduce((sum, item) => {
+            return sum + Number(item.price);
+          }, 0) * 1.08;
+
+      const orderJSON = {
+        name: name,
+        type: togo ? "togo" : "here",
+        total: Number(total),
+        employee: employee.name,
+        orderItems: ["Fried Rice"],
+      };
+      try {
+        let response = await fetch(`${apiURL}/api/kiosk/`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderJSON),
+        });
+
+        clear();
+        return response.ok;
+      } catch (error) {
+        return false;
+      }
+    };
+    check("Not Applicable", true);
+    deleteCheckout();
+  };
+
   const deleteCheckout = () => {
     setItems([]);
     setTotal(0);
@@ -144,6 +193,7 @@ function Cashier() {
         total={total}
         handleDeleteItem={handleDeleteItem}
         deleteCheckout={deleteCheckout}
+        handleCheckout={handleCheckout}
       />
 
       <OrderingSection handleNavigation={handleNavigation} />
@@ -151,7 +201,20 @@ function Cashier() {
   );
 }
 
-// NavBar Component
+/**
+ * NavBar Component for displaying employee info, time, and management actions.
+ *
+ * @param {Object} props
+ * @param {string} props.employee - Employee name
+ * @param {string} props.time - Current time
+ * @param {boolean} props.isManager - Whether the user is a manager
+ * @param {function} props.handleLogout - Logout handler
+ * @param {function} props.handleManager - Navigate to manager page handler
+ * @param {function} props.handleInventory - Navigate to inventory page handler
+ * @param {function} props.handleCatering - Navigate to catering page handler
+ *
+ * @component
+ */
 function NavBar({
   employee,
   time,
@@ -181,8 +244,25 @@ function NavBar({
   );
 }
 
-// CheckoutSection Component
-function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
+/**
+ * CheckoutSection Component for displaying the checkout details including items, prices, and checkout buttons.
+ *
+ * @param {Object} props
+ * @param {Array} props.items - List of items in the checkout
+ * @param {number} props.total - Total price of the checkout
+ * @param {function} props.handleDeleteItem - Function to delete an item from the checkout
+ * @param {function} props.deleteCheckout - Function to clear the checkout
+ * @param {function} props.handleCheckout - Function to handle the checkout
+ *
+ * @component
+ */
+function CheckoutSection({
+  items,
+  total,
+  handleDeleteItem,
+  deleteCheckout,
+  handleCheckout,
+}) {
   return (
     <div className="cshr_checkoutSection">
       <div className="cshr_itemDisplay">
@@ -204,13 +284,22 @@ function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
         <button className="clrBtn" onClick={deleteCheckout}>
           Clear
         </button>
-        <button className="chkbtn">Checkout</button>
+        <button className="chkbtn" onClick={handleCheckout}>
+          Checkout
+        </button>
       </div>
     </div>
   );
 }
 
-// OrderingSection Component
+/**
+ * OrderingSection Component for displaying the buttons to navigate to different item selection categories.
+ *
+ * @param {Object} props
+ * @param {function} props.handleNavigation - Function to handle navigation based on the item type
+ *
+ * @component
+ */
 function OrderingSection({ handleNavigation }) {
   const buttonData = [
     { label: "Bowl", type: 0 },
@@ -238,7 +327,20 @@ function OrderingSection({ handleNavigation }) {
   );
 }
 
-// Item Component
+/**
+ * Item Component for displaying an individual item in the checkout with details like price, sides, and entrees.
+ *
+ * @param {Object} props
+ * @param {string} props.type - Type of the item (e.g., "Bowl", "Plate")
+ * @param {Array} props.sides - List of sides for the item
+ * @param {Array} props.entrees - List of entrees for the item
+ * @param {number} props.price - Price of the item
+ * @param {string} props.drink - Drink associated with the item
+ * @param {string} props.app - Appetizer associated with the item
+ * @param {function} props.onDelete - Function to delete the item from the checkout
+ *
+ * @component
+ */
 function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
   return (
     <div className="cshr_itemContainer">
