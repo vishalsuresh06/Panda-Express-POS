@@ -30,8 +30,9 @@ function Cashier() {
     if (selection && selection.type) {
       const newItem = {
         type: selection.type,
-        sides: selection.sides || [],
-        entrees: selection.entrees || [],
+        sides: [selection.side1, selection.side2] || [],
+        entrees:
+          [selection.entree1, selection.entree2, selection.entree3] || [],
         price: selection.price || 0,
         drink: selection.drink || "",
         app: selection.app || "",
@@ -224,8 +225,6 @@ function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
     <div className="cshr_itemContainer">
       <h1 className="cshr_typeLbl">{type}</h1>
       <div className="cshr_detailsContainer">
-        {drink && <p className="cshr_drinkValue">{drink}</p>}
-        {app && <p className="cshr_appValue">{app}</p>}
         {price && (
           <>
             <h3 className="cshr_priceLbl">Price:</h3>
@@ -233,7 +232,7 @@ function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
           </>
         )}
       </div>
-      {sides.length > 0 && (
+      {sides[0] !== "" && (
         <div className="cshr_sidesContainer">
           <h3 className="cshr_sidesLbl">Sides:</h3>
           <ul className="cshr_sideList">
@@ -245,7 +244,7 @@ function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
           </ul>
         </div>
       )}
-      {entrees.length > 0 && (
+      {entrees[0] !== "" && (
         <div className="cshr_entreesContainer">
           <h3 className="cshr_entreesLbl">Entrees:</h3>
           <ul className="cshr_entreeList">
@@ -255,6 +254,18 @@ function Item({ type, sides = [], entrees, price, drink, app, onDelete }) {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+      {drink && (
+        <div>
+          <h3>Drinks: </h3>
+          <p className="cshr_drinkValue">{drink}</p>
+        </div>
+      )}
+      {app && (
+        <div>
+          <h3>Appetizers: </h3>
+          <p className="cshr_drinkValue">{app}</p>
         </div>
       )}
       <button className="cshr_deleteBtn" onClick={onDelete}>

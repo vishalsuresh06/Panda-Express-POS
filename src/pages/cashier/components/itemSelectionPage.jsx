@@ -26,7 +26,8 @@ function ItemSelection() {
 
   const [selection, setSelection] = useState({
     type: "",
-    sides: [],
+    side1: "",
+    side2: "",
     entree1: "",
     entree2: "",
     entree3: "",
@@ -112,17 +113,7 @@ function ItemSelection() {
 
   const handleSelection = (type, item, slot = "") => {
     setSelection((prev) => {
-      if (type === "sides") {
-        const isAlreadySelected = prev.sides.includes(item.name);
-        return {
-          ...prev,
-          sides: isAlreadySelected
-            ? prev.sides.filter((name) => name !== item.name)
-            : [...prev.sides, item.name],
-        };
-      }
-
-      if (type === "entrees") {
+      if (type === "entrees" || type === "sides") {
         return {
           ...prev,
           [slot]: prev[slot] === item.name ? "" : item.name,
@@ -168,7 +159,7 @@ function ItemSelection() {
   };
 
   const getDrinkPrice = () => {
-    if (selection.drink) {
+    if (selection.drink && itemType !== 3) {
       const drink = menuItems.drinks.find(
         (item) => item.name === selection.drink
       );
@@ -245,7 +236,7 @@ function ItemSelection() {
   const renderBowl = () => (
     <div className="cshr_bowlContainer">
       <h1 className="cshr_bowlLabel">Bowl</h1>
-      {renderSection("Side", menuItems.sides, "sides")}
+      {renderSection("Side", menuItems.sides, "sides", "side1")}
       {renderSection("Entree", menuItems.entrees, "entrees", "entree1")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
@@ -256,7 +247,7 @@ function ItemSelection() {
   const renderPlate = () => (
     <div className="cshr_plateContainer">
       <h1 className="cshr_plateLabel">Plate</h1>
-      {renderSection("Side", menuItems.sides, "sides")}
+      {renderSection("Side", menuItems.sides, "sides", "side1")}
       {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
@@ -268,7 +259,7 @@ function ItemSelection() {
   const renderBiggerPlate = () => (
     <div className="cshr_bPlateContainer">
       <h1 className="cshr_bPlateLabel">Bigger Plate</h1>
-      {renderSection("Side", menuItems.sides, "sides")}
+      {renderSection("Side", menuItems.sides, "sides", "side1")}
       {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
       {renderSection("Entree 3", menuItems.entrees, "entrees", "entree3")}
@@ -281,7 +272,7 @@ function ItemSelection() {
   const renderCubMeal = () => (
     <div className="cshr_bowlContainer">
       <h1 className="cshr_bowlLabel">Cub Meal</h1>
-      {renderSection("Side", menuItems.sides, "sides")}
+      {renderSection("Side", menuItems.sides, "sides", "side1")}
       {renderSection("Entree", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Drink", menuItems.drinks, "drink")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
@@ -293,7 +284,8 @@ function ItemSelection() {
   const renderFamilyFeast = () => (
     <div className="cshr_ffContainer">
       <h1 className="cshr_ffLabel">Family Feast</h1>
-      {renderSection("Sides", menuItems.sides, "sides")}
+      {renderSection("Side 1", menuItems.sides, "sides", "side1")}
+      {renderSection("Side 2", menuItems.sides, "sides", "side2")}
       {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
       {renderSection("Entree 3", menuItems.entrees, "entrees", "entree3")}
@@ -305,7 +297,6 @@ function ItemSelection() {
 
   const renderDrinks = () => (
     <div className="cshr_drinkContainer">
-      <h1 className="cshr_drinkLabel">Drinks</h1>
       {renderSection("Drinks", menuItems.drinks, "drink")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
@@ -316,7 +307,12 @@ function ItemSelection() {
   const renderAlaCarte = () => (
     <div className="cshr_acContainer">
       <h1 className="cshr_acLabel">A La Carte</h1>
-      {renderSection("Entrees", menuItems.entrees, "entrees", "entree1")}
+      {renderSection(
+        "Entrees",
+        [...menuItems.entrees, ...menuItems.sides],
+        "entrees",
+        "entree1"
+      )}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -325,9 +321,7 @@ function ItemSelection() {
 
   const renderSidesAppetizers = () => (
     <div className="cshr_saContainer">
-      <h1 className="cshr_saLabel">Sides & Appetizers</h1>
-      {renderSection("Sides", menuItems.sides, "sides")}
-      {renderSection("Apps", menuItems.apps, "app")}
+      {renderSection("Appetizers", menuItems.apps, "app")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
