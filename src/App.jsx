@@ -12,7 +12,8 @@ import {
   Sales,
   ProductUsage,
   XReport,
-  ZReport
+  ZReport,
+  OrderHistory
 } from "./pages/manager";
 import Cashiers from './pages/cashier';
 import Customers from './pages/customers';
@@ -46,6 +47,7 @@ function App() {
           <Route path="productusage" element={<ProductUsage />} />
           <Route path="xreport" element={<XReport />} />
           <Route path="zreport" element={<ZReport />} />
+          <Route path="orderhistory" element={<OrderHistory />} />
         </Route>
 
         <Route path="/cashier" element={

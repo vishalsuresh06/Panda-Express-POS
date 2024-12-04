@@ -27,6 +27,7 @@ urlpatterns = [
     path("manager/sellstogether", manager_views.SellsTogetherView.as_view(), name="sellstogether"),
     path("manager/restock", manager_views.RestockView.as_view(), name="restock"),
     path("manager/xzreports", manager_views.XZReports.as_view(), name="xzreports"),
+    path("manager/orderhistory", manager_views.OrderHistoryView.as_view(), name="orderhistory"),
 ]
 
 if settings.DEBUG:

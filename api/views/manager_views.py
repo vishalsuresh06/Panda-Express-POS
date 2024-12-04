@@ -363,8 +363,27 @@ class XZReports(APIView):
             print(e)
             return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
+class OrderHistoryView(APIView):
+    def get(self, request):
+        try:
+            targetDate = request.GET.get("date")
+            orders = Order.objects.filter(date_created__date=targetDate).order_by("-date_created")
+            return JsonResponse(OrderSerializer(orders, many=True).data , safe=False, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST);
+
+
     def post(self, request):
-        pass
+        try:
+            targetOrderID = request.data["orderID"]
+            targetOrder = Order.objects.get(id=targetOrderID)
+            targetOrder.delete()
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST);
 
 
 
