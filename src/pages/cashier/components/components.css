@@ -171,7 +171,15 @@ button:hover {
   justify-content: center;
 }
 
-button:focus {
-  outline: none;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+.selected {
+  background-color: #4caf50; /* Green */
+  color: white;
+  font-weight: bold;
+}
+
+.greyed-out {
+  background-color: #d3d3d3;
+  color: #a9a9a9;
+  pointer-events: none;
+  opacity: 0.6;
 }

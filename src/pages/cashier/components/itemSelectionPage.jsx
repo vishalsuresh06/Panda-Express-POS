@@ -27,7 +27,9 @@ function ItemSelection() {
   const [selection, setSelection] = useState({
     type: "",
     sides: [],
-    entrees: [],
+    entree1: "",
+    entree2: "",
+    entree3: "",
     drink: "",
     app: "",
     price: 0,
@@ -108,14 +110,30 @@ function ItemSelection() {
     }
   };
 
-  const handleSelection = (type, item) => {
-    setSelection((prev) => ({
-      ...prev,
-      [type]:
-        type === "sides" || type === "entrees"
-          ? [...prev[type], item.name]
-          : item.name,
-    }));
+  const handleSelection = (type, item, slot = "") => {
+    setSelection((prev) => {
+      if (type === "sides") {
+        const isAlreadySelected = prev.sides.includes(item.name);
+        return {
+          ...prev,
+          sides: isAlreadySelected
+            ? prev.sides.filter((name) => name !== item.name)
+            : [...prev.sides, item.name],
+        };
+      }
+
+      if (type === "entrees") {
+        return {
+          ...prev,
+          [slot]: prev[slot] === item.name ? "" : item.name,
+        };
+      }
+
+      return {
+        ...prev,
+        [type]: prev[type] === item.name ? "" : item.name,
+      };
+    });
   };
 
   const calculatePrice = () => {
@@ -142,7 +160,8 @@ function ItemSelection() {
   };
 
   const calculateUpcharges = () => {
-    return selection.entrees.reduce((upcharge, entreeName) => {
+    const entrees = [selection.entree1, selection.entree2, selection.entree3];
+    return entrees.reduce((upcharge, entreeName) => {
       const entree = menuItems.entrees.find((item) => item.name === entreeName);
       return entree?.upcharge ? upcharge + Number(entree.upcharge) : upcharge;
     }, 0);
@@ -173,22 +192,30 @@ function ItemSelection() {
     });
   };
 
-  const renderButtons = (items, type) => {
+  const renderButtons = (items, type, slot = "") => {
     return items.map((item, index) => (
       <button
         key={index}
-        className={`cshr_${type}Btn`}
-        onClick={() => handleSelection(type, item)}
+        className={`cshr_${type}Btn ${
+          (
+            slot
+              ? selection[slot] === item.name
+              : selection[type].includes(item.name)
+          )
+            ? "selected"
+            : ""
+        }`}
+        onClick={() => handleSelection(type, item, slot)}
       >
         {item.name}
       </button>
     ));
   };
 
-  const renderSection = (label, items, type) => (
+  const renderSection = (label, items, type, slot = "") => (
     <>
       <h1>{label}</h1>
-      {renderButtons(items, type)}
+      {renderButtons(items, type, slot)}
     </>
   );
 
@@ -219,7 +246,7 @@ function ItemSelection() {
     <div className="cshr_bowlContainer">
       <h1 className="cshr_bowlLabel">Bowl</h1>
       {renderSection("Side", menuItems.sides, "sides")}
-      {renderSection("Entree", menuItems.entrees, "entrees")}
+      {renderSection("Entree", menuItems.entrees, "entrees", "entree1")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -230,8 +257,8 @@ function ItemSelection() {
     <div className="cshr_plateContainer">
       <h1 className="cshr_plateLabel">Plate</h1>
       {renderSection("Side", menuItems.sides, "sides")}
-      {renderSection("Entree 1", menuItems.entrees, "entrees")}
-      {renderSection("Entree 2", menuItems.entrees, "entrees")}
+      {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
+      {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -242,9 +269,9 @@ function ItemSelection() {
     <div className="cshr_bPlateContainer">
       <h1 className="cshr_bPlateLabel">Bigger Plate</h1>
       {renderSection("Side", menuItems.sides, "sides")}
-      {renderSection("Entree 1", menuItems.entrees, "entrees")}
-      {renderSection("Entree 2", menuItems.entrees, "entrees")}
-      {renderSection("Entree 3", menuItems.entrees, "entrees")}
+      {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
+      {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
+      {renderSection("Entree 3", menuItems.entrees, "entrees", "entree3")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -255,7 +282,8 @@ function ItemSelection() {
     <div className="cshr_bowlContainer">
       <h1 className="cshr_bowlLabel">Cub Meal</h1>
       {renderSection("Side", menuItems.sides, "sides")}
-      {renderSection("Entree", menuItems.entrees, "entrees")}
+      {renderSection("Entree", menuItems.entrees, "entrees", "entree1")}
+      {renderSection("Drink", menuItems.drinks, "drink")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -263,14 +291,12 @@ function ItemSelection() {
   );
 
   const renderFamilyFeast = () => (
-    <div className="cshr_famFeastContainer">
-      <h1 className="cshr_famFeastLabel">Family Feast</h1>
-      {renderSection("Side 1", menuItems.sides, "sides")}
-      {renderSection("Side 2", menuItems.sides, "sides")}
-      {renderSection("Side 3", menuItems.sides, "sides")}
-      {renderSection("Entree 1", menuItems.entrees, "entrees")}
-      {renderSection("Entree 2", menuItems.entrees, "entrees")}
-      {renderSection("Entree 3", menuItems.entrees, "entrees")}
+    <div className="cshr_ffContainer">
+      <h1 className="cshr_ffLabel">Family Feast</h1>
+      {renderSection("Sides", menuItems.sides, "sides")}
+      {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
+      {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
+      {renderSection("Entree 3", menuItems.entrees, "entrees", "entree3")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -278,9 +304,9 @@ function ItemSelection() {
   );
 
   const renderDrinks = () => (
-    <div className="cshr_drinksContainer">
-      <h1 className="cshr_drinksLabel">Drinks</h1>
-      {renderButtons(menuItems.drinks, "drink")}
+    <div className="cshr_drinkContainer">
+      <h1 className="cshr_drinkLabel">Drinks</h1>
+      {renderSection("Drinks", menuItems.drinks, "drink")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -288,9 +314,9 @@ function ItemSelection() {
   );
 
   const renderAlaCarte = () => (
-    <div className="cshr_aLCContainer">
-      <h1 className="aLCLabel">A La Carte</h1>
-      {renderButtons([...menuItems.sides, ...menuItems.entrees], "app")}
+    <div className="cshr_acContainer">
+      <h1 className="cshr_acLabel">A La Carte</h1>
+      {renderSection("Entrees", menuItems.entrees, "entrees", "entree1")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
@@ -298,16 +324,17 @@ function ItemSelection() {
   );
 
   const renderSidesAppetizers = () => (
-    <div className="cshr_sideContainer">
-      <h1 className="cshr_sideLabel">Sides</h1>
-      {renderButtons(menuItems.apps, "app")}
+    <div className="cshr_saContainer">
+      <h1 className="cshr_saLabel">Sides & Appetizers</h1>
+      {renderSection("Sides", menuItems.sides, "sides")}
+      {renderSection("Apps", menuItems.apps, "app")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
       </button>
     </div>
   );
 
-  return renderTypeSpecificItems();
+  return <div className="cshr_itemsContainer">{renderTypeSpecificItems()}</div>;
 }
 
 export default ItemSelection;

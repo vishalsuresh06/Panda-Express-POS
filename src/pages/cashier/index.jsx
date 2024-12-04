@@ -42,6 +42,8 @@ function Cashier() {
 
       setItems(updatedItems);
       setTotal(updatedTotal);
+
+      navigate(location.pathname, { replace: true });
     }
   }, [selection]);
 
