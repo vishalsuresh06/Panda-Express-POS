@@ -151,6 +151,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import django_heroku
 django_heroku.settings(locals())
 
+SITE_ID = 1
+
 AUTH_USER_MODEL = 'api.Employee'
 
 REST_FRAMEWORK = {
@@ -160,6 +162,6 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'api.pin_auth.PinAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'api.pin_auth.PinAuthenticationBackend',
 ]

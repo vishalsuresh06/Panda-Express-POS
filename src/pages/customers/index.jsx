@@ -5,14 +5,26 @@ import Chatbot from '@components/Chatbot/Chatbot';
 import "./kiosk.css"
 const WEATHER_REFRESH_MIN = 10
 
+function Time(){
+    const [currTime, setTime] = useState(new Date().toLocaleTimeString())
+    useEffect(() => {
+        const intervalID = setInterval(() => {
+            setTime(new Date().toLocaleTimeString());
+        }, 1000);
 
-function Customers() {
+        return () => clearInterval(intervalID);
+    }, []);
+
+    return(<h4 className="notranslate">{currTime}</h4>)
+}
+
+
+export default function Customers() {
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
     const [ItemList, setItems] = useState([]);
     const [orderTypes, setOrderTypes] = useState([])
-    const [currTime, setTime] = useState(new Date().toLocaleTimeString())
     const [currWeather, setWeather] = useState({})
     
     const check = async (name, togo) => {
@@ -31,7 +43,6 @@ function Customers() {
             "employee": "kiosk",
             "orderItems": ItemList
         }
-        console.log(orderJSON);
         try {
             let response = await fetch(`${apiURL}/api/kiosk/`, {
                 method: "POST",
@@ -48,15 +59,6 @@ function Customers() {
         } catch (error) { return false; }
     }
 
-
-
-    useEffect(() => {
-        const intervalID = setInterval(() => {
-            setTime(new Date().toLocaleTimeString());
-        }, 1000);
-
-        return () => clearInterval(intervalID);
-    }, []);
 
     var translateWidgetAdded = false;
     const googleTranslateElementInit = () => {
@@ -110,36 +112,36 @@ function Customers() {
         return () => clearInterval(intervalID);
     }, []);    
 
-    useEffect( () => async function updateOrders(){
+    async function updateOrders(){
         try {
-            let response = await fetch(`${apiURL}/api/kiosk_orders/`, {
-                method: "GET"
-            });
+            let response = await fetch(`${apiURL}/api/kiosk_orders/`);
 
             if (response.ok) {
-                const fetchedMenu = await response.json()
+                const fetchedMenu = await response.json();
+                console.log("FETCHED TYPES:")
+                console.log(fetchedMenu);
                 const menuWithNumbers = fetchedMenu.map(item => ({
                     ...item,
                     id: Number(item.id),
                     price: parseFloat(item.Base_price)
                 }));
-                setOrderTypes(menuWithNumbers)
+                setOrderTypes(menuWithNumbers);
             } else {
-                return false
+                return false;
             }
         } catch (error) {
             console.log(error);
             return false
         }
+    }
+
+    useEffect(() => {
+        updateOrders();
     }, [])
 
-    
-
-    useEffect( () => async function updateMenu(){
+    async function updateMenu(){
         try {
-            let response = await fetch(`${apiURL}/api/kiosk/`, {
-                method: "GET"
-            });
+            let response = await fetch(`${apiURL}/api/kiosk/`);
 
             if (response.ok) {
                 const fetchedMenu = await response.json()
@@ -156,7 +158,11 @@ function Customers() {
             console.log(error);
             return false
         }
-    }, [])
+    }
+
+    useEffect( () => {
+        updateMenu();
+    }, []);
 
     const remove_item = (id_to_remove)=>{
         setItems(items => 
@@ -291,7 +297,7 @@ function Customers() {
     
     return (
         <>
-            <h4 className="notranslate">{currTime}</h4>
+            <Time/>
             <div id="google_translate_element"></div>
             {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
             <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
@@ -316,6 +322,8 @@ function Customers() {
 // }
 
 function OrderButtons({setSys, orderTypes}){
+    console.log("CONSTRUCTING BUTTONS WITH THE FOLLOWING TYPES:");
+    console.log(orderTypes);
     const removeID = ["A La Carte (Side) (L)",
                       "A La Carte (Side) (S)",
                       "A La Carte (Entree) (S)",
@@ -346,11 +354,11 @@ function OrderButtons({setSys, orderTypes}){
                     </button>
             </div>
         ))}
-        <div className='CK-subMenuOptionsItem' key={8}>
+        {/* <div className='CK-subMenuOptionsItem' key={8}>
             <button onClick={() => buttonPressAction("A La Carte")}>
                 <div>A La Carte</div>
             </button>
-        </div>
+        </div> */}
         </ul>
     );
 }
@@ -468,7 +476,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     }
 
     function CompleteButton(){
-        if (numEntree === currOrder.filter(item => item.type === "Entree").length && numSide === currOrder.filter(item => item.type === "Side").length){
+        if (numEntree === currOrder.filter(item => item.type === "entree").length && numSide === currOrder.filter(item => item.type === "side").length){
             return (
                 <button className= "CK-CompleteButton" onClick={completeOrder}>
                     Complete
@@ -491,7 +499,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         <h5>Pick {numEntree} entree{Es()}</h5>
         <ul className="CK-entrees">
             
-            {menu.filter(item => item.type === "Entree").map((item) => (
+            {menu.filter(item => item.type === "entree").map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} max={numEntree} setOrd={setOrder} ord={currOrder} />
                 </li>
@@ -500,7 +508,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         <h3>Side</h3>
         <h5>Pick {numSide} side{Ss()}</h5>
         <ul className="CK-sides">
-            {menu.filter(item => item.type === "Side").map((item) => (
+            {menu.filter(item => item.type === "side").map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} max={numSide} setOrd={setOrder} ord={currOrder} />
                 </li>
@@ -527,7 +535,7 @@ function SinglePick({orderType, typeID, menu, addItem, setSys}){
     <div className = "CK-singlePick">
         <button onClick={() => setSys(-1)} className="CK-cancelOrder">Back</button>
         <ul className="CK-singlePickList CK-sides">
-            {menu.filter(item => item.type === orderType).map((item) => (
+            {menu.filter(item => item.type === orderType.tolowercase()).map((item) => (
                 <li key={item.id}>
                     <FoodCard id={item.id} menu={menu} setOrd={setOrder} ord={currOrder} max={1}/>
                 </li>
@@ -541,10 +549,3 @@ function SinglePick({orderType, typeID, menu, addItem, setSys}){
     </div>
     )
 }
-
-
-
-export default Customers
-
-
-

@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     gap: 20px;
-    padding: 20px;
+    padding: 10px;
 }
 
 .mngr-nav button {
@@ -62,17 +62,19 @@
     display: inline-block;
     background-color: #f44336;
     color: #FFFFFF;
-    padding: 14px 25px;
+    padding: 14px 20px;
     text-align: center;
     text-decoration: none;
     font-size: 16px;
     opacity: 0.9;
 }
 
+.mngr-btn-ret {
+    background-color: #020406;
+}
+
 .mngr-btn:hover {
-    color: white;
     background-color: red;
-    opacity: 1;
 }
 
 
@@ -96,7 +98,7 @@
     text-align: center;
 }
 
-.mngr-kitchensettings, .mngr-excess, .mngr-sellstogether, .mngr-restockReport {
+.mngr-kitchensettings, .mngr-excess, .mngr-sellstogether, .mngr-restockReport, .mngr-xreport, .mngr-zreport, .mngr-orderhist {
     display: flex;
     flex-direction: column; 
     align-items: center;     
@@ -120,4 +122,58 @@
 
 .mngr-salescol {
     width: 50%;
+}
+
+.mngr-orderList {
+	list-style-type: none;
+	padding: 0;
+	margin: 0; 
+    width:60vw;
+}
+
+.mngr-orderList {
+	flex-grow: 1;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.mngr-orderCard {
+	border: 1px solid rgb(0, 0, 0);
+	padding: 0px;
+    margin-bottom:20px;
+}
+
+.mngr-orderItemCard li {
+	font-size: 20px;
+}
+
+.mngr-orderItemCard h3 {
+	font-size: 25px;
+}
+
+.mngr-orderCardHeaders {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start; 
+	width: 100%; 
+	background-color: #757575;	
+}
+
+.mngr-orderInfo {
+	margin-left:10px;
+}
+
+.mngr-orderCardBody {
+	display: flex;
+}
+
+.mngr-cardButtons {
+	display: flex;
+	margin-left: auto;
+}
+
+.mngr-cardButtons button {
+	font-size:30px;
+	width:150px;
+	height:75px;
 }

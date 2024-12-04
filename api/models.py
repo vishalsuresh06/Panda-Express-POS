@@ -50,10 +50,10 @@ class Employee(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'id'  # Field to use as the unique identifier
     REQUIRED_FIELDS = ['name']  # Other required fields during user creation
+    email = models.EmailField(unique=True, null=True)
 
     def __str__(self):
         return self.name
-
 
 class OrderItemType(models.Model):
     name = models.CharField(max_length=100)
@@ -136,3 +136,4 @@ class SettingParameter(models.Model):
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField()
     default = models.TextField()
+
