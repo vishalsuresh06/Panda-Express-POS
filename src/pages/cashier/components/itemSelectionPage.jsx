@@ -121,8 +121,8 @@ function ItemSelection() {
   const calculatePrice = () => {
     let basePrice = getBasePrice(itemType);
     let upcharge = calculateUpcharges();
-    let drinkPrice = getDrinkPrice();
-    let appPrice = getAppPrice();
+    let drinkPrice = Number(getDrinkPrice());
+    let appPrice = Number(getAppPrice());
 
     return Number(basePrice + upcharge + drinkPrice + appPrice).toFixed(2);
   };
@@ -134,6 +134,9 @@ function ItemSelection() {
       itemPrices.bigger_plate,
       itemPrices.cub_meal,
       itemPrices.family_feast,
+      0,
+      itemPrices.a_la_carte,
+      0,
     ];
     return Number(prices[type]);
   };
@@ -150,7 +153,7 @@ function ItemSelection() {
       const drink = menuItems.drinks.find(
         (item) => item.name === selection.drink
       );
-      return drink ? Number(drink.alt_price) : 0;
+      return drink && drink.alt_price ? Number(drink.alt_price) : 0;
     }
     return 0;
   };
@@ -158,7 +161,7 @@ function ItemSelection() {
   const getAppPrice = () => {
     if (selection.app) {
       const app = menuItems.apps.find((item) => item.name === selection.app);
-      return app ? Number(app.alt_price) : 100;
+      return app && app.alt_price ? Number(app.alt_price) : 0;
     }
     return 0;
   };
