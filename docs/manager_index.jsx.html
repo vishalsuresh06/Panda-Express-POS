@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: manager/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: manager/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useState, useEffect, createContext, useContext } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { Compact } from '@uiw/react-color';
+import { Line } from 'react-chartjs-2';
+import { ManagerRoute } from '../../utils/Auth';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { apiURL } from '../../config.js';
+import './manager.css';
+import { OrbitProgress } from 'react-loading-indicators';
+
+/**
+ * @module Manager
+ */
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+);
+
+const KitchenSettingsContext = createContext(null);
+
+function DBEditorTable({ title, fetchData, addData, removeData, modifyData }) {
+    const [items, setItems] = useState([]);
+    const [isEditing, setIsEditing] = useState(null);
+
+    async function updateItems() {
+        let data = await fetchData();
+        setItems(data)
+    }
+
+    useEffect(() => {
+        updateItems();
+    }, [])
+
+    async function handleAdd(defaultData) {
+        await addData(defaultData)
+
+        await updateItems();
+    }
+
+    async function handleRemove(index) {
+        if (await removeData(items.at(index).id)) {
+            let copy = [...items];
+            copy.splice(index, 1);
+            setItems(copy);
+        }
+    }
+
+    async function handleEditSave(index, element) {
+        const rows = element.closest('tr').children;
+
+        if (isEditing == index) {
+            setIsEditing(null);
+
+            for (let [key, value] of Object.entries(rows)) {
+                value.contentEditable = false;
+            }
+
+            let modifiedItem = structuredClone(items.at(index))
+
+            const keys = Object.keys(modifiedItem);
+
+            for (let i = 0; i &lt; keys.length; i++) {
+                modifiedItem[keys[i]] = rows[i].innerText;
+            }
+
+            await modifyData(modifiedItem)
+
+            await updateItems();
+        } else {
+            setIsEditing(index);
+
+            for (let [key, value] of Object.entries(rows)) {
+                // Prevent changing id
+                if (key != 0) {
+                    value.contentEditable = true;
+                }
+            }
+        }
+    }
+
+    return (
+        &lt;section>
+            &lt;h2 className='mngr-font'>Edit {title}&lt;/h2>
+            &lt;table className='mngr-table'>
+                &lt;thead>
+                    &lt;tr>
+                        {items.length > 0 &amp;&amp; Object.keys(items[0]).map((key, index) => (
+                            &lt;td className='mngr-font' key={index}>{key}&lt;/td>
+                        ))}
+                        &lt;td>&lt;/td>
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody>
+                    {items.map((menuItem, index) => (
+                        &lt;tr key={index}>
+                            {Object.values(items[index]).map((entry, index2) => (
+                                &lt;td className='mngr-font' key={index2}>{entry?.toString() || ""}&lt;/td>
+                            ))}
+                            &lt;td>
+                                &lt;button onClick={(event) => handleEditSave(index, event.target)}>{isEditing === index ? 'Save' : 'Edit'}&lt;/button>
+                                &lt;button onClick={() => handleRemove(index)}>Delete&lt;/button>
+                            &lt;/td>
+                        &lt;/tr>
+                    ))}
+                &lt;/tbody>
+            &lt;/table>
+            &lt;button className="mngr-createbutton" onClick={() => handleAdd()}>Create {title}&lt;/button>
+        &lt;/section>
+    )
+}
+
+function EmployeeEdit() {
+    async function fetchEmployees() {
+        try {
+            let response = await fetch(`${apiURL}/api/employees`);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.log(error)
+            return []
+        }
+    }
+
+    async function modifyEmployees(data, action) {
+        let reqBody = { action: null, data: null }
+        if (action == "delete") {
+            reqBody.action = "delete"
+            reqBody.data = data
+
+        } else if (action == "add") {
+            reqBody.action = "add"
+            reqBody.data = data
+
+        } else {
+            reqBody.action = "modify"
+            reqBody.data = data
+
+            if (!reqBody?.data?.email.trim()) {
+                reqBody.data.email = null
+            }
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/employees/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+
+            if (response.ok) {
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+
+    async function addEmployee(data) {
+        const newEmployee = { name: 'Enter Name', is_manager: false, wage: 7.00 };
+        return modifyEmployees(newEmployee, "add");
+    }
+
+    async function removeEmployee(id) {
+        return modifyEmployees(id, "delete")
+    }
+
+    async function modifyEmployee(modifiedItem) {
+        return modifyEmployees(modifiedItem, "modify")
+    }
+
+    return (
+        &lt;DBEditorTable title="Employee" fetchData={fetchEmployees} addData={addEmployee} removeData={removeEmployee} modifyData={modifyEmployee} />
+    )
+}
+
+function MenuEdit() {
+    async function fetchMenu() {
+        try {
+            let response = await fetch(`${apiURL}/api/menu`);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.log(error)
+            return []
+        }
+    }
+
+    async function modifyMenus(data, action) {
+        let reqBody = { action: null, data: null }
+        if (action == "delete") {
+            reqBody.action = "delete"
+            reqBody.data = data
+
+        } else if (action == "add") {
+            reqBody.action = "add"
+            reqBody.data = data
+
+        } else {
+            reqBody.action = "modify"
+            reqBody.data = data
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/menu/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+
+            if (response.ok) {
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+
+    async function addMenu(data) {
+        const newMenu = { name: '? Chicken', type: "Entree", alt_price: 6.00, upcharge: 0, on_menu: true };
+        return modifyMenus(newMenu, "add");
+    }
+
+    async function removeMenu(id) {
+        return modifyMenus(id, "delete")
+    }
+
+    async function modifyMenu(modifiedItem) {
+        return modifyMenus(modifiedItem, "modify")
+    }
+
+    return (
+        &lt;DBEditorTable title="Menu" fetchData={fetchMenu} addData={addMenu} removeData={removeMenu} modifyData={modifyMenu} />
+    )
+}
+
+function InventoryEdit() {
+    async function fetchInventory() {
+        try {
+            let response = await fetch(`${apiURL}/api/inventory`);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.log(error)
+            return []
+        }
+    }
+
+    async function modifyInventorys(data, action) {
+        let reqBody = { action: null, data: null }
+        if (action == "delete") {
+            reqBody.action = "delete"
+            reqBody.data = data
+
+        } else if (action == "add") {
+            reqBody.action = "add"
+            reqBody.data = data
+
+        } else {
+            reqBody.action = "modify"
+            reqBody.data = data
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/inventory/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+
+            if (response.ok) {
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+
+    async function addInventory(data) {
+        const newMenu = { name: '? Item', is_food: true, stock: 0, restock_threshold: 100, restock_amount: 100 };
+        return modifyInventory(newMenu, "add");
+    }
+
+    async function removeInventory(id) {
+        return modifyInventory(id, "delete")
+    }
+
+    async function modifyInventory(modifiedInventory) {
+        return modifyInventorys(modifiedInventory, "modify")
+    }
+
+    return (
+        &lt;DBEditorTable title="Inventory" fetchData={fetchInventory} addData={addInventory} removeData={removeInventory} modifyData={modifyInventory} />
+    )
+}
+
+/**
+ * A helper component which constructs a custom settings input field 
+ * based on the arguments.
+ * @param {string} name The display name of the setting
+ * @param {string} desc A brief description of the setting
+ * @param {string} field The db name of the setting
+ * @param {string} type The type of input the setting uses
+ * @returns An editable settings component connected to the DB
+ */
+function SettingsInput({ name, desc, field, type }) {
+    const { settings, setSettings } = useContext(KitchenSettingsContext);
+    const [color, setColor] = useState(type == "color" ? settings[field] : "");
+
+    const changeSettings = async (event) => {
+        const settingsCopy = { ...settings };
+        var data;
+        if (type == "text") {
+
+            settingsCopy[field] = event.target.value;
+        } else if (type == "checkbox") {
+            settingsCopy[field] = (event.target.checked ? "true" : "false");
+        } else if (type == "color") {
+            setColor(event.hex);
+            settingsCopy[field] = event.hex;
+        }
+        setSettings(settingsCopy);
+
+        let reqBody = { action: "set", field: field, data: settingsCopy[field] };
+        try {
+            await fetch(`${apiURL}/api/settings`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // Prevents while DB settings are still being loaded in
+
+    var inputComponent;
+    if (type == "text") {
+        inputComponent = &lt;input type="text" value={settings[field]} onChange={changeSettings} />;
+    } else if (type == "checkbox") {
+        inputComponent = &lt;input type="checkbox" defaultChecked={settings[field] == "true"} onChange={changeSettings} />;
+    } else if (type == "color") {
+        inputComponent = &lt;Compact color={color} onChange={changeSettings} />
+    }
+
+    return (
+        &lt;tr>
+            &lt;td>{name}&lt;/td>
+            &lt;td>{desc}&lt;/td>
+            &lt;td>{inputComponent}&lt;/td>
+        &lt;/tr>
+    )
+}
+
+/**
+ * A component which allows the manager to edit different settings regarding the kitchen UI. These
+ * settings are saved to the database.
+ */
+function KitchenSettings() {
+    const [settings, setSettings] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    // Fetch the current settings from the database
+    useEffect(() => {
+        async function fetchSettings() {
+            try {
+                let response = await fetch(`${apiURL}/api/settings`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setSettings(data);
+                    setLoading(false);
+                } else {
+                    setSettings({});
+                    setLoading(true);
+                }
+            } catch (error) {
+                console.log(error)
+                setSettings({});
+                setLoading(true);
+            }
+        }
+
+        fetchSettings();
+    }, []);
+
+    const restoreDefaults = async () => {
+        let reqBody = { action: "restoredefaults" };
+        try {
+            await fetch(`${apiURL}/api/settings`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        window.location.reload();
+    }
+
+    if (loading) {
+        return &lt;>&lt;/>;
+    }
+
+    return (&lt;KitchenSettingsContext.Provider value={{ settings, setSettings }}>
+        &lt;div className="mngr-kitchensettings">
+            &lt;h2 className="mngr-font">KITCHEN CUSTOMIZER&lt;/h2>
+            &lt;table className="mngr-settingsTable">
+                &lt;thead>
+                    &lt;tr>
+                        &lt;td className="mngr-font">Setting&lt;/td>
+                        &lt;td className="mngr-font">Description&lt;/td>
+                        &lt;td className="mngr-font">Value&lt;/td>
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody>
+                    &lt;SettingsInput name="Order Refresh Rate (s)"
+                        desc="How pages will refresh with newly entered orders."
+                        field="kt_refreshRate"
+                        type="text" />
+
+                    &lt;SettingsInput name="Full Order Render Count"
+                        desc="How many order cards are automatically expanded in the HERE/TOGO columns."
+                        field="kt_fullOrderCount"
+                        type="text" />
+
+                    &lt;SettingsInput name="Recent Order Count"
+                        desc="How many of the most recent orders will be displayed."
+                        field="kt_recentOrderCount"
+                        type="text" />
+
+                    &lt;SettingsInput name="Here Orders on Left"
+                        desc="Alters which of the two order columns is displayed."
+                        field="kt_hereOrdersLeft"
+                        type="checkbox" />
+
+                    &lt;SettingsInput name="Temperature in Fahrenheit"
+                        field="kt_tempUnits"
+                        type="checkbox" />
+
+                    &lt;SettingsInput name="Pending Order Color"
+                        field="kt_pendingColor"
+                        type="color" />
+
+                    &lt;SettingsInput name="In Progress Order Color"
+                        field="kt_inprogressColor"
+                        type="color" />
+
+                    &lt;SettingsInput name="Completed Order Color"
+                        field="kt_completedColor"
+                        type="color" />
+
+                    &lt;SettingsInput name="Canceled Order Color"
+                        field="kt_cancelledColor"
+                        type="color" />
+
+                &lt;/tbody>
+            &lt;/table>
+
+            &lt;button onClick={restoreDefaults}>RESTORE DEFAULTS&lt;/button>
+        &lt;/div>
+    &lt;/KitchenSettingsContext.Provider>)
+}
+
+/**
+ * A component which generates a report of the usage of all inventory items from an editable date 
+ * until the current date. It highlights those which fall below 10% usage.
+ */
+function Excess() {
+    const [targetTime, setTargetTime] = useState("2023-01-01");
+    const [excessItems, setExcessItems] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleTimeChange = (event) => {
+        setTargetTime(event.target.value);
+    }
+
+    const queryExcess = async () => {
+        setLoading(true);
+        try {
+            let response = await fetch(`${apiURL}/api/manager/excess?timestamp=${targetTime}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setExcessItems(data);
+            } else {
+                setExcessItems([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setExcessItems([]);
+        }
+        setLoading(false);
+    }
+
+    return (&lt;div className="mngr-excess mngr-font">
+        &lt;h2>Excess Inventory&lt;/h2>
+        &lt;div className="mngr-excessQuery">
+            &lt;input type="date" defaultValue={targetTime} onChange={handleTimeChange} key={targetTime} />
+            &lt;button onClick={queryExcess}>QUERY&lt;/button>
+        &lt;/div>
+
+        {loading &amp;&amp; &lt;OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {excessItems.length > 0 &amp;&amp; 
+            &lt;table className="mngr-settingsTable">
+                &lt;thead>
+                    &lt;tr>
+                        &lt;td>Inventory Item&lt;/td>
+                        &lt;td>Units Sold&lt;/td>
+                        &lt;td>Percent of Quantity&lt;/td>
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody>
+                    {excessItems.map((item, index) => (
+                        &lt;tr key={index}>
+                            &lt;td>{item.name}&lt;/td>
+                            &lt;td>{item.quantitySold}&lt;/td>
+                            &lt;td className={item.percentSold &lt; 10 ? "mngr-excessItem" : "mngr-normalItem"}>{item.percentSold}%&lt;/td>
+                        &lt;/tr>
+                    ))}
+                &lt;/tbody>
+            &lt;/table>
+        }
+    &lt;/div>)
+}
+
+/**
+ * A component which generates a report of which Sides &amp; Entrees sell well together, displaying their
+ * frequency together over order in a editable time window.
+ */
+function SellsTogether() {
+    const [startDate, setStartDate] = useState("2023-01-01");
+    const [endDate, setEndDate] = useState("2023-12-31");
+    const [foodPairs, setFoodPairs] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const changeStart = (event) => {
+        setStartDate(event.target.value);
+    }
+
+    const changeEnd = (event) => {
+        setEndDate(event.target.value);
+    }
+
+    const queryPairs = async () => {
+        setLoading(true);
+        try {
+            let response = await fetch(`${apiURL}/api/manager/sellstogether?startDate=${startDate}&amp;endDate=${endDate}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setFoodPairs(data);
+            } else {
+                setFoodPairs([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setFoodPairs([]);
+        }
+        setLoading(false);
+    };
+
+    return (&lt;div className="mngr-sellstogether mngr-font">
+        &lt;h2>What Sells Together&lt;/h2>
+        &lt;h5>Time Period&lt;/h5>
+        &lt;input type="date" defaultValue={startDate} key={startDate} onChange={changeStart}/>
+        &lt;input type="date" defaultValue={endDate} key={endDate} onChange={changeEnd}/>
+        &lt;button onClick={queryPairs}>QUERY&lt;/button>
+
+        {loading &amp;&amp; &lt;OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />}
+        {foodPairs.length > 0 &amp;&amp; 
+            &lt;table className="mngr-settingsTable">
+                &lt;thead>
+                    &lt;tr>
+                        &lt;td>Food Item 1&lt;/td>
+                        &lt;td>Food Item 2&lt;/td>
+                        &lt;td>Frequency&lt;/td>
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody>
+                    {foodPairs.map((pair, index) => (
+                        &lt;tr key={index}>
+                            &lt;td>{pair.foodItem1}&lt;/td>
+                            &lt;td>{pair.foodItem2}&lt;/td>
+                            &lt;td>{pair.count}&lt;/td>
+                        &lt;/tr>
+                    ))}
+                &lt;/tbody>
+            &lt;/table>
+        }   
+    &lt;/div>)
+}
+
+/**
+ * A component which generates a restock report of all inventory items, display those 
+ * which have less than their designated threshold and adds button to restock.
+ */
+function Restock() {
+    const [restockList, setRestockList] = useState([]);
+
+    const queryRestock = async () => {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/restock`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setRestockList(data);
+            } else {
+                setRestockList([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setRestockList([]);
+        }
+    }
+
+    const restockItem = (item) => async () => {
+        let reqBody = { "invItem": item }
+        try {
+            let response = await fetch(`${apiURL}/api/manager/restock`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });
+
+            queryRestock();
+            return response.ok;
+
+        } catch (error) { return false; }
+    };
+
+    useEffect(() => {
+        queryRestock();
+    }, [])
+
+    return (&lt;div className="mngr-restockReport mngr-font">
+        &lt;h2>Restock Report&lt;/h2>
+        &lt;button onClick={queryRestock}>Refresh&lt;/button>
+        &lt;table className="mngr-settingsTable">
+            &lt;thead>
+                &lt;tr>
+                    &lt;td>Inventory Item&lt;/td>
+                    &lt;td>Current Stock&lt;/td>
+                    &lt;td>Restock Threshold&lt;/td>
+                    &lt;td>Restock&lt;/td>
+                &lt;/tr>
+            &lt;/thead>
+            &lt;tbody>
+                {restockList.map((invItem, index) => (
+                    &lt;tr key={index}>
+                        &lt;td>{invItem.name}&lt;/td>
+                        &lt;td>{invItem.stock}&lt;/td>
+                        &lt;td>{invItem.restock_threshold}&lt;/td>
+                        &lt;td>&lt;button onClick={restockItem(invItem)}>Restock (Purchase {invItem.restock_amount})&lt;/button>&lt;/td>
+                    &lt;/tr>
+                ))}
+            &lt;/tbody>
+        &lt;/table>
+    &lt;/div>)
+}
+
+function Sales() {
+    const [startDate, setStartDate] = useState('2023-01-01');
+    const [endDate, setEndDate] = useState('2023-01-12');
+    const [chartData, setChartData] = useState(null);
+
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [menuItems, setMenuItems] = useState([]);
+
+    useEffect(() => {
+        async function fetchMenu() {
+            try {
+                let response = await fetch(`${apiURL}/api/menu`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setMenuItems(data)
+                } else {
+                    setMenuItems([])
+                }
+            } catch (error) {
+                console.log(error)
+                setMenuItems([])
+            }
+        }
+
+        fetchMenu();
+    }, []);
+
+    const handleCheckboxChange = (id) => {
+        setSelectedIds((prevSelectedIds) => {
+            if (prevSelectedIds.includes(id)) {
+                return prevSelectedIds.filter((item) => item !== id);
+            } else {
+                return [...prevSelectedIds, id];
+            }
+        });
+    };
+
+    const handleStartChange = (event) => {
+        setStartDate(event.target.value);
+    };
+
+    const handleEndChange = (event) => {
+        setEndDate(event.target.value);
+    };
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        let datesPopulated = false
+
+        const promises = selectedIds.map(async (id) => {
+            try {
+                let response = await fetch(`${apiURL}/api/manager/menu-query/${id}?start_date=${startDate}&amp;end_date=${endDate}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    function getRandomColor() {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256);
+                        return `rgba(${r}, ${g}, ${b}, 0.7)`; // Adjust alpha for transparency
+                    }
+
+                    const color = getRandomColor()
+
+                    let newDataset = {
+                        label: menuItems.find(item => item.id === id).name,
+                        backgroundColor: color,
+                        borderColor: color,
+                        data: [],
+                    }
+
+                    let populateDates = false
+                    if (!datesPopulated) {
+                        datesPopulated = true
+                        populateDates = true
+                    }
+                    data.forEach((day) => {
+                        if (populateDates) {
+                            newChartData.labels.push(day.date)
+                        }
+                        newDataset.data.push(day.quantity)
+                    })
+
+                    newChartData.datasets.push(newDataset)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        await Promise.all(promises);
+
+        setChartData(newChartData);
+
+        setLoading(false)
+    }
+
+    return (
+        &lt;div className='mngr-salescontainer'>
+            &lt;div className='mngr-salescol'>
+                {chartData ? (
+                    &lt;Line data={chartData} />
+                ) : (
+                    &lt;p>Send a query&lt;/p>
+                )}
+            &lt;/div>
+            &lt;div className='mngr-salescol'>
+                &lt;div>
+                    &lt;h3>Select Items&lt;/h3>
+                    {menuItems.map((item) => (
+                        &lt;div key={item.id}>
+                            &lt;input
+                                type="checkbox"
+                                checked={selectedIds.includes(item.id)}
+                                onChange={() => handleCheckboxChange(item.id)}
+                            />
+                            &lt;label> {item.name}&lt;/label>
+                        &lt;/div>
+                    ))}
+                &lt;/div>
+                &lt;input type="date" value={startDate} onChange={handleStartChange} />
+                &lt;input type="date" value={endDate} onChange={handleEndChange} />
+                &lt;button onClick={fetchData} disabled={loading}>Query&lt;/button>
+            &lt;/div>
+        &lt;/div>
+    )
+}
+
+function ProductUsage() {
+    const [startDate, setStartDate] = useState('2023-01-01');
+    const [endDate, setEndDate] = useState('2023-01-12');
+    const [chartData, setChartData] = useState(null);
+
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [inventoryItems, setInventoryItems] = useState([]);
+
+    useEffect(() => {
+        async function fetchInventory() {
+            try {
+                let response = await fetch(`${apiURL}/api/inventory`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setInventoryItems(data)
+                } else {
+                    setInventoryItems([])
+                }
+            } catch (error) {
+                console.log(error)
+                setInventoryItems([])
+            }
+        }
+
+        fetchInventory();
+    }, []);
+
+    const handleCheckboxChange = (id) => {
+        setSelectedIds((prevSelectedIds) => {
+            if (prevSelectedIds.includes(id)) {
+                return prevSelectedIds.filter((item) => item !== id);
+            } else {
+                return [...prevSelectedIds, id];
+            }
+        });
+    };
+
+    const handleStartChange = (event) => {
+        setStartDate(event.target.value);
+    };
+
+    const handleEndChange = (event) => {
+        setEndDate(event.target.value);
+    };
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        let datesPopulated = false
+
+        const promises = selectedIds.map(async (id) => {
+            try {
+                let response = await fetch(`${apiURL}/api/manager/inventory-query/${id}?start_date=${startDate}&amp;end_date=${endDate}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    function getRandomColor() {
+                        const r = Math.floor(Math.random() * 256);
+                        const g = Math.floor(Math.random() * 256);
+                        const b = Math.floor(Math.random() * 256);
+                        return `rgba(${r}, ${g}, ${b}, 0.7)`; // Adjust alpha for transparency
+                    }
+
+                    const color = getRandomColor()
+
+                    let newDataset = {
+                        label: inventoryItems.find(item => item.id === id).name,
+                        backgroundColor: color,
+                        borderColor: color,
+                        data: [],
+                    }
+
+                    let populateDates = false
+                    if (!datesPopulated) {
+                        datesPopulated = true
+                        populateDates = true
+                    }
+                    data.forEach((day) => {
+                        if (populateDates) {
+                            newChartData.labels.push(day.date)
+                        }
+                        newDataset.data.push(day.quantity)
+                    })
+
+                    newChartData.datasets.push(newDataset)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        await Promise.all(promises);
+
+        setChartData(newChartData);
+
+        setLoading(false)
+    }
+
+    return (
+        &lt;div className='mngr-salescontainer'>
+            &lt;div className='mngr-salescol'>
+                {chartData ? (
+                    &lt;Line data={chartData} />
+                ) : (
+                    &lt;p>Send a query&lt;/p>
+                )}
+            &lt;/div>
+            &lt;div className='mngr-salescol'>
+                &lt;div>
+                    &lt;h3>Select Items&lt;/h3>
+                    {inventoryItems.map((item) => (
+                        &lt;div key={item.id}>
+                            &lt;input
+                                type="checkbox"
+                                checked={selectedIds.includes(item.id)}
+                                onChange={() => handleCheckboxChange(item.id)}
+                            />
+                            &lt;label> {item.name}&lt;/label>
+                        &lt;/div>
+                    ))}
+                &lt;/div>
+                &lt;input type="date" value={startDate} onChange={handleStartChange} />
+                &lt;input type="date" value={endDate} onChange={handleEndChange} />
+                &lt;button onClick={fetchData} disabled={loading}>Query&lt;/button>
+            &lt;/div>
+        &lt;/div>
+    )
+}
+
+/**
+ * A component that summerizes that days total sales and total number of orders THUS FAR, 
+ * and compiles the hourly sales THUS FAR.
+ * @returns The X report HTML
+ */
+function XReport() {
+    const [loading, setLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalSales, setTotalSales] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/manager/xzreports?type=x`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const color = `rgba($10, 10, 10, 0.7)`;
+
+                let newDataset = {
+                    label: "Today's Sales ($)",
+                    backgroundColor: color,
+                    borderColor: color,
+                    data: [],
+                }
+
+                data.hourlySales.forEach((datapoint) => {
+                    newChartData.labels.push(datapoint.hour)
+                    newDataset.data.push(datapoint.sales)
+                }); 
+                
+                setTotalSales(data.totalSales);
+                setTotalOrders(data.totalOrders);
+                newChartData.datasets.push(newDataset)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+        setChartData(newChartData);
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    return (&lt;div className="mngr-xreport mngr-font">
+        &lt;h2>X Report&lt;/h2>
+        &lt;button onClick={fetchData}>Refresh&lt;/button>
+        &lt;br>&lt;/br>
+        &lt;p>Sales So Far ($): {Number(totalSales).toFixed(2)}&lt;/p>
+        &lt;p>Orders So Far: {totalOrders}&lt;/p>
+        &lt;div className='mngr-salescol'>
+                {(chartData &amp;&amp; !loading) ? (
+                    &lt;Line data={chartData} />
+                ) : (
+                    &lt;OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+                )}
+        &lt;/div>
+    &lt;/div>)
+}
+
+/**
+ * A component that summerizes that days total sales, total number of orders, and hourly sales
+ * together into a single report.
+ * @returns The Z report HTML
+ */
+function ZReport() {
+    const [loading, setLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [totalSales, setTotalSales] = useState(0);
+    const [totalOrders, setTotalOrders] = useState(0);
+
+    const fetchData = async () => {
+        setLoading(true)
+
+        let newChartData = {
+            labels: [],
+            datasets: []
+        }
+
+        try {
+            let response = await fetch(`${apiURL}/api/manager/xzreports?type=z`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const color = `rgba($10, 10, 10, 0.7)`;
+
+                let newDataset = {
+                    label: "Today's Sales ($)",
+                    backgroundColor: color,
+                    borderColor: color,
+                    data: [],
+                }
+
+                data.hourlySales.forEach((datapoint) => {
+                    newChartData.labels.push(datapoint.hour)
+                    newDataset.data.push(datapoint.sales)
+                }); 
+                
+                setTotalSales(data.totalSales);
+                setTotalOrders(data.totalOrders);
+                newChartData.datasets.push(newDataset)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+        setChartData(newChartData);
+        setLoading(false)
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    return (&lt;div className="mngr-zreport mngr-font">
+        &lt;h2>Z Report&lt;/h2>
+        &lt;button onClick={fetchData}>Refresh&lt;/button>
+        &lt;br>&lt;/br>
+        &lt;p>Todays Sales ($): {Number(totalSales).toFixed(2)}&lt;/p>
+        &lt;p>Total Orders: {totalOrders}&lt;/p>  
+        &lt;div className='mngr-salescol'>
+                {(chartData &amp;&amp; !loading) ? (
+                    &lt;Line data={chartData} />
+                ) : (
+                    &lt;OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+                )}
+        &lt;/div>
+    &lt;/div>)
+}
+
+/**
+ * A helper method used to set the default date of date inputs to the current date. The extra
+ * formatting is specific to input components.
+ * @returns Todays date formatted in YYYY-MM_DD
+ */
+function getToday() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+}
+
+/**
+ * A list displaying order item type name and all contained food items
+ * @param {JSON} orderItem The data of a single order item from an order
+ */
+function OrderItemCard({orderItem}) {
+	return (&lt;div className="mngr-orderItemCard">
+		&lt;h3> {orderItem.order_item_type.name} &lt;/h3>
+		&lt;ul> {
+			
+			orderItem.food_items.map((food_item, index) => (
+				&lt;li className="notranslate" key={index}>&amp;ensp; {food_item.quantity} x {food_item.food_item} &lt;/li>
+			))
+
+		} &lt;/ul>
+	&lt;/div>)
+}
+
+/**
+ * A card displaying all relevent information of the specified order.
+ * @param {JSON} order The data of a single order
+ * @param {Method} handleDelete Called whenever the delete button on the order card is pressed
+ */
+function OrderCard({order, handleDelete}) {
+    return (&lt;div className="mngr-orderCard">
+		&lt;div className="mngr-orderCardHeaders">	
+			&lt;h3 className="mngr-orderInfo"> #{order.id} for "{order.customer_name}" &lt;/h3>
+            &lt;h3>{new Date(order.date_created).toDateString()} {new Date(order.date_created).toLocaleTimeString()}&lt;/h3>
+            &lt;h3>Employee: {order.employee.name}&lt;/h3>
+            &lt;h3 className="mngr-orderTotal">${order.total_price}&lt;/h3>
+		&lt;/div>
+
+        &lt;div className="mngr-orderCardBody">
+            &lt;ul className="mngr-orderItemList"> 
+                {
+                    order.order_items.map((orderItem, index) => (
+                        &lt;li key={index}> &lt;OrderItemCard orderItem={orderItem}/> &lt;/li>
+                    ))
+                } 
+            &lt;/ul>
+
+            &lt;div className="mngr-cardButtons">
+                &lt;button className="kt-cancel" onClick={() => handleDelete(order)}> Delete &lt;/button>
+		    &lt;/div>
+        &lt;/div>
+
+	&lt;/div>)
+}
+
+/**
+ * A component displays order information for a target day with the ability to delete specific orders
+ */
+function OrderHistory() {
+    const [date, setDate] = useState(getToday());
+    const [orders, setOrders] = useState([]);
+
+    const changeDate = (event) => {
+        setDate(event.target.value);
+    }
+
+    const fetchOrders = async () => {
+        try {
+            let response = await fetch(`${apiURL}/api/manager/orderhistory?date=${date}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOrders(data);
+            } else {
+                setOrders([]);
+            }
+        } catch (error) {
+            console.log(error)
+            setOrders([]);
+        }
+    }
+
+    const handleDelete = async (order) => {
+		let reqBody = { orderID: order.id }
+        try {
+            let response = await fetch(`${apiURL}/api/manager/orderhistory`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
+
+            fetchOrders();
+			return response.ok;
+			
+        } catch (error) { return false; }
+    }
+
+    useEffect(() => {
+        fetchOrders();
+    }, [])
+
+    return (&lt;div className="mngr-orderhist mngr-font">
+        &lt;h2>Order History&lt;/h2>
+        &lt;input type="date" defaultValue={date} key={date} onChange={changeDate}/>
+        &lt;button onClick={fetchOrders}>Query Date&lt;/button>
+        &lt;ul className="mngr-orderList">
+            {orders.map((order, index) => (
+				&lt;li key={index}> 
+					&lt;OrderCard order={order} handleDelete={handleDelete}/> 
+				&lt;/li>
+			))}
+        &lt;/ul>
+    &lt;/div>)
+}
+
+/**
+ * The main manager nav bar with an outlet component to contain the subpanels
+ */
+function Manager() {
+    return (
+        &lt;>
+            &lt;ManagerRoute>&lt;/ManagerRoute>
+            &lt;div>
+                &lt;h1 className='mngr-title mngr-font'>Restaurant Manager Dashboard&lt;/h1>
+                &lt;div className='mngr-nav'>
+                    &lt;Link to="/cashier" className='mngr-btn mngr-btn-ret'>Cashier&lt;/Link>
+                    &lt;Link to="/manager/employees" className='mngr-btn'>Employees&lt;/Link>
+                    &lt;Link to="/manager/menu" className='mngr-btn'>Menu&lt;/Link>
+                    &lt;Link to="/manager/inventory" className='mngr-btn'>Inventory&lt;/Link>
+                    &lt;Link to="/manager/sales" className='mngr-btn'>Sales&lt;/Link>
+                    &lt;Link to="/manager/productusage" className='mngr-btn'>Product Usage&lt;/Link>
+                    &lt;Link to="/manager/kitchensettings" className='mngr-btn'>Kitchen Settings&lt;/Link>
+                &lt;/div>
+                &lt;div className='mngr-nav'>
+                    &lt;Link to="/manager/excess" className='mngr-btn'>Excess Inventory&lt;/Link>
+                    &lt;Link to="/manager/sellstogether" className='mngr-btn'>What Sells Together&lt;/Link>
+                    &lt;Link to="/manager/restock" className='mngr-btn'>Restock Report&lt;/Link>
+                    &lt;Link to="/manager/xreport" className='mngr-btn'>X Report&lt;/Link>
+                    &lt;Link to="/manager/zreport" className='mngr-btn'>Z Reports&lt;/Link>
+                    &lt;Link to="/manager/orderhistory" className='mngr-btn'>Order History&lt;/Link>
+                &lt;/div>
+                &lt;Outlet />
+            &lt;/div>
+        &lt;/>
+    )
+}
+
+export {Manager, EmployeeEdit, MenuEdit, InventoryEdit, 
+        KitchenSettings, Excess, SellsTogether, Restock, 
+        Sales, ProductUsage, XReport, ZReport, OrderHistory}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Kitchen.html">Kitchen</a></li><li><a href="module-Manager.html">Manager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 00:13:56 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

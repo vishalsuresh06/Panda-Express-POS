@@ -4,6 +4,18 @@ from django.db import models
 #TODO restrict food item types 
 
 class Order(models.Model):
+    """
+    Model representing a single customer transaction/order
+
+    :param customer_name: Name of the customer
+    :param employee: The employee who processed the order
+    :param date_created: The date and time when the order was first added to the database
+    :param date_processed: The date and time when the order was last processed (completed or cancelled), can be null
+    :param type: The type of order, either "Here" or "Togo"
+    :param status: The current status of the order, with possible values like "Pending", "In Progress", "Completed", or "Cancelled"
+    :param total_price: The total price of the order
+    """
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -38,6 +50,16 @@ class Order(models.Model):
         return f"Order #{self.id}"
 
 class Employee(AbstractBaseUser):
+    """
+    Model representing a single Panda Express employee
+
+    :param name: The name of the employee
+    :param pin: The PIN assigned to the employee for authentication, stored as a CharField
+    :param is_manager: A boolean flag indicating if the employee is a manager
+    :param wage: The wage rate of the employee
+    :param email: The employee's email address, stored as an EmailField and must be unique, can be null
+    """
+
     name = models.CharField(max_length=100)
     pin = models.CharField(max_length=6, default=1234)
     is_manager = models.BooleanField(default=False)
@@ -50,6 +72,12 @@ class Employee(AbstractBaseUser):
         return self.name
 
 class OrderItemType(models.Model):
+    """
+    A model representing a specific type of order item (e.g. bowl)
+
+    :param name: The name of the order item type
+    :param base_price: The base price of the order item type
+    """
     name = models.CharField(max_length=100)
     base_price = models.DecimalField(decimal_places=2, max_digits=10)
 
@@ -57,6 +85,13 @@ class OrderItemType(models.Model):
         return self.name
 
 class OrderItem(models.Model):
+    """
+    A model representing a single order item from an order (e.g. a bowl w/ food, a drink)
+
+    :param order: The order to which the item belongs
+    :param order_item_type: The type of the order item
+    :param food_items: A many-to-many relationship with FoodItem, through the OrderFoodQuantity model
+    """
     order = models.ForeignKey('api.Order', on_delete=models.CASCADE, related_name="order_items") 
     order_item_type = models.ForeignKey('api.OrderItemType', models.RESTRICT)
     food_items = models.ManyToManyField('api.FoodItem', through="OrderFoodQuantity")
@@ -65,6 +100,21 @@ class OrderItem(models.Model):
         return f"OrderItem #{self.id} for Order #{self.order.id}"
 
 class FoodItem(models.Model):
+    """
+    A model representing individual edible items on the menu (e.g. Orange Chicken, Beijing Beef, etc)
+
+    :param name: The name of the food item
+    :param type: The type of the food item, with choices like "Entree", "Side", "Appetizer", "Dessert", or "Drink"
+    :param alt_price: The alternative price for the food item which overrides any base price
+    :param upcharge: The upcharge associated with the food item for premium items
+    :param on_menu: A boolean flag indicating whether the food item is currently on the menu
+    :param image: An image of the food item, uploaded to the 'food_images/' directory
+    :param calories: The calorie count of the food item
+    :param is_spicy: A boolean flag indicating if the food item is spicy
+    :param is_premium: A boolean flag indicating if the food item is considered premium
+    :param is_gluten_free: A boolean flag indicating if the food item is gluten-fre
+    """
+
     ENTREE = "entree"
     SIDE = "side"
     APPETIZER = "appetizer"
@@ -97,6 +147,15 @@ class FoodItem(models.Model):
         return self.name
 
 class InventoryItem(models.Model):
+    """
+    A model representing all different inventories items tracked by the restaurant.
+
+    :param name: The name of the inventory item
+    :param is_food: A boolean flag indicating whether the inventory item is edible
+    :param stock: The number of units of the inventory item currently in stock
+    :param restock_threshold: The stock level at which the inventory item should be restocked
+    :param restock_amount: The amount to be restocked when the inventory item reaches the restock threshold
+    """
     name = models.CharField(max_length=100)
     is_food = models.BooleanField()
     stock = models.IntegerField()
@@ -107,6 +166,15 @@ class InventoryItem(models.Model):
         return self.name
 
 class FoodInventoryQuantity(models.Model):
+    """
+    A through model that associates how much of each inventory item a given food
+    item uses when cooked.
+
+    :param food_item: The food item associated with the inventory item
+    :param inventory_item: The inventory item associated with the food item
+    :param quantity: The quantity of the inventory item required for the corresponding food item
+    """
+
     food_item = models.ForeignKey('api.FoodItem', on_delete=models.CASCADE)
     inventory_item = models.ForeignKey('api.InventoryItem', on_delete=models.CASCADE)
     quantity = models.IntegerField()
@@ -119,6 +187,14 @@ class FoodInventoryQuantity(models.Model):
         return f"{self.food_item} --> {self.inventory_item} : {self.quantity}"
 
 class OrderFoodQuantity(models.Model):
+    """
+    A through model which associates an order item with a variable quantity of 
+    a single food item.
+
+    :param order_item: The order item associated with the food item
+    :param food_item: The food item included in the order item
+    :param quantity: The quantity of the food item in the order item, default is 1
+    """
     order_item = models.ForeignKey('api.OrderItem', on_delete=models.CASCADE)
     food_item = models.ForeignKey('api.FoodItem', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
@@ -127,6 +203,13 @@ class OrderFoodQuantity(models.Model):
         unique_together = ('order_item', 'food_item')
 
 class SettingParameter(models.Model):
+    """
+    A model representing different page settings and their values.
+
+    :param key: The key name of the setting parameter, must be unique
+    :param value: The current value of the setting parameter
+    :param default: The default value of the setting parameter
+    """
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField()
     default = models.TextField()
