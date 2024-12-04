@@ -2,6 +2,11 @@ import "./checkoutView.css"
 
 /**
  * 
+ * @module Kiosk
+ */
+
+/**
+ * 
  * @param {JSON, function} param0 
  * @returns HTML list of order items with removal functionality
  */
