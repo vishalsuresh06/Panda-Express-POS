@@ -68,10 +68,10 @@
   margin: 20px auto;
   padding: 20px;
   max-width: 800px;
-  background-color: #fff5e6; /* Subtle background */
+  background-color: #fff5e6;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border: 2px solid #c8102e; /* Accent color */
+  border: 2px solid #c8102e;
 }
 
 /* Section Labels */
@@ -89,7 +89,7 @@
 }
 
 .cshr_confirmBtn {
-  background-color: #c8102e; /* Panda Express red */
+  background-color: #c8102e;
   color: white;
   font-size: 16px;
   padding: 12px 20px;
@@ -101,7 +101,7 @@
 }
 
 .cshr_confirmBtn:hover {
-  background-color: #a60d22; /* Darker red */
+  background-color: #a60d22;
 }
 
 /* Section Layout */
@@ -134,8 +134,8 @@
 .cshr_entreesBtn,
 .cshr_drinkBtn,
 .cshr_appBtn {
-  background-color: #f0f0f0; /* Neutral background */
-  border: 2px solid #c8102e; /* Accent border */
+  background-color: #f0f0f0;
+  border: 2px solid #c8102e;
   color: #333;
   font-size: 16px;
   font-weight: bold;
