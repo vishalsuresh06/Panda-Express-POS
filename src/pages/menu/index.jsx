@@ -96,7 +96,7 @@ const Index = () => {
     }
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/food-items/", formData, {
+      await axios.post(`${apiURL}/api/food-items/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setSuccessMessage("Item added successfully!");
