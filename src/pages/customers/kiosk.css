@@ -121,3 +121,12 @@ button.CK-clicked{
     padding-left:10px;
     
 }
+.CK-CompleteButton{
+    justify-self: center;
+    background-color: rgb(3, 195, 3);
+}
+
+.CK-nonCompleteButton{
+    justify-self: center;
+    color:red;
+}
