@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { apiURL, WEATHER_API_KEY} from '../../config.js';
@@ -167,68 +166,53 @@ function OrderColumn({title, orders, onHandle, current}) {
  * the current time, and the current weather.
  */
 function NavBar() {
-  const { settings, setSettings } = useContext(SettingsContext);
-  const [weather, setWeather] = useState({});
-  const [currentTime, setCurrentTime] = useState(
-    new Date().toLocaleTimeString()
-  );
+	const {settings, setSettings} = useContext(SettingsContext);
+	const [weather, setWeather] = useState({});
+	const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
-  async function fetchWeather() {
-    try {
-      let response =
-        await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&
+
+	async function fetchWeather() {
+		try {
+			let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&
 																						lon=-96.314445&
 																						units=${settings.kt_tempUnits == "F" ? "imperial" : "metric"}&
 																						appid=${WEATHER_API_KEY}`);
-      if (response.ok) {
-        const data = await response.json();
-        setWeather(data);
-      } else {
-        setWeather({});
-      }
-    } catch (error) {
-      console.log(error);
-      setWeather({});
-    }
-  }
+			if (response.ok) {
+				const data = await response.json();
+				setWeather(data)
+			} else {
+				setWeather({})
+			}
+		} catch (error) {
+			console.log(error);
+			setWeather({});
+		}
+	}
 
-  useEffect(() => {
-    const intervalID = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			setCurrentTime(new Date().toLocaleTimeString());
+		}, 1000);
+		
+		return () => clearInterval(intervalID);
+	}, []);	
 
-    return () => clearInterval(intervalID);
-  }, []);
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			fetchWeather();
+		}, WEATHER_REFRESH_MIN*60*1000);
+		
+		fetchWeather();
+		return () => clearInterval(intervalID);
+	}, [settings.kt_tempUnits]);	
 
-  useEffect(() => {
-    const intervalID = setInterval(() => {
-      fetchWeather();
-    }, WEATHER_REFRESH_MIN * 60 * 1000);
-
-    fetchWeather();
-    return () => clearInterval(intervalID);
-  }, [settings.kt_tempUnits]);
-
-  return (
-    <div className="kt-navBar">
-      <div id="google_translate_element"></div>
-      <h4 className="notranslate">{currentTime}</h4>
-      <Link className="kt-navBtn" to="/kitchen/orders">
-        Orders
-      </Link>
-      <Link className="kt-navBtn" to="/kitchen/recentorders">
-        Recent Orders
-      </Link>
-      {Object.keys(weather).length > 0 && (
-        <h4>
-          <span className="notranslate">
-            {weather.current.temp} {settings.kt_tempUnits}
-          </span>{" "}
-          | {weather.current.weather[0].description.toUpperCase()}
-        </h4>
-      )}
-    </div>
-  );
+	return (<div className="kt-navBar">
+		<div id="google_translate_element"></div>
+		<h4 className="notranslate">{currentTime}</h4>
+			<Link className="kt-navBtn" to="/kitchen/orders">Orders</Link>
+			<Link className="kt-navBtn" to="/kitchen/recentorders">Recent Orders</Link>
+		{Object.keys(weather).length > 0 && <h4><span className="notranslate">{weather.current.temp} {settings.kt_tempUnits}</span> | {weather.current.weather[0].description.toUpperCase()}</h4>}
+	</div>)
 }
 
 /**
@@ -236,142 +220,120 @@ function NavBar() {
  * tje kitchen: HERE and TOGO. 
  */
 function KitchenOrders() {
-  const [ordersHere, setOrdersHere] = useState([]);
-  const [ordersTogo, setOrdersTogo] = useState([]);
-  const { settings, setSettings } = useContext(SettingsContext);
+	const [ordersHere, setOrdersHere] = useState([]);
+	const [ordersTogo, setOrdersTogo] = useState([]);
+	const { settings, setSettings } = useContext(SettingsContext);
 
-  // Fetches the pending orders from the database
-  async function fetchOrders() {
-    try {
-      let response = await fetch(`${apiURL}/api/kitchen/orders`);
+	// Fetches the pending orders from the database
+	async function fetchOrders() {
+		try {
+			let response = await fetch(`${apiURL}/api/kitchen/orders`);
 
-      if (response.ok) {
-        const data = await response.json();
-        sethooks(data.here, data.togo);
-      } else {
-        sethooks([], []);
-      }
-    } catch (error) {
-      sethooks([], []);
-    }
-  }
+			if (response.ok) {
+				const data = await response.json();
+				sethooks(data.here, data.togo);
 
-  // Either "comlete" or "cancel" or "toggle" the target order
-  const handleOrder = async (order, action) => {
-    console.log(action);
+			} else {
+				sethooks([], []);
+			}
+		} catch (error) {
+			sethooks([], []);
+		}
+	}
 
-    if (action == "toggle") {
-      toggleOrder(order);
-    } else if (action == "complete" || action == "cancel") {
-      removeOrder(order, action);
-    }
-  };
+	// Either "comlete" or "cancel" or "toggle" the target order 
+	const handleOrder = async (order, action) => {
+		console.log(action);
 
-  // Request "pending" & "in-progress" orders on page load & fresh periodically
-  useEffect(() => {
-    const intervalID = setInterval(() => {
-      fetchOrders();
-    }, parseInt(settings.kt_refreshRate) * 1000);
+		if (action == "toggle") {
+			toggleOrder(order);
+		} else if (action == "complete" || action == "cancel") {
+			removeOrder(order, action);
+		}
+	}
 
-    fetchOrders();
-    return () => clearInterval(intervalID);
-  }, []);
+	// Request "pending" & "in-progress" orders on page load & fresh periodically
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			fetchOrders();
+		}, parseInt(settings.kt_refreshRate)*1000);
+		
+		fetchOrders();	
+		return () => clearInterval(intervalID);
+	}, []);	
 
-  // HELPER METHODS
-  function sethooks(here, togo) {
-    setOrdersHere(here);
-    setOrdersTogo(togo);
-  }
 
-  async function toggleOrder(order) {
-    // Update database with POST request
-    let reqBody = { action: "toggle", orderID: order.id };
-    try {
-      let response = await fetch(`${apiURL}/api/kitchen/orders`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reqBody),
-      });
+	// HELPER METHODS
+	function sethooks(here, togo) {
+		setOrdersHere(here);
+		setOrdersTogo(togo);
+	}
 
-      // Toggles the items locally w/o refetching to reduce latency
-      if (response.ok) {
-        order.status = order.status == "pending" ? "in_progress" : "pending";
-      }
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
+	async function toggleOrder(order) {
+		
+		// Update database with POST request
+		let reqBody = { action: "toggle", orderID: order.id }
+        try {
+            let response = await fetch(`${apiURL}/api/kitchen/orders`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
 
-  async function removeOrder(order, action) {
-    // Update database with POST request
-    let reqBody = { action: action, orderID: order.id };
-    try {
-      let response = await fetch(`${apiURL}/api/kitchen/orders`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reqBody),
-      });
+			// Toggles the items locally w/o refetching to reduce latency
+            if (response.ok) {
+				order.status = order.status == "pending" ? "in_progress" : "pending";
+			}
+			return response.ok;
+			
+        } catch (error) { return false; }
+	}
 
-      // Removes the items locally w/o refetching to reduce latency
-      if (response.ok) {
-        if (order.type == "here") {
-          setOrdersHere((ordersHere) => ordersHere.filter((o) => o !== order));
-        } else if (order.type == "togo") {
-          setOrdersTogo((ordersTogo) => ordersTogo.filter((o) => o !== order));
-        }
-      }
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
+	async function removeOrder(order, action) {
+		// Update database with POST request
+		let reqBody = { action: action, orderID: order.id }
+        try {
+            let response = await fetch(`${apiURL}/api/kitchen/orders`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
 
-  if (settings.kt_hereOrdersLeft == "true") {
-    return (
-      <>
-        <div className="kt-columnContainer">
-          <OrderColumn
-            title={"Here"}
-            orders={ordersHere}
-            onHandle={handleOrder}
-            current={true}
-          />
-          <OrderColumn
-            title={"Togo"}
-            orders={ordersTogo}
-            onHandle={handleOrder}
-            current={true}
-          />
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <div className="kt-columnContainer">
-          <OrderColumn
-            title={"Togo"}
-            orders={ordersTogo}
-            onHandle={handleOrder}
-            current={true}
-          />
-          <OrderColumn
-            title={"Here"}
-            orders={ordersHere}
-            onHandle={handleOrder}
-            current={true}
-          />
-        </div>
-      </>
-    );
-  }
+			// Removes the items locally w/o refetching to reduce latency
+            if (response.ok) {
+				if (order.type == "here") {
+					setOrdersHere(ordersHere => ordersHere.filter(o => o !== order));
+				} else if (order.type == "togo") {
+					setOrdersTogo(ordersTogo => ordersTogo.filter(o => o !== order));
+				}
+			}
+			return response.ok;
+			
+        } catch (error) { return false; }
+	}
+
+	if (settings.kt_hereOrdersLeft == "true") {
+		return (<>
+			<div className="kt-columnContainer">
+				<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} current={true}/>
+				<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} current={true}/>	
+			</div>
+		</>)
+	} else {
+		return (<>
+			<div className="kt-columnContainer">
+				<OrderColumn title={"Togo"} orders={ordersTogo} onHandle={handleOrder} current={true}/>	
+				<OrderColumn title={"Here"} orders={ordersHere} onHandle={handleOrder} current={true}/>
+			</div>
+		</>)
+	}
+	
 }
 
 /**
@@ -379,149 +341,136 @@ function KitchenOrders() {
  * functionality to restore them to the major orders page.
  */
 function RecentOrders() {
-  const [recentOrders, setRecentOrders] = useState([]);
-  const { settings, setSettings } = useContext(SettingsContext);
+	const [recentOrders, setRecentOrders] = useState([]);
+	const { settings, setSettings } = useContext(SettingsContext);
 
-  async function fetchOrders() {
-    try {
-      let response = await fetch(
-        `${apiURL}/api/kitchen/recentorders?count=${parseInt(
-          settings.kt_recentOrderCount
-        )}`
-      );
+	async function fetchOrders() {
+		try {
+			let response = await fetch(`${apiURL}/api/kitchen/recentorders?count=${parseInt(settings.kt_recentOrderCount)}`);
 
-      if (response.ok) {
-        const data = await response.json();
-        setRecentOrders(data);
-      } else {
-        setRecentOrders([]);
-      }
-    } catch (error) {
-      setRecentOrders([]);
-    }
-  }
+			if (response.ok) {
+				const data = await response.json();
+				setRecentOrders(data);
 
-  const handleOrder = async (order, action) => {
-    if (action == "restore") {
-      // Update database with POST request
-      let reqBody = { action: "restore", orderID: order.id };
-      try {
-        let response = await fetch(`${apiURL}/api/kitchen/recentorders`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(reqBody),
-        });
+			} else {
+				setRecentOrders([]);
+			}
+		} catch (error) {
+			setRecentOrders([]);
+		}
+	}
 
-        // Toggles the items locally w/o refetching to reduce latency
-        if (response.ok) {
-          setRecentOrders((ordersHere) =>
-            ordersHere.filter((o) => o !== order)
-          );
-        }
-        return response.ok;
-      } catch (error) {
-        return false;
-      }
-    } else {
-      throw "Invalid action on ordercard in kitchen/recentorders";
-    }
-  };
+	const handleOrder = async (order, action) => {
+		if (action == "restore") {
+			// Update database with POST request
+		let reqBody = { action: "restore", orderID: order.id }
+        try {
+            let response = await fetch(`${apiURL}/api/kitchen/recentorders`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody),
+            });	
 
-  useEffect(() => {
-    const intervalID = setInterval(() => {
-      fetchOrders();
-    }, parseInt(settings.kt_refreshRate) * 1000);
+			// Toggles the items locally w/o refetching to reduce latency
+            if (response.ok) {
+				setRecentOrders(ordersHere => ordersHere.filter(o => o !== order));
+			}
+			return response.ok;
+			
+        } catch (error) { return false; }
+		} else {
+			throw "Invalid action on ordercard in kitchen/recentorders";
+		}
+	}
 
-    fetchOrders();
-    return () => clearInterval(intervalID);
-  }, []);
+	useEffect(() => {
+		const intervalID = setInterval(() => {
+			fetchOrders();
+		}, parseInt(settings.kt_refreshRate)*1000);
+		
+		fetchOrders();
+		return () => clearInterval(intervalID);
+	}, []);	
 
-  return (
-    <div className="kt-columnContainer">
-      <OrderColumn
-        title={"RECENT ORDERS"}
-        orders={recentOrders}
-        onHandle={handleOrder}
-      />
-    </div>
-  );
+	return (<div className="kt-columnContainer">
+		<OrderColumn title={"RECENT ORDERS"} orders={recentOrders} onHandle={handleOrder}/>
+	</div>)
 }
+
 
 /**
  * The main kitchen component which renders all other subcomponents.
  */
 function Kitchen() {
-  const [settings, setSettings] = useState({});
-  const [loading, setLoading] = useState(true);
+	const [settings, setSettings] = useState({});
+	const [loading, setLoading] = useState(true);
+	
+	// Load settings from database into context
+	useEffect(() => {
+		async function fetchSettings() {
+			try {
+				let response = await fetch(`${apiURL}/api/settings`);
 
-  // Load settings from database into context
-  useEffect(() => {
-    async function fetchSettings() {
-      try {
-        let response = await fetch(`${apiURL}/api/settings`);
+				if (response.ok) {
+					const data = await response.json();
+					setSettings(data);
+					setLoading(false);
+				} else {
+					setSettings({});
+					setLoading(true);
+				}
+			} catch (error) {
+				console.log(error)
+				setSettings({});
+				setLoading(true);
+			}
+		}
 
-        if (response.ok) {
-          const data = await response.json();
-          setSettings(data);
-          setLoading(false);
-        } else {
-          setSettings({});
-          setLoading(true);
-        }
-      } catch (error) {
-        console.log(error);
-        setSettings({});
-        setLoading(true);
-      }
-    }
+		fetchSettings();
+	}, []);
 
-    fetchSettings();
-  }, []);
+	// var translateWidgetAdded = false;
+	// const googleTranslateElementInit = () => {
+	// 	if (!translateWidgetAdded) {
+	// 		new window.google.translate.TranslateElement(
+	// 			{
+	// 				pageLanguage: "en",
+	// 				autoDisplay: false,
+	// 				includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de", 
+    //     			layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+	// 			},
+	// 			"google_translate_element"
+	// 		);
 
-  // var translateWidgetAdded = false;
-  // const googleTranslateElementInit = () => {
-  // 	if (!translateWidgetAdded) {
-  // 		new window.google.translate.TranslateElement(
-  // 			{
-  // 				pageLanguage: "en",
-  // 				autoDisplay: false,
-  // 				includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de",
-  //     			layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-  // 			},
-  // 			"google_translate_element"
-  // 		);
+	// 		translateWidgetAdded = true;
+	// 	}
+	// };
 
-  // 		translateWidgetAdded = true;
-  // 	}
-  // };
+	// useEffect(() => {
+	// 	var addScript = document.createElement("script");
+	// 	addScript.setAttribute(
+	// 		"src",
+	// 		"//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+	// 	);
+	// 	document.body.appendChild(addScript);
+	// 	window.googleTranslateElementInit = googleTranslateElementInit;
+	// }, []);
 
-  // useEffect(() => {
-  // 	var addScript = document.createElement("script");
-  // 	addScript.setAttribute(
-  // 		"src",
-  // 		"//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-  // 	);
-  // 	document.body.appendChild(addScript);
-  // 	window.googleTranslateElementInit = googleTranslateElementInit;
-  // }, []);
+	if (loading) {
+		return <></>;
+	}
 
-  if (loading) {
-    return <></>;
-  }
-
-  return (
-    <>
-      <SettingsContext.Provider value={{ settings, setSettings }}>
-        <div className="kt-mainDiv">
-          <NavBar />
-          <Outlet />
-        </div>
-      </SettingsContext.Provider>
-    </>
-  );
+	return (<>
+		<SettingsContext.Provider value={{settings, setSettings}}>
+			<div className="kt-mainDiv">
+				<NavBar/>
+				<Outlet/>
+			</div>
+		</SettingsContext.Provider>
+	</>)
 }
 
-export { Kitchen, KitchenOrders, RecentOrders };
+export {Kitchen, KitchenOrders, RecentOrders}

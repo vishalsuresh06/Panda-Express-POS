@@ -1,5 +1,5 @@
 from django.urls import path, include
-from api.views import kiosk_views, kitchen_views, manager_views, menu_views, auth_views, general_views
+from api.views import cashier_views, chatbot_views, kiosk_views, kitchen_views, manager_views, menu_views, auth_views, general_views
 from django.conf import settings
 from django.conf.urls.static import static
 from api.views.menu_views import MenuView
