@@ -119,6 +119,10 @@ function Cashier() {
     navigate("/catering");
   };
 
+  const handleCheckout = () => {
+    deleteCheckout();
+  };
+
   const deleteCheckout = () => {
     setItems([]);
     setTotal(0);
@@ -144,6 +148,7 @@ function Cashier() {
         total={total}
         handleDeleteItem={handleDeleteItem}
         deleteCheckout={deleteCheckout}
+        handleCheckout={handleCheckout}
       />
 
       <OrderingSection handleNavigation={handleNavigation} />
@@ -182,7 +187,13 @@ function NavBar({
 }
 
 // CheckoutSection Component
-function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
+function CheckoutSection({
+  items,
+  total,
+  handleDeleteItem,
+  deleteCheckout,
+  handleCheckout,
+}) {
   return (
     <div className="cshr_checkoutSection">
       <div className="cshr_itemDisplay">
@@ -204,7 +215,9 @@ function CheckoutSection({ items, total, handleDeleteItem, deleteCheckout }) {
         <button className="clrBtn" onClick={deleteCheckout}>
           Clear
         </button>
-        <button className="chkbtn">Checkout</button>
+        <button className="chkbtn" onClick={handleCheckout}>
+          Checkout
+        </button>
       </div>
     </div>
   );
