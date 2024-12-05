@@ -406,8 +406,8 @@ function OrderButtons({setSys, orderTypes}){
         {orderTypes.filter(type => addID.includes(type.name)).map((type) => (
             <div className='CK-subMenuOptionsItem' key={type.id}>
                 <button className='CK-subMenuOptionsItemButton' onClick={() => buttonPressAction(type.name)}>
-                    <div>{type.name}</div>
-                    <div>${type.base_price}</div>
+                    <div className="CK-subMenuOptionsItemText">{type.name}</div>
+                    <div className="CK-subMenuOptionsItemText">${type.base_price}</div>
                     </button>
             </div>
         ))}
@@ -613,7 +613,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     return (
     <div className = "CK-BuildFoodPage">
         <div className="CK-foodHelpers">
-        <button className="CK-foodHelp" onClick={() => setSys(-1)} className="CK-cancelOrder">Back</button>
+        <button className="CK-foodHelp CK-cancelOrder" onClick={() => setSys(-1)} >Back</button>
         <h3 className="CK-foodHelp">Entree</h3>
         <h5 className="CK-foodHelp">Pick {numEntree} entree{Es()}</h5>
         </div>

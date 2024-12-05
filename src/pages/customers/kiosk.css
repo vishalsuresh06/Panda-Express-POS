@@ -1,6 +1,7 @@
 
 
 .CK-subMenuOptions{
+    
     width:100%;
     list-style-type:none;
     padding-inline-start: 0px;
@@ -9,13 +10,28 @@
     
     
 }
+.CK-cancelOrder{
+    width:100%;
+    height:10vh;
+    background-color: #cc0000;
+    color:white;
+}
+.CK-cancelOrder:hover{
+    background-color: #af0c00;
+}
+
+.CK-subMenuOptionsItemText{
+    font-size:x-large
+}
 
 .CK-subMenuOptionsItem{
     text-align: center;
+    
 }
 
 .CK-subMenuOptionsItemButton{
-    width:100%;
+    width:95%;
+    margin-bottom: 10px;
     height:30vh;
     overflow-y: auto;
 }
@@ -96,10 +112,12 @@ button.CK-clicked{
 
 .CK-screenContainer{
     display: flex;
-    
+    background-color: rgb(196, 196, 194);
+    padding:10px;
 }
 
 .CK-OrderContainer{
     width:100%;
+    padding-left:10px;
     
 }
