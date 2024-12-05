@@ -24,7 +24,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
+  gap: 10px; /* Adjusted spacing between elements */
   list-style: none;
   padding: 0;
   margin: 0;
@@ -32,14 +32,15 @@
 
 /* Menu Item Styling */
 .menu-item {
-  background-color: #3a3a3a; /* Light gray for contrast */
-  border: 1px solid #555; /* Subtle border */
+  background-color: #000; /* Light gray for contrast */
+  border: 1px solid #444; /* Subtle border */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  width: 250px;
+  width: 180px; /* Reduced size for compact display */
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
+  color: #fff
 }
 
 .menu-item:hover {
@@ -48,30 +49,30 @@
 }
 
 .menu-item-details {
-  padding: 15px;
+  padding: 10px; /* Adjusted for compactness */
 }
 
 .menu-item-details h2 {
-  font-size: 1.5rem;
-  margin: 10px 0;
+  font-size: 1.2rem; /* Reduced font size */
+  margin: 5px 0;
   color: #d04a4a; /* Muted red for text */
 }
 
 .menu-item-details p {
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduced font size */
   margin: 5px 0;
   color: #fff; /* White text for readability */
 }
 
 /* Icons Styling */
 .menu-item-icons {
-  margin-top: 10px;
+  margin-top: 5px; /* Reduced margin */
 }
 
 .menu-item-icons span {
   display: inline-block;
-  font-size: 1.2rem;
-  margin-right: 8px;
+  font-size: 1rem; /* Adjusted size */
+  margin-right: 5px;
 }
 
 /* Specific Icon Colors */
@@ -94,11 +95,11 @@
   list-style: none;
   padding: 0;
   margin: 10px 0;
-  gap: 15px; /* Add spacing between links */
+  gap: 10px; /* Adjusted spacing between links */
 }
 
 .menu-nav-list li {
-  font-size: 1.2rem;
+  font-size: 1rem; /* Reduced font size */
 }
 
 .menu-nav-list a {
@@ -114,22 +115,22 @@
 
 /* General Menu Section Styling */
 .menu-section {
-  padding: 20px;
+  padding: 10px; /* Reduced padding */
   font-family: Arial, sans-serif;
   text-align: center; /* Center all content */
 }
 
 .menu-section h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 1.5rem; /* Reduced size */
+  margin-bottom: 15px;
   color: #d04a4a; /* Muted red */
   text-align: center;
   text-decoration: underline;
 }
 
 .menu-section h2 {
-  font-size: 1.5rem;
-  margin-top: 20px;
+  font-size: 1.2rem; /* Reduced size */
+  margin-top: 15px;
   margin-bottom: 10px;
   color: #d04a4a; /* Muted red */
   text-align: center; /* Center subheaders */
@@ -150,17 +151,17 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .menu-item {
-    width: 300px;
+    width: 250px; /* Adjusted width for medium screens */
   }
 }
 
 /* Image Styling */
 .menu-item-image {
-  width: 100px; /* Consistent width */
-  height: 100px; /* Consistent height */
+  width: 80px; /* Smaller size for consistency */
+  height: 80px;
   object-fit: cover; /* Ensures the image fills the area without distortion */
   border-radius: 50%; /* Makes it circular */
-  margin-bottom: 10px;
+  margin-bottom: 5px; /* Reduced margin */
   display: block;
   margin: 0 auto; /* Centers the image */
 }
@@ -168,18 +169,72 @@
 /* Error Message Styling */
 .error-message {
   color: red;
-  font-size: 1rem;
-  margin: 20px 0;
+  font-size: 0.9rem; /* Reduced font size */
+  margin: 15px 0; /* Adjusted margin */
 }
 
 /* Featured and Popular Sections Styling */
 .featured-section,
 .popular-section,
 .sizes-section {
-  margin-top: 30px;
+  margin-top: 20px; /* Reduced spacing between sections */
 }
 
 .featured-section .menu-item,
 .popular-section .menu-item {
   margin: 0 auto;
+}
+
+/* Panda Express Logo */
+.logo-container {
+  text-align: center;
+  margin-bottom: 10px; /* Reduced margin */
+}
+
+.logo-image {
+  max-width: 100px; /* Smaller logo size */
+  height: auto;
+}
+
+/* Spacing Adjustments */
+.menu-category {
+  margin: 10px; /* Reduced spacing between categories */
+}
+
+.menu-category .menu-item-details {
+  margin-top: 5px; /* Adjust spacing inside items */
+}
+/* Side Menu Styling */
+.side-menu {
+  display: flex; /* Arrange items in a row */
+  flex-wrap: wrap; /* Allow wrapping to the next line if needed */
+  justify-content: center; /* Center the items horizontally */
+  gap: 10px; /* Add spacing between items */
+  list-style: none; /* Remove bullets */
+  padding: 0;
+  margin: 0;
+}
+
+.side-menu-item {
+  background-color: #000; /* Light gray background */
+  border: 1px solid #444; /* Subtle border */
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex: 1; /* Make items flexible */
+  max-width: 150px; /* Limit the width of each item */
+  color:#fff
+}
+
+.side-menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+}
+
+.side-menu-item button {
+  margin-top: 5px; /* Add spacing between Edit and Delete buttons */
+  display: block; /* Ensure buttons are stacked */
+  min-width: 150px; /* Ensure a consistent minimum width */
+  max-width: 200px; /* Optionally limit the maximum width */
 }

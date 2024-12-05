@@ -114,7 +114,16 @@ class InventoryView(APIView):
         return JsonResponse({"success": False}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
 class ExcessView(APIView):
+    """
+    Django view that handles API requests to generate excess reports 
+    """
+
     def get(self, request):
+        """
+        Returns a JSON of all inventory items sorted by the percent of quantity that
+        was used in all orders since the given timestamp. Sorted in increasing order.
+        """
+
         timestamp = request.GET.get("timestamp")
         results = (
             Order.objects.filter(
@@ -149,7 +158,17 @@ class ExcessView(APIView):
         return JsonResponse(excessItems, safe=False, status=status.HTTP_200_OK)
     
 class SellsTogetherView(APIView):
+    """
+    Django view that handles API calls to query for which food items sell best together.
+    """
+
     def get(self, request):
+        """
+        Returns a JSON containing pair of different SIDE and ENTREE food items sorted by the 
+        frequency in which they are ordered together in the same container. Ordered by most
+        frequent to least frequent. Only processes orders dated in between the two argument dates.
+        """
+
         try:
             startDate = datetime.strptime(request.GET.get("startDate"), '%Y-%m-%d')
             endDate = datetime.strptime(request.GET.get("endDate"), '%Y-%m-%d')
@@ -189,7 +208,17 @@ class SellsTogetherView(APIView):
             return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 class RestockView(APIView):
+    """
+    Django view that handles generating information for a restock report and 
+    restocking inventory items.
+    """
+
     def get(self, request):
+        """
+        Returns a JSON response with all inventory items whose stock is less than
+        their designated restock threshold.
+        """
+
         try:
             response = []
             for invItem in InventoryItem.objects.all():
@@ -208,6 +237,11 @@ class RestockView(APIView):
             return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
+        """
+        Accepts incoming inventory item id and restocks that item by its designated 
+        restock amount.
+        """
+
         try:
             invItemReq = request.data["invItem"]
             invItem = InventoryItem.objects.get(name=invItemReq["name"])
@@ -222,6 +256,11 @@ class RestockView(APIView):
 
 @api_view(['GET'])
 def menuQueryView(request, id):
+    """
+    Django view that takes in a time window designated by two endpoints and a food item id
+    and queries for the daily sales of that specific food item.
+    """
+
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
 
@@ -258,6 +297,11 @@ def menuQueryView(request, id):
 
 @api_view(['GET'])
 def inventoryQueryView(request, id):
+    """
+    Django view that takes in a time window designated by two endpoints and a inventory item id
+    and queries for the daily sales of that specific inventory item.
+    """
+
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
 
@@ -298,7 +342,15 @@ def inventoryQueryView(request, id):
     return Response(final_results, status=status.HTTP_200_OK)
 
 class XZReports(APIView):
+    """
+    Django view that handles all API requests involving querying that days sales numbers for X and Z reports
+    """
+
     def getSalesToday(self):
+        """
+        Helper method that queries the database for the hourly sales of the current day.
+        """
+
         timezone = pytz.timezone('America/Chicago')
         today = timezone.localize(datetime.now())
         startOfDay= today.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -318,6 +370,10 @@ class XZReports(APIView):
         )
 
     def generateXReport(self):
+        """
+        Returns a JSON response with todays sales numbers and hourly sales numbers for an X report.
+        """
+
         today, results = self.getSalesToday()
 
         response = {
@@ -334,6 +390,10 @@ class XZReports(APIView):
         return JsonResponse(response, status=status.HTTP_200_OK)
 
     def generateZReport(self):
+        """
+        Returns a JSON response with todays sales numbers and hourly sales numbers for an Z report.
+        """
+
         today, results = self.getSalesToday()
 
         response = {
@@ -350,6 +410,10 @@ class XZReports(APIView):
         return JsonResponse(response, status=status.HTTP_200_OK)
     
     def get(self, request):
+        """
+        Processes incoming API calls and returns the desired report type (X or Z).
+        """
+
         try:
             reportType = request.GET.get("type")
             if reportType == "x":
@@ -364,7 +428,16 @@ class XZReports(APIView):
             return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 class OrderHistoryView(APIView):
+    """
+    Django view that handles all backend API requests regarding managing order history    
+    """
+
     def get(self, request):
+        """
+        Returns a JSON of all orders from a target day and returns them sorted by
+        their date created with most recent first.
+        """
+
         try:
             targetDate = request.GET.get("date")
             orders = Order.objects.filter(date_created__date=targetDate).order_by("-date_created")
@@ -376,6 +449,10 @@ class OrderHistoryView(APIView):
 
 
     def post(self, request):
+        """
+        Processes requests to delete a target order (specified by id) from the order history.
+        """
+
         try:
             targetOrderID = request.data["orderID"]
             targetOrder = Order.objects.get(id=targetOrderID)
@@ -384,11 +461,3 @@ class OrderHistoryView(APIView):
         except Exception as e:
             print(e)
             return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST);
-
-
-
-
-
-
-
-    

@@ -1,167 +1,171 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { apiURL, WEATHER_API_KEY } from "../../config.js";
-import "./kitchen.css";
 
-//! PAGE SETTINGS
+import { createContext, useContext, useState, useEffect } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { apiURL, WEATHER_API_KEY} from '../../config.js';
+import './kitchen.css';
+
+/**
+ * @module Kitchen
+ */
+
+
+/**
+ * A global context object used to load the page settings 
+ * recursively into each subcomponent.
+ */
 const SettingsContext = createContext(null);
-const WEATHER_REFRESH_MIN = 10; // DON'T INCREASE THIS, >1000 API calls charges Ryan (please no)
 
-//! HELPER COMPONENTS
-function CardButtons({ onHandle, inProgress, order }) {
-  if (inProgress) {
-    return (
-      <div className="kt-buttons">
-        <button className="kt-toggle" onClick={() => onHandle(order, "toggle")}>
-          {" "}
-          {order.status == "pending" ? "Start" : "Stop"}{" "}
-        </button>
-        <button className="kt-cancel" onClick={() => onHandle(order, "cancel")}>
-          {" "}
-          Cancel{" "}
-        </button>
-        <button
-          className="kt-complete"
-          onClick={() => onHandle(order, "complete")}
-        >
-          {" "}
-          Confirm{" "}
-        </button>
-      </div>
-    );
-  } else {
-    return (
-      <div className="kt-buttons">
-        <button
-          className="kt-restore"
-          onClick={() => onHandle(order, "restore")}
-        >
-          {" "}
-          Restore{" "}
-        </button>
-      </div>
-    );
-  }
+/**
+ * A page constant for how often the current weather should be queried from the API.
+ * SHOULD NOT EXCEED 10!
+ */
+const WEATHER_REFRESH_MIN = 10;					// DON'T INCREASE THIS, >1000 API calls charges Ryan (please no)
+
+
+
+/**
+ * A subcomponent used to construct the buttons on each order card in the kitchen. Different
+ * buttons are used depending on the status of the order and whether the order is being viewed in 
+ * ORDERS or RECENT ORDERS
+ * @param {Method} onHandle Method called by each button in component
+ * @param {Boolean} inProgress Whether these buttons are on a PENDING order or a COMPLETED order
+ * @param {JSON} order Data of the order to dedicate button appearances & functionality
+ */
+function CardButtons({onHandle, inProgress, order}) {
+	if (inProgress) {
+		return <div className="kt-buttons">
+			<button className="kt-toggle" onClick={() => onHandle(order, "toggle")}> {order.status == "pending" ? "Start" : "Stop"} </button>
+			<button className="kt-cancel" onClick={() => onHandle(order, "cancel")}> Cancel </button>
+			<button className="kt-complete" onClick={() => onHandle(order, "complete")}> Confirm </button>
+		</div>
+	} else {
+		return <div className="kt-buttons">
+			<button className="kt-restore" onClick={() => onHandle(order, "restore")}> Restore </button>
+		</div>
+	}
 }
 
-function OrderItemCard({ orderItem }) {
-  return (
-    <div className="kt-orderItemCard">
-      <h3> {orderItem.order_item_type.name} </h3>
-      <ul>
-        {" "}
-        {orderItem.food_items.map((food_item, index) => (
-          <li className="notranslate" key={index}>
-            &ensp; {food_item.quantity} x {food_item.food_item}{" "}
-          </li>
-        ))}{" "}
-      </ul>
-    </div>
-  );
+/**
+ * A subcomponent that constructs a list of the information on a single order item 
+ * from a particular order.
+ * @param {JSON} orderItem The data of a single order item 
+ */
+function OrderItemCard({orderItem}) {
+		
+	return (<div className="kt-orderItemCard">
+		<h3> {orderItem.order_item_type.name} </h3>
+		<ul> {
+			
+			orderItem.food_items.map((food_item, index) => (
+				<li className="notranslate" key={index}>&ensp; {food_item.quantity} x {food_item.food_item} </li>
+			))
+
+		} </ul>
+	</div>)
 }
 
-function OrderCard({ order, onHandle, displayFullCard, inProgress }) {
-  const { settings, setSettings } = useContext(SettingsContext);
+/**
+ * A component which renders all information of a particular order relevant to
+ * the kitchen based on several arguments.
+ * @param {JSON} order Data of the particular order to be displayed
+ * @param {Method} onHandle Method to handle all order interactions
+ * @param {Boolean} displayFullCard To display the full card or an abreviated/collpased one
+ * @param {Boolean} inProgress Whether the order in question is in progress or not
+ */
+function OrderCard({order, onHandle, displayFullCard, inProgress}) {
+	const { settings, setSettings } = useContext(SettingsContext);
 
-  // "Time since order"
-  const [TOS, setTOS] = useState(calcTOS());
-  function calcTOS() {
-    function padnum(num) {
-      return String(num).padStart(2, "0");
-    }
+	// "Time since order"
+	const [TOS, setTOS] = useState(calcTOS())
+	function calcTOS() {
+		function padnum(num) {
+			return String(num).padStart(2, '0');
+		}
 
-    let sec = Math.floor((Date.now() - Date.parse(order.date_created)) / 1000);
-    let min = Math.floor(sec / 60);
-    let hr = Math.floor(min / 60);
-    return `${hr > 0 ? `${hr}h` : ""} ${
-      min > 0 ? `${padnum(min % 60)}m` : ""
-    } ${padnum(sec % 60)}s`;
-  }
+		let sec = Math.floor((Date.now()-Date.parse(order.date_created))/1000);
+		let min = Math.floor(sec/60);
+		let hr = Math.floor(min/60);
+		return `${hr>0 ? `${hr}h` : ''} ${min>0 ? `${padnum(min%60)}m` : ''} ${padnum(sec%60)}s`
+	}
 
-  // 1s timer to update the TOS on every card
-  useEffect(() => {
-    setTOS(calcTOS());
-    const intervalID = setInterval(() => {
-      setTOS(calcTOS());
-    }, 1000);
+	// 1s timer to update the TOS on every card
+	useEffect(() => {
+		setTOS(calcTOS());
+		const intervalID = setInterval(() => {
+			setTOS(calcTOS());
+		}, 1000);
+		
+		return () => clearInterval(intervalID);
+	}, [order.date_created]);	
 
-    return () => clearInterval(intervalID);
-  }, [order.date_created]);
+	
+	const cardColors = {
+		"pending": settings.kt_pendingColor,
+		"in_progress": settings.kt_inprogressColor,
+		"completed": settings.kt_completedColor,
+		"cancelled": settings.kt_cancelledColor,
+	}
 
-  const cardColors = {
-    pending: settings.kt_pendingColor,
-    in_progress: settings.kt_inprogressColor,
-    completed: settings.kt_completedColor,
-    cancelled: settings.kt_cancelledColor,
-  };
+	const style = {
+		backgroundColor: cardColors[order.status]
+	};
 
-  const style = {
-    backgroundColor: cardColors[order.status],
-  };
+	return (<div style={style} className="kt-orderCard">
+		<div className="kt-orderCardHeaders">	
+			<h3 className="kt-orderInfo"> #{order.id} for "{order.customer_name}" </h3>
+			<h3 className="kt-TOS notranslate"> {inProgress && TOS} </h3>
+		</div>
 
-  return (
-    <div style={style} className="kt-orderCard">
-      <div className="kt-orderCardHeaders">
-        <h3 className="kt-orderInfo">
-          {" "}
-          #{order.id} for "{order.customer_name}"{" "}
-        </h3>
-        <h3 className="kt-TOS notranslate"> {inProgress && TOS} </h3>
-      </div>
+		<div>
+			{displayFullCard && <div className="kt-orderCardBody">
+				<ul className="kt-orderItemList"> {
+					
+					order.order_items.map((orderItem, index) => (
+						<li key={index}> <OrderItemCard orderItem={orderItem}/> </li>
+					))
 
-      <div>
-        {displayFullCard && (
-          <div className="kt-orderCardBody">
-            <ul className="kt-orderItemList">
-              {" "}
-              {order.order_items.map((orderItem, index) => (
-                <li key={index}>
-                  {" "}
-                  <OrderItemCard orderItem={orderItem} />{" "}
-                </li>
-              ))}{" "}
-            </ul>
+				} </ul>
 
-            <CardButtons
-              onHandle={onHandle}
-              inProgress={inProgress}
-              order={order}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
+				
+				<CardButtons onHandle={onHandle} inProgress={inProgress} order={order}/>
+			</div>}	
+		</div>
+
+	</div>)
 }
 
-function OrderColumn({ title, orders, onHandle, current }) {
-  const { settings, setSettings } = useContext(SettingsContext);
+/**
+ * A component which renders a list of given orders under a single titled column.
+ * @param {String} title The title listed atop the column of orders
+ * @param {JSON} order Data of the particular order to be displayed
+ * @param {Method} onHandle A method passed to each individual order to handle interactions 
+ * @param {Boolean} current Whether the list of orders being rendered a current orders or recent orders
+ */
+function OrderColumn({title, orders, onHandle, current}) {
+	const { settings, setSettings } = useContext(SettingsContext);
 
-  return (
-    <div className="kt-column">
-      <h1>
-        {title} ({orders.length})
-      </h1>
+	return (<div className="kt-column">
+		<h1>{title} ({orders.length})</h1>
 
-      <ul className="kt-cardList">
-        {orders.map((order, index) => (
-          <li key={index}>
-            <OrderCard
-              order={order}
-              onHandle={onHandle}
-              displayFullCard={
-                !current || index < Number(settings.kt_fullOrderCount)
-              }
-              inProgress={current}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+		<ul className="kt-cardList">
+			{orders.map((order, index) => (
+				<li key={index}> 
+						<OrderCard  order={order} 
+									onHandle={onHandle} 
+									displayFullCard={!current || index<Number(settings.kt_fullOrderCount)} 
+									inProgress={current}/> 
+				</li>
+			))}
+		</ul>
+	</div>)
 }
 
-//! MAIN COMPONENTS
+
+
+/**
+ * A component which constructs a nav bar containing links to subcomponents, 
+ * the current time, and the current weather.
+ */
 function NavBar() {
   const { settings, setSettings } = useContext(SettingsContext);
   const [weather, setWeather] = useState({});
@@ -227,6 +231,10 @@ function NavBar() {
   );
 }
 
+/**
+ * A major component which renders two columns of orders to be displayed to 
+ * tje kitchen: HERE and TOGO. 
+ */
 function KitchenOrders() {
   const [ordersHere, setOrdersHere] = useState([]);
   const [ordersTogo, setOrdersTogo] = useState([]);
@@ -366,6 +374,10 @@ function KitchenOrders() {
   }
 }
 
+/**
+ * A major component which renders a column the most recently processed orders. Giving
+ * functionality to restore them to the major orders page.
+ */
 function RecentOrders() {
   const [recentOrders, setRecentOrders] = useState([]);
   const { settings, setSettings } = useContext(SettingsContext);
@@ -438,7 +450,9 @@ function RecentOrders() {
   );
 }
 
-//! PARENT COMPONENT
+/**
+ * The main kitchen component which renders all other subcomponents.
+ */
 function Kitchen() {
   const [settings, setSettings] = useState({});
   const [loading, setLoading] = useState(true);

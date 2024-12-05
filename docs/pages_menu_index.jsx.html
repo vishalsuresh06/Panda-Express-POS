@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/menu/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/menu/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Menu
+ */
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import Entrees from "./Entrees";
+import SidesDrinksAppetizers from "./SidesDrinksAppetizers";
+import SizesFeaturedPopular from "./SizesFeaturedPopular";
+import axios from "axios";
+import "./menu.css";
+/**
+ * The main component for the menu view.
+ * Displays navigation links for different menu categories and allows adding, editing, and deleting menu items.
+ *
+ * @function Index
+ * @returns {JSX.Element} The rendered menu index component.
+ */
+const Index = () => {
+  const [menuItems, setMenuItems] = useState([]);
+  const [editingItem, setEditingItem] = useState(null);
+  const [newItem, setNewItem] = useState({
+    name: "",
+    type: "entree", // default lowercase value
+    calories: "",
+    alt_price: "",
+    upcharge: "0.00",
+    image: null,
+    is_spicy: false,
+    is_premium: false,
+    is_gluten_free: false,
+    on_menu: true,
+  });
+
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  /**
+   * Fetches all menu items from the backend when the component mounts.
+   */
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/food-items/");
+        setMenuItems(response.data);
+      } catch (err) {
+        console.error("Error fetching menu items:", err);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
+
+  /**
+   * Handles form input changes for adding or editing menu items.
+   *
+   * @param {Object} e The input change event.
+   * @param {boolean} isEdit Specifies if the form is for editing an item.
+   */
+  const handleFormChange = (e, isEdit = false) => {
+    const { name, value, type, checked } = e.target;
+    const updatedItem = {
+      ...(isEdit ? editingItem : newItem),
+      [name]: type === "checkbox" ? checked : value,
+    };
+
+    if (isEdit) setEditingItem(updatedItem);
+    else setNewItem(updatedItem);
+  };
+  /**
+   * Handles file input changes for adding or editing menu items.
+   *
+   * @param {Object} e The input change event for file uploads.
+   * @param {boolean} isEdit Specifies if the form is for editing an item.
+   */
+  const handleFileChange = (e, isEdit = false) => {
+    const updatedItem = { ...(isEdit ? editingItem : newItem), image: e.target.files[0] };
+    if (isEdit) setEditingItem(updatedItem);
+    else setNewItem(updatedItem);
+  };
+
+   /**
+   * Submits the form to add a new menu item to the backend.
+   *
+   * @param {Object} e The form submission event.
+   */
+  const handleAddItem = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    for (const key in newItem) {
+      const value = newItem[key];
+      if (value !== null &amp;&amp; value !== "") {
+        formData.append(key, value);
+      }
+    }
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/food-items/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setSuccessMessage("Item added successfully!");
+      setErrorMessage("");
+      setNewItem({
+        name: "",
+        type: "entree",
+        calories: "",
+        alt_price: "",
+        upcharge: "0.00",
+        image: null,
+        is_spicy: false,
+        is_premium: false,
+        is_gluten_free: false,
+        on_menu: true,
+      });
+      const updatedMenu = await axios.get("http://127.0.0.1:8000/api/food-items/");
+      setMenuItems(updatedMenu.data);
+    } catch (err) {
+      console.error("Error adding item:", err.response?.data || err.message);
+      setErrorMessage("Error adding item. Please check required fields and try again.");
+    }
+  };
+
+  /**
+   * Submits the form to update an existing menu item in the backend.
+   *
+   * @param {Object} e The form submission event.
+   */
+  const handleUpdateItem = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    for (const key in editingItem) {
+      const value = editingItem[key];
+      if (value !== null &amp;&amp; value !== "") {
+        formData.append(key, value);
+      }
+    }
+
+    try {
+      await axios.put(
+        `http://127.0.0.1:8000/api/food-items/${editingItem.id}/`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      setSuccessMessage("Item updated successfully!");
+      setErrorMessage("");
+      setEditingItem(null);
+      const updatedMenu = await axios.get("http://127.0.0.1:8000/api/food-items/");
+      setMenuItems(updatedMenu.data);
+    } catch (err) {
+      console.error("Error updating item:", err.response?.data || err.message);
+      setErrorMessage("Error updating item. Please try again.");
+    }
+  };
+
+  /**
+   * Deletes a menu item from the backend.
+   *
+   * @param {number} id The ID of the menu item to delete.
+   */
+  const handleDeleteItem = async (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      try {
+        await axios.delete(`http://127.0.0.1:8000/api/food-items/${id}/`);
+        setSuccessMessage("Item deleted successfully!");
+        setMenuItems(menuItems.filter((menuItem) => menuItem.id !== id));
+      } catch (err) {
+        console.error("Error deleting item:", err.response?.data || err.message);
+        setErrorMessage("Error deleting item. Please try again.");
+      }
+    }
+  };
+
+  return (
+    &lt;div className="menu-navigation">
+      &lt;h1>Our Menu&lt;/h1>
+      &lt;nav>
+        &lt;ul className="menu-nav-list">
+          &lt;li>
+            &lt;Link to="entrees">Entrees&lt;/Link>
+          &lt;/li>
+          &lt;li>
+            &lt;Link to="sides-drinks-appetizers">Sides, Drinks &amp; Appetizers&lt;/Link>
+          &lt;/li>
+          &lt;li>
+            &lt;Link to="sizes-featured-popular">Sizes, Featured &amp; Popular&lt;/Link>
+          &lt;/li>
+        &lt;/ul>
+      &lt;/nav>
+
+      &lt;Routes>
+        &lt;Route path="entrees" element={&lt;Entrees />} />
+        &lt;Route path="sides-drinks-appetizers" element={&lt;SidesDrinksAppetizers />} />
+        &lt;Route path="sizes-featured-popular" element={&lt;SizesFeaturedPopular />} />
+      &lt;/Routes>
+
+      &lt;div className="manager-menu-container">
+        &lt;h2>Manage Menu&lt;/h2>
+        {successMessage &amp;&amp; &lt;p className="success-message">{successMessage}&lt;/p>}
+        {errorMessage &amp;&amp; &lt;p className="error-message">{errorMessage}&lt;/p>}
+
+        &lt;form onSubmit={handleAddItem} className="add-item-form">
+          &lt;h3>Add New Menu Item&lt;/h3>
+          &lt;input
+            type="text"
+            name="name"
+            placeholder="Name (required)"
+            value={newItem.name}
+            onChange={handleFormChange}
+            required
+          />
+          &lt;select name="type" value={newItem.type} onChange={handleFormChange}>
+            &lt;option value="entree">Entree&lt;/option>
+            &lt;option value="side">Side&lt;/option>
+            &lt;option value="drink">Drink&lt;/option>
+            &lt;option value="appetizer">Appetizer&lt;/option>
+            &lt;option value="dessert">Dessert&lt;/option>
+          &lt;/select>
+          &lt;input
+            type="number"
+            name="alt_price"
+            placeholder="Price (required)"
+            value={newItem.alt_price}
+            onChange={handleFormChange}
+            required
+          />
+          &lt;input
+            type="number"
+            name="upcharge"
+            placeholder="Upcharge"
+            value={newItem.upcharge}
+            onChange={handleFormChange}
+          />
+          &lt;input
+            type="number"
+            name="calories"
+            placeholder="Calories"
+            value={newItem.calories}
+            onChange={handleFormChange}
+          />
+          &lt;input type="file" name="image" onChange={handleFileChange} />
+          &lt;label>
+            &lt;input
+              type="checkbox"
+              name="is_spicy"
+              checked={newItem.is_spicy}
+              onChange={handleFormChange}
+            />
+            Spicy
+          &lt;/label>
+          &lt;label>
+            &lt;input
+              type="checkbox"
+              name="is_premium"
+              checked={newItem.is_premium}
+              onChange={handleFormChange}
+            />
+            Premium
+          &lt;/label>
+          &lt;label>
+            &lt;input
+              type="checkbox"
+              name="is_gluten_free"
+              checked={newItem.is_gluten_free}
+              onChange={handleFormChange}
+            />
+            Gluten-Free
+          &lt;/label>
+          &lt;label>
+            &lt;input
+              type="checkbox"
+              name="on_menu"
+              checked={newItem.on_menu}
+              onChange={handleFormChange}
+            />
+            On Menu
+          &lt;/label>
+          &lt;button type="submit">Add Item&lt;/button>
+        &lt;/form>
+
+        {editingItem &amp;&amp; (
+          &lt;form onSubmit={handleUpdateItem} className="edit-item-form">
+            &lt;h3>Edit Menu Item&lt;/h3>
+            &lt;input
+              type="text"
+              name="name"
+              placeholder="Name (required)"
+              value={editingItem.name || ""}
+              onChange={(e) => handleFormChange(e, true)}
+              required
+            />
+            &lt;select
+              name="type"
+              value={editingItem.type || "entree"}
+              onChange={(e) => handleFormChange(e, true)}
+            >
+              &lt;option value="entree">Entree&lt;/option>
+              &lt;option value="side">Side&lt;/option>
+              &lt;option value="drink">Drink&lt;/option>
+              &lt;option value="appetizer">Appetizer&lt;/option>
+              &lt;option value="dessert">Dessert&lt;/option>
+            &lt;/select>
+            &lt;input
+              type="number"
+              name="alt_price"
+              placeholder="Price (required)"
+              value={editingItem.alt_price || ""}
+              onChange={(e) => handleFormChange(e, true)}
+              required
+            />
+            &lt;input
+              type="number"
+              name="upcharge"
+              placeholder="Upcharge"
+              value={editingItem.upcharge || ""}
+              onChange={(e) => handleFormChange(e, true)}
+            />
+            &lt;input
+              type="number"
+              name="calories"
+              placeholder="Calories"
+              value={editingItem.calories || ""}
+              onChange={(e) => handleFormChange(e, true)}
+            />
+            &lt;input type="file" name="image" onChange={(e) => handleFileChange(e, true)} />
+            &lt;label>
+              &lt;input
+                type="checkbox"
+                name="is_spicy"
+                checked={editingItem.is_spicy || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              Spicy
+            &lt;/label>
+            &lt;label>
+              &lt;input
+                type="checkbox"
+                name="is_premium"
+                checked={editingItem.is_premium || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              Premium
+            &lt;/label>
+            &lt;label>
+              &lt;input
+                type="checkbox"
+                name="is_gluten_free"
+                checked={editingItem.is_gluten_free || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              Gluten-Free
+            &lt;/label>
+            &lt;label>
+              &lt;input
+                type="checkbox"
+                name="on_menu"
+                checked={editingItem.on_menu || false}
+                onChange={(e) => handleFormChange(e, true)}
+              />
+              On Menu
+            &lt;/label>
+            &lt;button type="submit">Save Changes&lt;/button>
+            &lt;button type="button" onClick={() => setEditingItem(null)}>
+              Cancel
+            &lt;/button>
+          &lt;/form>
+        )}
+
+        &lt;div className="menu-list-container">
+          {menuItems.map((item) => (
+            &lt;div key={item.id} className="menu-item">
+              &lt;h3>{item.name}&lt;/h3>
+              &lt;button onClick={() => setEditingItem(item)}>Edit&lt;/button>
+              &lt;button onClick={() => handleDeleteItem(item.id)}>Delete&lt;/button>
+            &lt;/div>
+          ))}
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default Index;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Chatbot.html">Chatbot</a></li><li><a href="module-Kiosk.html">Kiosk</a></li><li><a href="module-Kitchen.html">Kitchen</a></li><li><a href="module-Manager.html">Manager</a></li><li><a href="module-Menu.html">Menu</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:24:07 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

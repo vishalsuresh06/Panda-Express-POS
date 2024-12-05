@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/menu/SizesFeaturedPopular.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/menu/SizesFeaturedPopular.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Menu
+ */
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./menu.css";
+/**
+ * A React component for displaying menu sizes, a featured item, and a popular item.
+ *
+ * @function SizesFeaturedPopular
+ * @returns {JSX.Element} The menu section with sizes, featured, and popular items.
+ */
+const SizesFeaturedPopular = () => {
+  /**
+   * @typedef {Object} Size
+   * @property {string} name - The name of the size (e.g., Bowl, Plate).
+   * @property {string} price - The price of the size.
+   * @property {string} image - URL or path of the size's image.
+   * @property {string} description - A brief description of the size.
+   */
+  const sizes = [
+    {
+      name: "Bowl",
+      price: "$7.50",
+      image: "/media/food_images/Bowl.png",
+      description: "One side and one entree.",
+    },
+    {
+      name: "Plate",
+      price: "$9.50",
+      image: "/media/food_images/Plate.png",
+      description: "One side and two entrees.",
+    },
+    {
+      name: "Bigger Plate",
+      price: "$11.30",
+      image: "/media/food_images/Bigger.png",
+      description: "One side and three entrees.",
+    },
+    {
+      name: "Family Feast",
+      price: "$39.00",
+      image: "/media/food_images/Catering.png",
+      description: "Large portions for sharing.",
+    },
+    {
+      name: "Cub Meal",
+      price: "$6.00",
+      image: "/media/food_images/cub.png",
+      description: "Perfect size for kids.",
+    },
+    {
+      name: "A La Carte",
+      price: "$7.50",
+      image: "/media/food_images/A_La_Carte.png",
+      description: "Single serving of your favorite item.",
+    },
+  ];
+
+  const [featuredItem, setFeaturedItem] = useState(null);
+  const [popularItem, setPopularItem] = useState(null);
+  const [error, setError] = useState(null);
+
+  /**
+   * Fetches the featured and popular items from the backend API.
+   */
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const featuredResponse = await axios.get(
+          "http://127.0.0.1:8000/api/food-items/?name=Apple%20Pie%20Roll"
+        );
+        const popularResponse = await axios.get(
+          "http://127.0.0.1:8000/api/food-items/?name=Orange%20Chicken"
+        );
+        setFeaturedItem(featuredResponse.data[0]);
+        setPopularItem(popularResponse.data[0]);
+      } catch (err) {
+        console.error("Error fetching featured and popular items:", err);
+        setError("Failed to load items. Please try again later.");
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  return (
+    &lt;div className="menu-section">
+      &lt;div className="logo-container">
+        &lt;img
+          src="/media/food_images/panda.jpg"
+          alt="Panda Express Logo"
+          className="logo-image"
+        />
+      &lt;/div>
+
+      &lt;h1>Sizes, Featured &amp; Popular&lt;/h1>
+
+      {error &amp;&amp; &lt;p className="error-message">{error}&lt;/p>}
+
+      &lt;div className="sizes-section">
+        &lt;h2>Sizes&lt;/h2>
+        &lt;ul className="menu-list">
+          {sizes.map((size, index) => (
+            &lt;li key={index} className="menu-item">
+              &lt;img
+                src={size.image}
+                alt={size.name}
+                className="menu-item-image"
+              />
+              &lt;div className="menu-item-details">
+                &lt;h2>{size.name}&lt;/h2>
+                &lt;p>{size.price}&lt;/p>
+                &lt;p className="menu-item-description">{size.description}&lt;/p>
+              &lt;/div>
+            &lt;/li>
+          ))}
+        &lt;/ul>
+      &lt;/div>
+
+      &lt;div className="featured-section">
+        &lt;h2>Featured&lt;/h2>
+        {featuredItem ? (
+          &lt;div className="menu-item">
+            &lt;img
+              src={featuredItem.image || "/media/food_images/placeholder.png"}
+              alt={featuredItem.name}
+              className="menu-item-image"
+            />
+            &lt;div className="menu-item-details">
+              &lt;h2>{featuredItem.name}&lt;/h2>
+              &lt;p>{featuredItem.calories} Calories&lt;/p>
+            &lt;/div>
+          &lt;/div>
+        ) : (
+          &lt;p>Loading featured item...&lt;/p>
+        )}
+      &lt;/div>
+
+      &lt;div className="popular-section">
+        &lt;h2>Popular&lt;/h2>
+        {popularItem ? (
+          &lt;div className="menu-item">
+            &lt;img
+              src={popularItem.image || "/media/food_images/placeholder.png"}
+              alt={popularItem.name}
+              className="menu-item-image"
+            />
+            &lt;div className="menu-item-details">
+              &lt;h2>{popularItem.name}&lt;/h2>
+              &lt;p>{popularItem.calories} Calories&lt;/p>
+            &lt;/div>
+          &lt;/div>
+        ) : (
+          &lt;p>Loading popular item...&lt;/p>
+        )}
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default SizesFeaturedPopular;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Chatbot.html">Chatbot</a></li><li><a href="module-Kiosk.html">Kiosk</a></li><li><a href="module-Kitchen.html">Kitchen</a></li><li><a href="module-Manager.html">Manager</a></li><li><a href="module-Menu.html">Menu</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:24:07 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

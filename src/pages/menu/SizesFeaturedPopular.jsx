@@ -1,9 +1,23 @@
+/**
+ * @module Menu
+ */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./menu.css";
-
+/**
+ * A React component for displaying menu sizes, a featured item, and a popular item.
+ *
+ * @function SizesFeaturedPopular
+ * @returns {JSX.Element} The menu section with sizes, featured, and popular items.
+ */
 const SizesFeaturedPopular = () => {
-  // Hardcoded sizes data with descriptions
+  /**
+   * @typedef {Object} Size
+   * @property {string} name - The name of the size (e.g., Bowl, Plate).
+   * @property {string} price - The price of the size.
+   * @property {string} image - URL or path of the size's image.
+   * @property {string} description - A brief description of the size.
+   */
   const sizes = [
     {
       name: "Bowl",
@@ -47,7 +61,9 @@ const SizesFeaturedPopular = () => {
   const [popularItem, setPopularItem] = useState(null);
   const [error, setError] = useState(null);
 
-  // Fetch Featured and Popular items from backend
+  /**
+   * Fetches the featured and popular items from the backend API.
+   */
   useEffect(() => {
     const fetchItems = async () => {
       try {

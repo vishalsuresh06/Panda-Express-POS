@@ -1,3 +1,6 @@
+/**
+ * @module Menu
+ */
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Entrees from "./Entrees";
@@ -5,7 +8,13 @@ import SidesDrinksAppetizers from "./SidesDrinksAppetizers";
 import SizesFeaturedPopular from "./SizesFeaturedPopular";
 import axios from "axios";
 import "./menu.css";
-
+/**
+ * The main component for the menu view.
+ * Displays navigation links for different menu categories and allows adding, editing, and deleting menu items.
+ *
+ * @function Index
+ * @returns {JSX.Element} The rendered menu index component.
+ */
 const Index = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
@@ -25,7 +34,9 @@ const Index = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Fetch menu items
+  /**
+   * Fetches all menu items from the backend when the component mounts.
+   */
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -39,7 +50,12 @@ const Index = () => {
     fetchMenuItems();
   }, []);
 
-  // Handle form changes for both new and edit forms
+  /**
+   * Handles form input changes for adding or editing menu items.
+   *
+   * @param {Object} e The input change event.
+   * @param {boolean} isEdit Specifies if the form is for editing an item.
+   */
   const handleFormChange = (e, isEdit = false) => {
     const { name, value, type, checked } = e.target;
     const updatedItem = {
@@ -50,14 +66,23 @@ const Index = () => {
     if (isEdit) setEditingItem(updatedItem);
     else setNewItem(updatedItem);
   };
-
+  /**
+   * Handles file input changes for adding or editing menu items.
+   *
+   * @param {Object} e The input change event for file uploads.
+   * @param {boolean} isEdit Specifies if the form is for editing an item.
+   */
   const handleFileChange = (e, isEdit = false) => {
     const updatedItem = { ...(isEdit ? editingItem : newItem), image: e.target.files[0] };
     if (isEdit) setEditingItem(updatedItem);
     else setNewItem(updatedItem);
   };
 
-  // Add new item
+   /**
+   * Submits the form to add a new menu item to the backend.
+   *
+   * @param {Object} e The form submission event.
+   */
   const handleAddItem = async (e) => {
     e.preventDefault();
 
@@ -95,7 +120,11 @@ const Index = () => {
     }
   };
 
-  // Update an existing item
+  /**
+   * Submits the form to update an existing menu item in the backend.
+   *
+   * @param {Object} e The form submission event.
+   */
   const handleUpdateItem = async (e) => {
     e.preventDefault();
 
@@ -124,7 +153,11 @@ const Index = () => {
     }
   };
 
-  // Delete an item
+  /**
+   * Deletes a menu item from the backend.
+   *
+   * @param {number} id The ID of the menu item to delete.
+   */
   const handleDeleteItem = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {
@@ -334,13 +367,16 @@ const Index = () => {
         )}
 
         <div className="menu-list-container">
-          {menuItems.map((item) => (
-            <div key={item.id} className="menu-item">
-              <h3>{item.name}</h3>
-              <button onClick={() => setEditingItem(item)}>Edit</button>
-              <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
-            </div>
-          ))}
+          {/* Side Menu */}
+  <ul className="side-menu">
+    {menuItems.map((item) => (
+      <li key={item.id} className="side-menu-item">
+        <span>{item.name}</span>
+        <button onClick={() => setEditingItem(item)}>Edit</button>
+        <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
+      </li>
+    ))}
+  </ul>
         </div>
       </div>
     </div>
