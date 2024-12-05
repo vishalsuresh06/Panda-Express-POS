@@ -448,7 +448,7 @@ function FoodCard({id, menu, setOrd, ord, max, upMult}){
             return(
                 <>
                 <h5 className= "CK-FoodCard-Subtitle">premium item</h5>
-                <div className= "CK-FoodCard-upchargeTag">{(currItem.upcharge * upMult).toFixed(2)}</div>
+                <div className= "CK-FoodCard-upchargeTag">+${(currItem.upcharge * upMult).toFixed(2)}</div>
                 </>
             )
         }
@@ -600,9 +600,11 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
     function CompleteButton(){
         if (numEntree === currOrder.filter(item => item.type === "entree").length && numSide === currOrder.filter(item => item.type === "side").length){
             return (
+                <div className='CK-cWrapper'>
                 <button className= "CK-CompleteButton" onClick={completeOrder}>
                     Complete
                 </button>
+                </div>
             )
         }
         else {
@@ -670,9 +672,11 @@ function SinglePick({orderType, typeID, menu, addItem, setSys, complete="complet
     function getCButton(){
         
             return(
+                <div className="CK-cWrapper">
                 <button className= "CK-CompleteButton CK-foodHelp" onClick={() => completeOrder()}>
                     {complete}
                 </button>
+                </div>
             )
     }
     function getBButton(){

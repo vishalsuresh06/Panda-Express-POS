@@ -49,7 +49,6 @@
     height:10vh;
     background-color: rgb(71, 71, 71);
     color : white;
-    margin-top: 20px;
 }
 
 .CK-FoodButton:hover{
@@ -129,4 +128,22 @@ button.CK-clicked{
 .CK-nonCompleteButton{
     justify-self: center;
     color:red;
+    background-color: white;
+}
+
+.CK-removeOne{
+    background-color:red;
+    color : white;
+}
+
+.CK-addAnother{
+    background-color:rgb(0, 255, 106);
+    color : rgb(0, 0, 0);
+}
+
+
+.CK-cWrapper{
+    width:0px;
+    justify-self: center;
+    justify-items: center;
 }
