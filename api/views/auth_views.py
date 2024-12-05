@@ -11,6 +11,9 @@ from api.models import Employee
 
 @api_view(['POST'])
 def pinLogin(request):
+    """
+    
+    """
     data = json.loads(request.body)
 
     id = data.get('id')
@@ -34,6 +37,10 @@ def pinLogin(request):
 
 @api_view(['POST'])
 def googleLogin(request):
+    """
+    
+    """
+
     data = json.loads(request.body)
 
     credential = data.get('credential')

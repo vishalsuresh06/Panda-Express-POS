@@ -1,0 +1,105 @@
+/* CateringItemSelection.css */
+
+.cshr_cateringItemsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.cshr_cateringRenderSectionContainer {
+  margin: 20px 0;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+}
+
+.cshr_cateringRenderSectionContainer h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.cshr_cateringRenderBtnContainer {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.cshr_sidesBtn,
+.cshr_entreesBtn,
+.cshr_appsBtn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #ffffff;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.highlighted {
+  background-color: #ff4d4d;
+  color: #fff;
+  border-color: #ff4d4d;
+}
+
+.cshr_sidesBtn:hover,
+.cshr_entreesBtn:hover,
+.cshr_appsBtn:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+.cshr_sidesBtn.highlighted,
+.cshr_entreesBtn.highlighted,
+.cshr_appsBtn.highlighted {
+  background-color: #ffb8b8;
+  border-color: #000000;
+  color: #000000;
+}
+
+.cshr_bundleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+.cshr_confirmBtn,
+.cshr_cateringConfirmBtn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #a60d22;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cshr_confirmBtn:hover,
+.cshr_cateringConfirmBtn:hover {
+  background-color: #fe7979;
+}
+
+.cshr_appContainer {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}

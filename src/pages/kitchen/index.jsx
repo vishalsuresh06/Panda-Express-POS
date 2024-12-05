@@ -3,12 +3,33 @@ import { Link, Outlet } from 'react-router-dom';
 import { apiURL, WEATHER_API_KEY} from '../../config.js';
 import './kitchen.css';
 
+/**
+ * @module Kitchen
+ */
 
-//! PAGE SETTINGS
+
+/**
+ * A global context object used to load the page settings 
+ * recursively into each subcomponent.
+ */
 const SettingsContext = createContext(null);
+
+/**
+ * A page constant for how often the current weather should be queried from the API.
+ * SHOULD NOT EXCEED 10!
+ */
 const WEATHER_REFRESH_MIN = 10;					// DON'T INCREASE THIS, >1000 API calls charges Ryan (please no)
 
-//! HELPER COMPONENTS
+
+
+/**
+ * A subcomponent used to construct the buttons on each order card in the kitchen. Different
+ * buttons are used depending on the status of the order and whether the order is being viewed in 
+ * ORDERS or RECENT ORDERS
+ * @param {Method} onHandle Method called by each button in component
+ * @param {Boolean} inProgress Whether these buttons are on a PENDING order or a COMPLETED order
+ * @param {JSON} order Data of the order to dedicate button appearances & functionality
+ */
 function CardButtons({onHandle, inProgress, order}) {
 	if (inProgress) {
 		return <div className="kt-buttons">
@@ -23,6 +44,11 @@ function CardButtons({onHandle, inProgress, order}) {
 	}
 }
 
+/**
+ * A subcomponent that constructs a list of the information on a single order item 
+ * from a particular order.
+ * @param {JSON} orderItem The data of a single order item 
+ */
 function OrderItemCard({orderItem}) {
 		
 	return (<div className="kt-orderItemCard">
@@ -37,6 +63,14 @@ function OrderItemCard({orderItem}) {
 	</div>)
 }
 
+/**
+ * A component which renders all information of a particular order relevant to
+ * the kitchen based on several arguments.
+ * @param {JSON} order Data of the particular order to be displayed
+ * @param {Method} onHandle Method to handle all order interactions
+ * @param {Boolean} displayFullCard To display the full card or an abreviated/collpased one
+ * @param {Boolean} inProgress Whether the order in question is in progress or not
+ */
 function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 	const { settings, setSettings } = useContext(SettingsContext);
 
@@ -99,6 +133,13 @@ function OrderCard({order, onHandle, displayFullCard, inProgress}) {
 	</div>)
 }
 
+/**
+ * A component which renders a list of given orders under a single titled column.
+ * @param {String} title The title listed atop the column of orders
+ * @param {JSON} order Data of the particular order to be displayed
+ * @param {Method} onHandle A method passed to each individual order to handle interactions 
+ * @param {Boolean} current Whether the list of orders being rendered a current orders or recent orders
+ */
 function OrderColumn({title, orders, onHandle, current}) {
 	const { settings, setSettings } = useContext(SettingsContext);
 
@@ -120,7 +161,10 @@ function OrderColumn({title, orders, onHandle, current}) {
 
 
 
-//! MAIN COMPONENTS
+/**
+ * A component which constructs a nav bar containing links to subcomponents, 
+ * the current time, and the current weather.
+ */
 function NavBar() {
 	const {settings, setSettings} = useContext(SettingsContext);
 	const [weather, setWeather] = useState({});
@@ -171,6 +215,10 @@ function NavBar() {
 	</div>)
 }
 
+/**
+ * A major component which renders two columns of orders to be displayed to 
+ * tje kitchen: HERE and TOGO. 
+ */
 function KitchenOrders() {
 	const [ordersHere, setOrdersHere] = useState([]);
 	const [ordersTogo, setOrdersTogo] = useState([]);
@@ -288,6 +336,10 @@ function KitchenOrders() {
 	
 }
 
+/**
+ * A major component which renders a column the most recently processed orders. Giving
+ * functionality to restore them to the major orders page.
+ */
 function RecentOrders() {
 	const [recentOrders, setRecentOrders] = useState([]);
 	const { settings, setSettings } = useContext(SettingsContext);
@@ -349,7 +401,9 @@ function RecentOrders() {
 }
 
 
-//! PARENT COMPONENT
+/**
+ * The main kitchen component which renders all other subcomponents.
+ */
 function Kitchen() {
 	const [settings, setSettings] = useState({});
 	const [loading, setLoading] = useState(true);

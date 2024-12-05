@@ -1,3 +1,8 @@
+"""
+@module Commands
+author: Luis Valdez
+"""
+
 from django.core.management.base import BaseCommand
 from api.models import Employee, FoodItem, InventoryItem, Order, OrderItemType, OrderItem, FoodInventoryQuantity, SettingParameter
 from django.utils import timezone
@@ -6,7 +11,7 @@ import random
 import pytz
 
 
-# IMPORTANT: Both fields must be STRINGS
+# Default application settings
 DEFAULT_SETTINGS = {
     "kt_refreshRate": "5",
     "kt_fullOrderCount": "2",
@@ -21,10 +26,24 @@ DEFAULT_SETTINGS = {
 
 
 class Command(BaseCommand):
+    """
+    Seeds the database with initial data for employees, inventory, settings, and orders.
+
+    @class Command
+    """
     help = 'Seed the database with initial data'
 
     def handle(self, *args, **kwargs):
-        
+        """
+        The main function that executes the seeding logic.
+        """
+
+
+        """
+        Creates default settings used throughout the application.
+
+        @returns None
+        """
         # Load default settings
         for key,value in DEFAULT_SETTINGS.items():
             SettingParameter.objects.create(key=key, value=value, default=value)
@@ -36,6 +55,12 @@ class Command(BaseCommand):
         employee3 = Employee.objects.create(name='Chris Panda', password='ILovePandas', is_manager=True, wage=15.00, email='nkodali@tamu.edu')
         employee4 = Employee.objects.create(name='kiosk', password='ILovePandas', is_manager=False, wage=0)
         employee5 = Employee.objects.create(name="Viscous", password="password", is_manager=True, wage=100.00, email="rpomullan@tamu.edu")
+
+        """
+        Seeds the database with food item data.
+
+        @returns None
+        """
 
         food_items_data = [
             {'name': 'Orange Chicken', 'type': "entree", 'on_menu': True, 'alt_price': 6.00, 'upcharge': 0.00, 'image': 'food_images/orangechicken.PNG', 'calories': 490, 'is_spicy': True, 'is_premium': False, 'is_gluten_free': False},
@@ -66,6 +91,11 @@ class Command(BaseCommand):
 
         for food_item in food_items_data:
             FoodItem.objects.create(**food_item)
+        """
+        Seeds the database with inventory item data.
+
+        @returns None
+        """
 
         #inventory
         breadedchicken = InventoryItem.objects.create(name='Breaded Chicken', is_food=True, stock=1000, restock_threshold=500, restock_amount = 1000)
@@ -96,6 +126,12 @@ class Command(BaseCommand):
         InventoryItem.objects.create(name='Gatorade Bottle', is_food=True, stock=498, restock_threshold=800, restock_amount=2000)
         InventoryItem.objects.create(name='Mushrooms', is_food=True, stock=498, restock_threshold=800, restock_amount=2000)
         
+        """
+        Creates default order item types (e.g., Bowls, Plates) with their base prices.
+
+        @returns None
+        """
+
         order_item_types = [
             ("Bowl", 8.30),
             ("Plate", 9.80),
@@ -103,10 +139,24 @@ class Command(BaseCommand):
             ("Family Feast", 43.00),
             ("Bigger Plate", 11.30),
             ("A La Carte", 7.40),
-            
+            ("Party Size Side", 16.00),
+            ("Party Size Entree", 41.00),
+            ("Party Size Appetizer", 41.00),
+            ("Bundle One", 108.00),
+            ("Bundle Two", 154.00),
+            ("Bundle Three", 194.00),
         ]
+        
         for name, base_price in order_item_types:
             item_type = OrderItemType.objects.create(name=name, base_price=base_price)
+
+        """
+        Generates orders for a given date range and sales targets.
+
+        @param date_range A list of datetime objects for the seeding period.
+        @param sales_limit Maximum total sales for a specific day.
+        @returns None
+        """
 
         # Generate Dates
         timezone = pytz.timezone('America/Chicago')

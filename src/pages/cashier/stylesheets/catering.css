@@ -1,0 +1,86 @@
+/* Nav Bar */
+.cshr_navBar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  background-color: #c8102e;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 80px;
+}
+
+.cshr_navBar > * {
+  flex-grow: 1;
+  text-align: center;
+  margin: 0;
+  color: #ffffff;
+}
+
+.cshr_employeeLbl,
+.cshr_timeLbl {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.cshr_logoutBtn,
+.cshr_managerBtn,
+.cshr_cateringBtn,
+.cshr_inventoryBtn {
+  background-color: #c8102e;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  height: 100%;
+  transition: background-color 0.3s;
+}
+
+.cshr_logoutBtn:hover,
+.cshr_managerBtn:hover,
+.cshr_cateringBtn:hover,
+.cshr_inventoryBtn:hover {
+  background-color: #a60d22;
+}
+
+/* Catering Button Section */
+.cshr_cateringButtonSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 15px;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  justify-items: center;
+}
+
+/* Large Buttons */
+.cshr_largeBtn {
+  width: 700px;
+  height: 250px;
+  font-size: 18px;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  top: 40px;
+  left: -400px;
+  transition: background-color 0.3s;
+}
+
+.cshr_largeBtn:hover {
+  background-color: #d2d2d2;
+  transform: scale(1.01);
+}

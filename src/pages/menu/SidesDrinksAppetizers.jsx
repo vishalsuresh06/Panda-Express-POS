@@ -1,8 +1,27 @@
+/**
+ * @module SidesDrinksAppetizers
+ */
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./menu.css";
-
+/**
+ * A React component for displaying Sides, Drinks, and Appetizers.
+ *
+ * @function SidesDrinksAppetizers
+ * @returns {JSX.Element} A categorized menu section for Sides, Drinks, and Appetizers.
+ */
 const SidesDrinksAppetizers = () => {
+  /**
+   * @typedef {Object} MenuItem
+   * @property {number} id - Unique identifier for the menu item.
+   * @property {string} name - Name of the menu item.
+   * @property {string} image - URL or path of the item's image.
+   * @property {number} calories - Number of calories in the item.
+   * @property {boolean} is_spicy - Indicates if the item is spicy.
+   * @property {boolean} is_premium - Indicates if the item is premium.
+   * @property {boolean} is_gluten_free - Indicates if the item is gluten-free.
+   */
   // States for Sides, Drinks, and Appetizers
   const [sides, setSides] = useState([]);
   const [drinks, setDrinks] = useState([]);
@@ -10,7 +29,9 @@ const SidesDrinksAppetizers = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch data for each category
+  /**
+   * Fetches data for Sides, Drinks, and Appetizers from the backend API.
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
