@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/menu/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/menu/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @module Menu
  */
 import React, { useEffect, useState } from "react";
@@ -89,7 +117,7 @@ const Index = () => {
     const formData = new FormData();
     for (const key in newItem) {
       const value = newItem[key];
-      if (value !== null && value !== "") {
+      if (value !== null &amp;&amp; value !== "") {
         formData.append(key, value);
       }
     }
@@ -131,7 +159,7 @@ const Index = () => {
     const formData = new FormData();
     for (const key in editingItem) {
       const value = editingItem[key];
-      if (value !== null && value !== "") {
+      if (value !== null &amp;&amp; value !== "") {
         formData.append(key, value);
       }
     }
@@ -172,36 +200,36 @@ const Index = () => {
   };
 
   return (
-    <div className="menu-navigation">
-      <h1>Our Menu</h1>
-      <nav>
-        <ul className="menu-nav-list">
-          <li>
-            <Link to="entrees">Entrees</Link>
-          </li>
-          <li>
-            <Link to="sides-drinks-appetizers">Sides, Drinks & Appetizers</Link>
-          </li>
-          <li>
-            <Link to="sizes-featured-popular">Sizes, Featured & Popular</Link>
-          </li>
-        </ul>
-      </nav>
+    &lt;div className="menu-navigation">
+      &lt;h1>Our Menu&lt;/h1>
+      &lt;nav>
+        &lt;ul className="menu-nav-list">
+          &lt;li>
+            &lt;Link to="entrees">Entrees&lt;/Link>
+          &lt;/li>
+          &lt;li>
+            &lt;Link to="sides-drinks-appetizers">Sides, Drinks &amp; Appetizers&lt;/Link>
+          &lt;/li>
+          &lt;li>
+            &lt;Link to="sizes-featured-popular">Sizes, Featured &amp; Popular&lt;/Link>
+          &lt;/li>
+        &lt;/ul>
+      &lt;/nav>
 
-      <Routes>
-        <Route path="entrees" element={<Entrees />} />
-        <Route path="sides-drinks-appetizers" element={<SidesDrinksAppetizers />} />
-        <Route path="sizes-featured-popular" element={<SizesFeaturedPopular />} />
-      </Routes>
+      &lt;Routes>
+        &lt;Route path="entrees" element={&lt;Entrees />} />
+        &lt;Route path="sides-drinks-appetizers" element={&lt;SidesDrinksAppetizers />} />
+        &lt;Route path="sizes-featured-popular" element={&lt;SizesFeaturedPopular />} />
+      &lt;/Routes>
 
-      <div className="manager-menu-container">
-        <h2>Manage Menu</h2>
-        {successMessage && <p className="success-message">{successMessage}</p>}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+      &lt;div className="manager-menu-container">
+        &lt;h2>Manage Menu&lt;/h2>
+        {successMessage &amp;&amp; &lt;p className="success-message">{successMessage}&lt;/p>}
+        {errorMessage &amp;&amp; &lt;p className="error-message">{errorMessage}&lt;/p>}
 
-        <form onSubmit={handleAddItem} className="add-item-form">
-          <h3>Add New Menu Item</h3>
-          <input
+        &lt;form onSubmit={handleAddItem} className="add-item-form">
+          &lt;h3>Add New Menu Item&lt;/h3>
+          &lt;input
             type="text"
             name="name"
             placeholder="Name (required)"
@@ -209,14 +237,14 @@ const Index = () => {
             onChange={handleFormChange}
             required
           />
-          <select name="type" value={newItem.type} onChange={handleFormChange}>
-            <option value="entree">Entree</option>
-            <option value="side">Side</option>
-            <option value="drink">Drink</option>
-            <option value="appetizer">Appetizer</option>
-            <option value="dessert">Dessert</option>
-          </select>
-          <input
+          &lt;select name="type" value={newItem.type} onChange={handleFormChange}>
+            &lt;option value="entree">Entree&lt;/option>
+            &lt;option value="side">Side&lt;/option>
+            &lt;option value="drink">Drink&lt;/option>
+            &lt;option value="appetizer">Appetizer&lt;/option>
+            &lt;option value="dessert">Dessert&lt;/option>
+          &lt;/select>
+          &lt;input
             type="number"
             name="alt_price"
             placeholder="Price (required)"
@@ -224,64 +252,64 @@ const Index = () => {
             onChange={handleFormChange}
             required
           />
-          <input
+          &lt;input
             type="number"
             name="upcharge"
             placeholder="Upcharge"
             value={newItem.upcharge}
             onChange={handleFormChange}
           />
-          <input
+          &lt;input
             type="number"
             name="calories"
             placeholder="Calories"
             value={newItem.calories}
             onChange={handleFormChange}
           />
-          <input type="file" name="image" onChange={handleFileChange} />
-          <label>
-            <input
+          &lt;input type="file" name="image" onChange={handleFileChange} />
+          &lt;label>
+            &lt;input
               type="checkbox"
               name="is_spicy"
               checked={newItem.is_spicy}
               onChange={handleFormChange}
             />
             Spicy
-          </label>
-          <label>
-            <input
+          &lt;/label>
+          &lt;label>
+            &lt;input
               type="checkbox"
               name="is_premium"
               checked={newItem.is_premium}
               onChange={handleFormChange}
             />
             Premium
-          </label>
-          <label>
-            <input
+          &lt;/label>
+          &lt;label>
+            &lt;input
               type="checkbox"
               name="is_gluten_free"
               checked={newItem.is_gluten_free}
               onChange={handleFormChange}
             />
             Gluten-Free
-          </label>
-          <label>
-            <input
+          &lt;/label>
+          &lt;label>
+            &lt;input
               type="checkbox"
               name="on_menu"
               checked={newItem.on_menu}
               onChange={handleFormChange}
             />
             On Menu
-          </label>
-          <button type="submit">Add Item</button>
-        </form>
+          &lt;/label>
+          &lt;button type="submit">Add Item&lt;/button>
+        &lt;/form>
 
-        {editingItem && (
-          <form onSubmit={handleUpdateItem} className="edit-item-form">
-            <h3>Edit Menu Item</h3>
-            <input
+        {editingItem &amp;&amp; (
+          &lt;form onSubmit={handleUpdateItem} className="edit-item-form">
+            &lt;h3>Edit Menu Item&lt;/h3>
+            &lt;input
               type="text"
               name="name"
               placeholder="Name (required)"
@@ -289,18 +317,18 @@ const Index = () => {
               onChange={(e) => handleFormChange(e, true)}
               required
             />
-            <select
+            &lt;select
               name="type"
               value={editingItem.type || "entree"}
               onChange={(e) => handleFormChange(e, true)}
             >
-              <option value="entree">Entree</option>
-              <option value="side">Side</option>
-              <option value="drink">Drink</option>
-              <option value="appetizer">Appetizer</option>
-              <option value="dessert">Dessert</option>
-            </select>
-            <input
+              &lt;option value="entree">Entree&lt;/option>
+              &lt;option value="side">Side&lt;/option>
+              &lt;option value="drink">Drink&lt;/option>
+              &lt;option value="appetizer">Appetizer&lt;/option>
+              &lt;option value="dessert">Dessert&lt;/option>
+            &lt;/select>
+            &lt;input
               type="number"
               name="alt_price"
               placeholder="Price (required)"
@@ -308,76 +336,99 @@ const Index = () => {
               onChange={(e) => handleFormChange(e, true)}
               required
             />
-            <input
+            &lt;input
               type="number"
               name="upcharge"
               placeholder="Upcharge"
               value={editingItem.upcharge || ""}
               onChange={(e) => handleFormChange(e, true)}
             />
-            <input
+            &lt;input
               type="number"
               name="calories"
               placeholder="Calories"
               value={editingItem.calories || ""}
               onChange={(e) => handleFormChange(e, true)}
             />
-            <input type="file" name="image" onChange={(e) => handleFileChange(e, true)} />
-            <label>
-              <input
+            &lt;input type="file" name="image" onChange={(e) => handleFileChange(e, true)} />
+            &lt;label>
+              &lt;input
                 type="checkbox"
                 name="is_spicy"
                 checked={editingItem.is_spicy || false}
                 onChange={(e) => handleFormChange(e, true)}
               />
               Spicy
-            </label>
-            <label>
-              <input
+            &lt;/label>
+            &lt;label>
+              &lt;input
                 type="checkbox"
                 name="is_premium"
                 checked={editingItem.is_premium || false}
                 onChange={(e) => handleFormChange(e, true)}
               />
               Premium
-            </label>
-            <label>
-              <input
+            &lt;/label>
+            &lt;label>
+              &lt;input
                 type="checkbox"
                 name="is_gluten_free"
                 checked={editingItem.is_gluten_free || false}
                 onChange={(e) => handleFormChange(e, true)}
               />
               Gluten-Free
-            </label>
-            <label>
-              <input
+            &lt;/label>
+            &lt;label>
+              &lt;input
                 type="checkbox"
                 name="on_menu"
                 checked={editingItem.on_menu || false}
                 onChange={(e) => handleFormChange(e, true)}
               />
               On Menu
-            </label>
-            <button type="submit">Save Changes</button>
-            <button type="button" onClick={() => setEditingItem(null)}>
+            &lt;/label>
+            &lt;button type="submit">Save Changes&lt;/button>
+            &lt;button type="button" onClick={() => setEditingItem(null)}>
               Cancel
-            </button>
-          </form>
+            &lt;/button>
+          &lt;/form>
         )}
 
-        <div className="menu-list-container">
+        &lt;div className="menu-list-container">
           {menuItems.map((item) => (
-            <div key={item.id} className="menu-item">
-              <h3>{item.name}</h3>
-              <button onClick={() => setEditingItem(item)}>Edit</button>
-              <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
-            </div>
+            &lt;div key={item.id} className="menu-item">
+              &lt;h3>{item.name}&lt;/h3>
+              &lt;button onClick={() => setEditingItem(item)}>Edit&lt;/button>
+              &lt;button onClick={() => handleDeleteItem(item.id)}>Delete&lt;/button>
+            &lt;/div>
           ))}
-        </div>
-      </div>
-    </div>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
   );
 };
 
 export default Index;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Chatbot.html">Chatbot</a></li><li><a href="module-Kiosk.html">Kiosk</a></li><li><a href="module-Kitchen.html">Kitchen</a></li><li><a href="module-Manager.html">Manager</a></li><li><a href="module-Menu.html">Menu</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:24:07 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

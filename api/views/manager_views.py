@@ -257,7 +257,8 @@ class RestockView(APIView):
 @api_view(['GET'])
 def menuQueryView(request, id):
     """
-    
+    Django view that takes in a time window designated by two endpoints and a food item id
+    and queries for the daily sales of that specific food item.
     """
 
     start_date_str = request.GET.get('start_date')
@@ -297,7 +298,8 @@ def menuQueryView(request, id):
 @api_view(['GET'])
 def inventoryQueryView(request, id):
     """
-    
+    Django view that takes in a time window designated by two endpoints and a inventory item id
+    and queries for the daily sales of that specific inventory item.
     """
 
     start_date_str = request.GET.get('start_date')
