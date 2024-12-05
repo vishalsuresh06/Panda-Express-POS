@@ -121,6 +121,7 @@ button.CK-clicked{
     
 }
 .CK-CompleteButton{
+    height:40px;
     justify-self: center;
     background-color: rgb(3, 195, 3);
 }
@@ -132,17 +133,20 @@ button.CK-clicked{
 }
 
 .CK-removeOne{
+    height:40px;
     background-color:red;
     color : white;
 }
 
 .CK-addAnother{
+    height:40px;
     background-color:rgb(0, 255, 106);
     color : rgb(0, 0, 0);
 }
 
 
 .CK-cWrapper{
+    height:40px;
     width:0px;
     justify-self: center;
     justify-items: center;
