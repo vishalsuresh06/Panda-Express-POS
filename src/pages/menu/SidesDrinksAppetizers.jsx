@@ -37,9 +37,9 @@ const SidesDrinksAppetizers = () => {
       try {
         // Fetch Sides, Drinks, and Appetizers separately
         const [sidesResponse, drinksResponse, appetizersResponse] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/food-items/?type=Side"),
-          axios.get("http://127.0.0.1:8000/api/food-items/?type=Drink"),
-          axios.get("http://127.0.0.1:8000/api/food-items/?type=Appetizer"),
+          axios.get(`${apiUrl}/api/food-items/?type=Side`),
+          axios.get(`${apiUrl}/api/food-items/?type=Drink`),
+          axios.get(`${apiUrl}/api/food-items/?type=Appetizer`),
         ]);
 
         // Update states with fetched data

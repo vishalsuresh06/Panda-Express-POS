@@ -33,6 +33,7 @@ function Time(){
  * @returns All the HTML for the kiosk page
  */
 export default function Customers() {
+    const [isChatbotVisible, setChatbotVisible] = useState(false);
     const [currI, setCurr] = useState(0)
     const [sysState, setState] = useState("")
     const [menu, setMenu] = useState([])
@@ -49,7 +50,11 @@ export default function Customers() {
      * identifier for togo or here order
      * @returns Nothing
      */
+    const toggleChatbot = () => {
+        setChatbotVisible((prev) => !prev);
+    };
     const check = async (name, togo) => {
+
         if (name == "" || ItemList.length == 0) {
             return;
         }
@@ -353,12 +358,21 @@ export default function Customers() {
                 <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
             <div className="CK-OrderContainer">{Order()}</div>
         </div>
-        {/* Chatbot Integration */}
-        {/* <div className="chatbot-container">
-            <Chatbot menu={menu} />
-        </div> */}
-    </>
-);
+        {/* Floating Chatbot Button */}
+        <div className="chatbot-button-container">
+                <button className="chatbot-toggle-button" onClick={toggleChatbot}>
+                    {isChatbotVisible ? "Close Chatbot" : "Open Chatbot"}
+                </button>
+            </div>
+
+            {/* Chatbot Container */}
+            {isChatbotVisible && (
+                <div className="chatbot-container">
+                    <Chatbot menu={menu} />
+                </div>
+            )}
+        </>
+    );
 
 }
 

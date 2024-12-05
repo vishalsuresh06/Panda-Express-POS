@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from '../../config'
 import "./menu.css";
 
 /**
@@ -29,7 +30,7 @@ const Entrees = () => {
   useEffect(() => {
     const fetchEntrees = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/food-items/?type=Entree");
+        const response = await axios.get(`${apiUrl}/api/food-items/?type=Entree`);
         console.log("API Response:", response.data); // Debug log
         setEntrees(response.data || []); // Fallback to empty array
       } catch (err) {
