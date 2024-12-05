@@ -138,6 +138,7 @@ class Command(BaseCommand):
             ("Cub Meal", 6.60),
             ("Family Feast", 43.00),
             ("Bigger Plate", 11.30),
+            ("Drink", 2.10),
             ("A La Carte", 7.40),
             ("Party Size Side", 16.00),
             ("Party Size Entree", 41.00),

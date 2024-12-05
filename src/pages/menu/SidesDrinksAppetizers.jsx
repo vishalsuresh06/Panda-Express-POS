@@ -1,5 +1,5 @@
 /**
- * @module SidesDrinksAppetizers
+ * @module Menu
  */
 
 import React, { useEffect, useState } from "react";

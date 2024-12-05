@@ -144,6 +144,14 @@
 </li>
 <li><a class="reference internal" href="#api.views.auth_views.googleLogin"><code class="docutils literal notranslate"><span class="pre">googleLogin()</span></code></a></li>
 <li><a class="reference internal" href="#api.views.auth_views.pinLogin"><code class="docutils literal notranslate"><span class="pre">pinLogin()</span></code></a></li>
+<li><a class="reference internal" href="#api.views.chatbot_views.ChatBotView"><code class="docutils literal notranslate"><span class="pre">ChatBotView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.chatbot_views.ChatBotView.post"><code class="docutils literal notranslate"><span class="pre">ChatBotView.post()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api.views.ChatBotView.ChatBotView"><code class="docutils literal notranslate"><span class="pre">ChatBotView</span></code></a><ul>
+<li><a class="reference internal" href="#api.views.ChatBotView.ChatBotView.post"><code class="docutils literal notranslate"><span class="pre">ChatBotView.post()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -532,12 +540,16 @@ frequent to least frequent. Only processes orders dated in between the two argum
 <dl class="py function">
 <dt class="sig sig-object py" id="api.views.manager_views.inventoryQueryView">
 <span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">inventoryQueryView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.inventoryQueryView" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Django view that takes in a time window designated by two endpoints and a inventory item id
+and queries for the daily sales of that specific inventory item.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="api.views.manager_views.menuQueryView">
 <span class="sig-prename descclassname"><span class="pre">api.views.manager_views.</span></span><span class="sig-name descname"><span class="pre">menuQueryView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.manager_views.menuQueryView" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Django view that takes in a time window designated by two endpoints and a food item id
+and queries for the daily sales of that specific food item.</p>
+</dd></dl>
 
 <dl class="py class" id="module-api.views.menu_views">
 <dt class="sig sig-object py" id="api.views.menu_views.MenuView">
@@ -650,6 +662,40 @@ Restore resets all page settings in the database to their designated default val
 <dt class="sig sig-object py" id="api.views.auth_views.pinLogin">
 <span class="sig-prename descclassname"><span class="pre">api.views.auth_views.</span></span><span class="sig-name descname"><span class="pre">pinLogin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.auth_views.pinLogin" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<p id="module-api.views.chatbot_views">&#64;module Views</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.chatbot_views.ChatBotView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.chatbot_views.</span></span><span class="sig-name descname"><span class="pre">ChatBotView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.chatbot_views.ChatBotView" title="Link to this definition"></a></dt>
+<dd><p>A Django Rest Framework API view to handle chatbot interactions.</p>
+<p>&#64;class ChatBotView</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.chatbot_views.ChatBotView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.chatbot_views.ChatBotView.post" title="Link to this definition"></a></dt>
+<dd><p>Handles POST requests to process user queries and return chatbot responses.</p>
+<p>&#64;method post
+&#64;param {Request} request The HTTP request object containing the user query.
+&#64;returns {Response} JSON response containing the chatbot’s reply or error details.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-api.views.ChatBotView">&#64;module Views</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="api.views.ChatBotView.ChatBotView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">api.views.ChatBotView.</span></span><span class="sig-name descname"><span class="pre">ChatBotView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.ChatBotView.ChatBotView" title="Link to this definition"></a></dt>
+<dd><p>A Django Rest Framework API view to handle chatbot interactions.</p>
+<p>&#64;class ChatBotView</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="api.views.ChatBotView.ChatBotView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#api.views.ChatBotView.ChatBotView.post" title="Link to this definition"></a></dt>
+<dd><p>Handles POST requests to process user queries and return chatbot responses.</p>
+<p>&#64;method post
+&#64;param {Request} request The HTTP request object containing the user query.
+&#64;returns {Response} JSON response containing the chatbot’s reply or error details.</p>
+</dd></dl>
+
+</dd></dl>
 
 </section>
 

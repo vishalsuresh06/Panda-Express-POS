@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/menu/SizesFeaturedPopular.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/menu/SizesFeaturedPopular.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @module Menu
  */
 import React, { useEffect, useState } from "react";
@@ -85,78 +113,101 @@ const SizesFeaturedPopular = () => {
   }, []);
 
   return (
-    <div className="menu-section">
-      <div className="logo-container">
-        <img
+    &lt;div className="menu-section">
+      &lt;div className="logo-container">
+        &lt;img
           src="/media/food_images/panda.jpg"
           alt="Panda Express Logo"
           className="logo-image"
         />
-      </div>
+      &lt;/div>
 
-      <h1>Sizes, Featured & Popular</h1>
+      &lt;h1>Sizes, Featured &amp; Popular&lt;/h1>
 
-      {error && <p className="error-message">{error}</p>}
+      {error &amp;&amp; &lt;p className="error-message">{error}&lt;/p>}
 
-      <div className="sizes-section">
-        <h2>Sizes</h2>
-        <ul className="menu-list">
+      &lt;div className="sizes-section">
+        &lt;h2>Sizes&lt;/h2>
+        &lt;ul className="menu-list">
           {sizes.map((size, index) => (
-            <li key={index} className="menu-item">
-              <img
+            &lt;li key={index} className="menu-item">
+              &lt;img
                 src={size.image}
                 alt={size.name}
                 className="menu-item-image"
               />
-              <div className="menu-item-details">
-                <h2>{size.name}</h2>
-                <p>{size.price}</p>
-                <p className="menu-item-description">{size.description}</p>
-              </div>
-            </li>
+              &lt;div className="menu-item-details">
+                &lt;h2>{size.name}&lt;/h2>
+                &lt;p>{size.price}&lt;/p>
+                &lt;p className="menu-item-description">{size.description}&lt;/p>
+              &lt;/div>
+            &lt;/li>
           ))}
-        </ul>
-      </div>
+        &lt;/ul>
+      &lt;/div>
 
-      <div className="featured-section">
-        <h2>Featured</h2>
+      &lt;div className="featured-section">
+        &lt;h2>Featured&lt;/h2>
         {featuredItem ? (
-          <div className="menu-item">
-            <img
+          &lt;div className="menu-item">
+            &lt;img
               src={featuredItem.image || "/media/food_images/placeholder.png"}
               alt={featuredItem.name}
               className="menu-item-image"
             />
-            <div className="menu-item-details">
-              <h2>{featuredItem.name}</h2>
-              <p>{featuredItem.calories} Calories</p>
-            </div>
-          </div>
+            &lt;div className="menu-item-details">
+              &lt;h2>{featuredItem.name}&lt;/h2>
+              &lt;p>{featuredItem.calories} Calories&lt;/p>
+            &lt;/div>
+          &lt;/div>
         ) : (
-          <p>Loading featured item...</p>
+          &lt;p>Loading featured item...&lt;/p>
         )}
-      </div>
+      &lt;/div>
 
-      <div className="popular-section">
-        <h2>Popular</h2>
+      &lt;div className="popular-section">
+        &lt;h2>Popular&lt;/h2>
         {popularItem ? (
-          <div className="menu-item">
-            <img
+          &lt;div className="menu-item">
+            &lt;img
               src={popularItem.image || "/media/food_images/placeholder.png"}
               alt={popularItem.name}
               className="menu-item-image"
             />
-            <div className="menu-item-details">
-              <h2>{popularItem.name}</h2>
-              <p>{popularItem.calories} Calories</p>
-            </div>
-          </div>
+            &lt;div className="menu-item-details">
+              &lt;h2>{popularItem.name}&lt;/h2>
+              &lt;p>{popularItem.calories} Calories&lt;/p>
+            &lt;/div>
+          &lt;/div>
         ) : (
-          <p>Loading popular item...</p>
+          &lt;p>Loading popular item...&lt;/p>
         )}
-      </div>
-    </div>
+      &lt;/div>
+    &lt;/div>
   );
 };
 
 export default SizesFeaturedPopular;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Chatbot.html">Chatbot</a></li><li><a href="module-Kiosk.html">Kiosk</a></li><li><a href="module-Kitchen.html">Kitchen</a></li><li><a href="module-Manager.html">Manager</a></li><li><a href="module-Menu.html">Menu</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 19:24:07 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

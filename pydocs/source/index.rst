@@ -34,3 +34,9 @@ PandaPOS Backend Documentation
 
 .. automodule:: api.views.auth_views
    :members: 
+
+.. automodule:: api.views.chatbot_views
+   :members: 
+
+.. automodule:: api.views.ChatBotView
+   :members: 
