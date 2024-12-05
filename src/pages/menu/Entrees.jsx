@@ -30,7 +30,7 @@ const Entrees = () => {
   useEffect(() => {
     const fetchEntrees = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/food-items/?type=Entree`);
+        const response = await axios.get(`${apiURL}/api/food-items/?type=Entree`);
         console.log("API Response:", response.data); // Debug log
         setEntrees(response.data || []); // Fallback to empty array
       } catch (err) {

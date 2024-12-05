@@ -69,10 +69,10 @@ const SizesFeaturedPopular = () => {
     const fetchItems = async () => {
       try {
         const featuredResponse = await axios.get(
-          `${apiUrl}/api/food-items/?name=Apple%20Pie%20Roll`
+          `${apiURL}/api/food-items/?name=Apple%20Pie%20Roll`
         );
         const popularResponse = await axios.get(
-          `${apiUrl}/api/food-items/?name=Orange%20Chicken`
+          `${apiURL}/api/food-items/?name=Orange%20Chicken`
         );
         setFeaturedItem(featuredResponse.data[0]);
         setPopularItem(popularResponse.data[0]);
