@@ -6,6 +6,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Entrees from "./Entrees";
 import SidesDrinksAppetizers from "./SidesDrinksAppetizers";
 import SizesFeaturedPopular from "./SizesFeaturedPopular";
+import { apiURL } from '../../config.js';
 import axios from "axios";
 import "./menu.css";
 /**
