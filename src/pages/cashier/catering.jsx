@@ -7,7 +7,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../utils/Auth";
 import "./stylesheets/catering.css";
 
-// Main Cashier Component
+/**
+ * Main Catering Component
+ *
+ * This component displays the catering options for the cashier.
+ *
+ * @component
+ */
 function Catering() {
   // State Variables
   const [time, setTime] = useState(new Date().toLocaleTimeString());

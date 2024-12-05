@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { apiURL } from "../../config.js";
 import { logout } from "../../utils/Auth";
 import "./stylesheets/index.css";
 
@@ -15,7 +16,6 @@ import "./stylesheets/index.css";
 function Cashier() {
   // State Variables
   const [time, setTime] = useState(new Date().toLocaleTimeString());
-  const [currI, setCurr] = useState(0);
   const [total, setTotal] = useState(
     Number(localStorage.getItem("total")) || 0
   );
@@ -33,6 +33,8 @@ function Cashier() {
   const navigate = useNavigate();
 
   const { selection } = location.state || {};
+
+  useEffect(() => {});
 
   // Handle incoming selection data
   useEffect(() => {
@@ -134,19 +136,12 @@ function Cashier() {
         return;
       }
 
-      const total =
-        Object.values(items)
-          .flat()
-          .reduce((sum, item) => {
-            return sum + Number(item.price);
-          }, 0) * 1.08;
-
       const orderJSON = {
         name: name,
         type: togo ? "togo" : "here",
-        total: Number(total),
-        employee: employee.name,
-        orderItems: ["Fried Rice"],
+        total: total,
+        employee: "kiosk",
+        orderItems: JSON.stringify(items),
       };
       try {
         let response = await fetch(`${apiURL}/api/kiosk/`, {
@@ -164,7 +159,7 @@ function Cashier() {
         return false;
       }
     };
-    check("Not Applicable", true);
+    check();
     deleteCheckout();
   };
 
