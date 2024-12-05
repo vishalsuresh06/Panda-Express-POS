@@ -367,13 +367,16 @@ const Index = () => {
         )}
 
         <div className="menu-list-container">
-          {menuItems.map((item) => (
-            <div key={item.id} className="menu-item">
-              <h3>{item.name}</h3>
-              <button onClick={() => setEditingItem(item)}>Edit</button>
-              <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
-            </div>
-          ))}
+          {/* Side Menu */}
+  <ul className="side-menu">
+    {menuItems.map((item) => (
+      <li key={item.id} className="side-menu-item">
+        <span>{item.name}</span>
+        <button onClick={() => setEditingItem(item)}>Edit</button>
+        <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
+      </li>
+    ))}
+  </ul>
         </div>
       </div>
     </div>
