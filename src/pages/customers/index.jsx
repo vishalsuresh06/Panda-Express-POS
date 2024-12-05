@@ -75,7 +75,7 @@ export default function Customers() {
                 body: JSON.stringify(orderJSON),
             });	
 
-            clear()
+            window.location.reload();
 			return response.ok;
 			
         } catch (error) { return false; }
@@ -208,10 +208,13 @@ export default function Customers() {
      * @param {string} itemName 
      */
     const addItem = (OrderItemTypeID, totalPrice, itemList, itemName) => {
+        console.log(OrderItemTypeID)
+        console.log(orderTypes)
         setItems(current => [
             ...current, 
             { 
                 array_id: currI, 
+                
                 type_id: orderTypes.find(item => item.name === OrderItemTypeID).id,
                 name: OrderItemTypeID,
                 price: totalPrice,
@@ -323,7 +326,7 @@ export default function Customers() {
                 addItem = {addItem}
                 setSys = {setState}
                 typeID = {sysState}
-                complete = {false}
+                complete = {"Pick Entree"}
                 />
                 <SinglePick
                 orderType={"side"}
@@ -331,6 +334,7 @@ export default function Customers() {
                 addItem = {addItem}
                 setSys = {setState}
                 typeID = {sysState}
+                complete = {"Pick Side"}
                 />
                 </>)
         }
@@ -339,44 +343,24 @@ export default function Customers() {
     
     
     return (
-    <>
-        <Time />
-        <div id="google_translate_element"></div>
-        {Object.keys(currWeather).length > 0 && (
-            <h4>
-                <span className="notranslate">
-                    {currWeather.current.temp.toFixed(0)} F
-                </span> 
-                | {currWeather.current.weather[0].description.toUpperCase()}
-            </h4>
-        )}
-        <div className="CK-screenContainer">
-            <CheckoutView
-                ItemList={ItemList}
-                removeAll={clear}
-                checkout={check}
-                remove_Item={remove_item}
-            />
+        <>
+            <div className="CK-topBar">
+            <Time/>
+            <div id="google_translate_element"></div>
+            {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
+            </div>
+            <div className="CK-screenContainer">
+                <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
             <div className="CK-OrderContainer">{Order()}</div>
         </div>
         {/* Chatbot Integration */}
-        <div className="chatbot-container">
+        {/* <div className="chatbot-container">
             <Chatbot menu={menu} />
-        </div>
+        </div> */}
     </>
 );
 
 }
-
-// function WaterButton({ menu, addItem }){
-//     const id = 13
-//     console.log(id)
-//     return (
-//         <button onClick={() => addItem(id)}>
-//             add water
-//         </button>
-//     )
-// }
 
 /** CK
  *  creates the list of buttons to other screens on startup
@@ -392,6 +376,16 @@ function OrderButtons({setSys, orderTypes}){
                       "A La Carte (Entree) (S)",
                       "A La Carte (Entree) (M)",
                       "A La Carte (Entree) (L)"
+    ]
+    const addID = [
+        "Drink",
+        "Appetizer",
+        "A La Carte",
+        "Bigger Plate",
+        "Family Feast",
+        "Cub Meal",
+        "Plate",
+        "Bowl"
     ]
     // console.log(orderTypes)
 
@@ -413,11 +407,11 @@ function OrderButtons({setSys, orderTypes}){
 
     return(
         <ul className="CK-subMenuOptions">
-        {orderTypes.filter(type => !removeID.includes(type.name)).map((type) => (
+        {orderTypes.filter(type => addID.includes(type.name)).map((type) => (
             <div className='CK-subMenuOptionsItem' key={type.id}>
                 <button className='CK-subMenuOptionsItemButton' onClick={() => buttonPressAction(type.name)}>
-                    <div>{type.name}</div>
-                    <div>${type.base_price}</div>
+                    <div className="CK-subMenuOptionsItemText">{type.name}</div>
+                    <div className="CK-subMenuOptionsItemText">${type.base_price}</div>
                     </button>
             </div>
         ))}
@@ -481,12 +475,12 @@ function FoodCard({id, menu, setOrd, ord, max, upMult}){
      * helper function to redefine the tag so that it can be styled differently on click
      * @returns HTML className tag
      */
-    function getStatus(){
+    function getStatus(str=""){
         if (clicked === 1){
-            return "CK-clicked"
+            return str + " CK-clicked"
         }
         else{
-            return "CK-unclicked"
+            return str + " CK-unclicked"
         }
     }
 
@@ -536,7 +530,7 @@ function FoodCard({id, menu, setOrd, ord, max, upMult}){
     }
     return(
         <div className="CK-FoodCard">
-        <button className={getStatus()} onClick={() => buttonHandle()}>
+        <button className={getStatus("CK-FoodButton")} onClick={() => buttonHandle()}>
             <h4>{currItem.name}</h4>
             {isPrem()}
         </button>
@@ -622,9 +616,11 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
 
     return (
     <div className = "CK-BuildFoodPage">
-        <button onClick={() => setSys(-1)} className="CK-cancelOrder">Back</button>
-        <h3>Entree</h3>
-        <h5>Pick {numEntree} entree{Es()}</h5>
+        <div className="CK-foodHelpers">
+        <button className="CK-foodHelp CK-cancelOrder" onClick={() => setSys(-1)} >Back</button>
+        <h3 className="CK-foodHelp">Entree</h3>
+        <h5 className="CK-foodHelp">Pick {numEntree} entree{Es()}</h5>
+        </div>
         <ul className="CK-entrees">
             
             {menu.filter(item => item.type === "entree").map((item) => (
@@ -633,8 +629,10 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
                 </li>
             ))}
         </ul>
-        <h3>Side</h3>
-        <h5>Pick {numSide} side{Ss()}</h5>
+        <div className="CK-foodHelpers">
+        <h3 className="CK-foodHelp">Side</h3>
+        <h5 className="CK-foodHelp">Pick {numSide} side{Ss()}</h5>
+        </div>
         <ul className="CK-sides">
             {menu.filter(item => item.type === "side").map((item) => (
                 <li key={item.id}>
@@ -643,7 +641,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
             ))}
         </ul>
         <div>
-            <CompleteButton/>
+            <CompleteButton className="CK-foodHelp"/>
         </div>
         
     </div>
@@ -655,7 +653,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
  * @param {string, int, JSON, function, function} param0 
  * @returns HTML of all foodcards for the ordertype passed in
  */
-function SinglePick({orderType, typeID, menu, addItem, setSys, complete=true}){
+function SinglePick({orderType, typeID, menu, addItem, setSys, complete="complete"}){
     const [currOrder,setOrder] = useState([])
 
     /**
@@ -670,15 +668,24 @@ function SinglePick({orderType, typeID, menu, addItem, setSys, complete=true}){
     }
 
     function getCButton(){
-        if (complete)
+        
             return(
-                <button className= "CK-CompleteButton" onClick={() => completeOrder()}>
-                    Done
+                <button className= "CK-CompleteButton CK-foodHelp" onClick={() => completeOrder()}>
+                    {complete}
                 </button>
             )
     }
+    function getBButton(){
+        if(complete != "Pick Side"){
+            return (
+                <div className="CK-foodHelpers">
+        <button className="CK-foodHelp CK-cancelOrder" onClick={() => setSys(-1)} >Back</button></div>
+            )
+        }
+    }
     return(
     <div className = "CK-singlePick">
+        {getBButton()}
         <ul className="CK-singlePickList CK-sides">
             {menu.filter(item => item.type === orderType).map((item) => (
                 <li key={item.id}>
