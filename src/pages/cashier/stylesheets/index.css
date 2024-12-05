@@ -1,16 +1,18 @@
+/* General Container */
 .cshr_container {
   display: flex;
   flex-direction: column;
+  height: auto;
   align-items: center;
   font-family: Arial, sans-serif;
 }
 
-/* Nav Bar CSS */
+/* Nav Bar */
 .cshr_navBar {
   display: flex;
   align-items: stretch;
   width: 100%;
-  background-color: #333;
+  background-color: #c8102e;
   color: #fff;
   position: sticky;
   top: 0;
@@ -23,7 +25,7 @@
   flex-grow: 1;
   text-align: center;
   margin: 0;
-  color: #f1f1f1;
+  color: #ffffff;
 }
 
 .cshr_employeeLbl,
@@ -39,7 +41,7 @@
 .cshr_managerBtn,
 .cshr_cateringBtn,
 .cshr_inventoryBtn {
-  background-color: #333;
+  background-color: #c8102e;
   color: #fff;
   border: none;
   font-size: 16px;
@@ -50,33 +52,35 @@
   justify-content: center;
   padding: 0;
   height: 100%;
+  transition: background-color 0.3s;
 }
 
 .cshr_logoutBtn:hover,
 .cshr_managerBtn:hover,
 .cshr_cateringBtn:hover,
 .cshr_inventoryBtn:hover {
-  background-color: #777;
+  background-color: #a60d22;
 }
 
-/* Checkout Section CSS */
+/* Checkout Section */
 .cshr_checkoutSection {
   position: fixed;
   top: 80px;
   left: 0;
   height: calc(100vh - 120px);
   width: 350px;
-  background-color: #f4f4f4;
+  background-color: #f9f9f9;
   display: flex;
   flex-direction: column;
   padding: 20px;
+  border-right: 2px solid #c8102e;
 }
 
 .cshr_itemDisplay {
   flex: 1;
   overflow-y: auto;
-  background-color: lightgray;
-  border: 1px solid #ddd;
+  background-color: #fff;
+  border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 10px;
 }
@@ -93,12 +97,14 @@
   text-align: left;
   font-size: 18px;
   margin: 5px 0;
+  color: #333;
 }
 
 .cshr_tax,
 .cshr_total {
   text-align: right;
   font-size: 18px;
+  color: #333;
 }
 
 .cshr_chckAndClearBtnContainer {
@@ -111,15 +117,16 @@
   width: 45%;
   padding: 10px;
   font-size: 16px;
-  background-color: #333;
+  background-color: #c8102e;
   color: white;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .clrBtn:hover,
 .chkbtn:hover {
-  background-color: #777;
+  background-color: #a60d22;
 }
 
 /* Ordering Section */
@@ -131,100 +138,141 @@
 }
 
 .cshr_typeBtn {
-  width: 400px; /* Adjust as needed */
-  height: 250px; /* Adjust as needed */
+  width: 400px;
+  height: 250px;
   font-size: 18px;
-  padding: 10px;
+  padding: 20px;
   background-color: #f0f0f0;
-  border: 1px solid #ccc;
   border-radius: 8px;
   text-align: center;
   cursor: pointer;
+  position: relative;
+  top: 40px;
+  left: -140px;
+  transition: background-color 0.3s;
 }
 
 .cshr_typeBtn:hover {
-  background-color: #e0e0e0;
+  background-color: #d2d2d2;
+  transform: scale(1.01);
 }
 
-/* General container */
+/* General Container for Item */
 .cshr_itemContainer {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
-  max-width: 600px;
+  gap: 10px;
+  position: relative;
 }
 
-/* Labels */
+/* Header for Item Type */
 .cshr_typeLbl {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 10px;
+  margin: 0;
+  text-transform: capitalize;
 }
 
-.cshr_detailsContainer h3,
-.cshr_sidesLbl,
-.cshr_entreesLbl {
-  font-size: 18px;
+/* Price Section */
+.cshr_detailsContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cshr_priceLbl {
+  font-size: 16px;
   font-weight: bold;
   color: #555;
-  margin: 10px 0 5px;
+  margin: 0;
 }
 
-.cshr_sideList,
+.cshr_priceValue {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+/* Sides Section */
+.cshr_sidesContainer {
+  margin-top: 10px;
+}
+
+.cshr_sidesLbl {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.cshr_sideList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cshr_sideItem {
+  font-size: 14px;
+  color: #333;
+  margin: 5px 0;
+}
+
+/* Entrees Section */
+.cshr_entreesContainer {
+  margin-top: 10px;
+}
+
+.cshr_entreesLbl {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
 .cshr_entreeList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.cshr_sideItem,
 .cshr_entreeItem {
-  font-size: 16px;
-  color: #666;
+  font-size: 14px;
+  color: #333;
   margin: 5px 0;
 }
 
-/* Button */
+/* Drinks and Appetizers Section */
+.cshr_drinkValue,
+.cshr_appValue {
+  font-size: 14px;
+  color: #333;
+  margin: 5px 0;
+}
+
+/* Delete Button */
 .cshr_deleteBtn {
-  align-self: flex-end;
-  background-color: #e74c3c;
+  background-color: #ff4d4d;
   color: #fff;
-  font-size: 16px;
-  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  padding: 8px 12px;
   cursor: pointer;
-  margin-top: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .cshr_deleteBtn:hover {
-  background-color: #c0392b;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .cshr_itemContainer {
-    padding: 15px;
-  }
-
-  .cshr_typeLbl {
-    font-size: 20px;
-  }
-
-  .cshr_detailsContainer h3,
-  .cshr_sidesLbl,
-  .cshr_entreesLbl {
-    font-size: 16px;
-  }
-
-  .cshr_deleteBtn {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
+  background-color: #e60000;
 }

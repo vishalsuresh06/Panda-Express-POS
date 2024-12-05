@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: customers/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: customers/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useState, useEffect } from 'react';
+import { apiURL, WEATHER_API_KEY } from '../../config.js';
+import CheckoutView from "./CheckoutView";
+import "./kiosk.css"
+const WEATHER_REFRESH_MIN = 10
+
+/**
+ * 
+ * @module Kiosk
+ */
+
+/** CK
+ * Time container, that holds and maintains the time state
+ * @returns the current time, using an api
+ */
+function Time(){
+    const [currTime, setTime] = useState(new Date().toLocaleTimeString())
+    useEffect(() => {
+        const intervalID = setInterval(() => {
+            setTime(new Date().toLocaleTimeString());
+        }, 1000);
+
+        return () => clearInterval(intervalID);
+    }, []);
+
+    return(&lt;h4 className="notranslate">{currTime}&lt;/h4>)
+}
+
+/** CK
+ * parent component, manages most states and all other components
+ * 
+ * @returns All the HTML for the kiosk page
+ */
+export default function Customers() {
+    const [currI, setCurr] = useState(0)
+    const [sysState, setState] = useState("")
+    const [menu, setMenu] = useState([])
+    const [ItemList, setItems] = useState([]);
+    const [orderTypes, setOrderTypes] = useState([])
+    const [currWeather, setWeather] = useState({})
+    
+    /** CK
+     * completes the check out process, recording the current order in the database,
+     * and clearing out the kiosk for the next person to order
+     * @param {String} name 
+     * Name on order for identification
+     * @param {Boolean} togo 
+     * identifier for togo or here order
+     * @returns Nothing
+     */
+    const check = async (name, togo) => {
+        if (name == "" || ItemList.length == 0) {
+            return;
+        }
+
+        const total = Object.values(ItemList).flat().reduce((sum, item) => {
+            return sum + Number(item.price)
+        }, 0) * 1.08;
+
+        const orderJSON = {
+            "name": name,
+            "type": togo ? "togo" : "here",
+            "total": total,
+            "employee": "kiosk",
+            "orderItems": ItemList
+        }
+        try {
+            let response = await fetch(`${apiURL}/api/kiosk/`, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderJSON),
+            });	
+
+            clear()
+			return response.ok;
+			
+        } catch (error) { return false; }
+    }
+
+
+    var translateWidgetAdded = false;
+    const googleTranslateElementInit = () => {
+        if (!translateWidgetAdded) {
+            new window.google.translate.TranslateElement(
+                {
+                    pageLanguage: "en",
+                    autoDisplay: false,
+                    includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de", 
+                    layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+                },
+                "google_translate_element"
+            );
+
+            translateWidgetAdded = true;
+        }
+    };
+
+    useEffect(() => {
+        var addScript = document.createElement("script");
+        addScript.setAttribute(
+            "src",
+            "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+        );
+        document.body.appendChild(addScript);
+        window.googleTranslateElementInit = googleTranslateElementInit;
+    }, []);
+
+
+    async function fetchWeather() {
+        try {
+            let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&amp;lon=-96.314445&amp;units=imperial&amp;appid=${WEATHER_API_KEY}`);
+            if (response.ok) {
+                const data = await response.json();
+                setWeather(data)
+            } else {
+                setWeather({})
+            }
+        } catch (error) {
+            console.log(error);
+            setWeather({});
+        }
+    }
+
+    useEffect(() => {
+        const intervalID = setInterval(() => {
+            fetchWeather();
+        }, WEATHER_REFRESH_MIN*60*1000);
+        
+        fetchWeather();
+        return () => clearInterval(intervalID);
+    }, []);    
+
+    async function updateOrders(){
+        try {
+            let response = await fetch(`${apiURL}/api/kiosk_orders/`);
+
+            if (response.ok) {
+                const fetchedMenu = await response.json();
+                console.log("FETCHED TYPES:")
+                console.log(fetchedMenu);
+                const menuWithNumbers = fetchedMenu.map(item => ({
+                    ...item,
+                    id: Number(item.id),
+                    price: parseFloat(item.Base_price)
+                }));
+                setOrderTypes(menuWithNumbers);
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+
+    useEffect(() => {
+        updateOrders();
+    }, [])
+
+    async function updateMenu(){
+        try {
+            let response = await fetch(`${apiURL}/api/kiosk/`);
+
+            if (response.ok) {
+                const fetchedMenu = await response.json()
+                const menuWithNumbers = fetchedMenu.map(item => ({
+                    ...item,
+                    id: Number(item.id),
+                    alt_price: parseFloat(item.alt_price)
+                }));
+                setMenu(menuWithNumbers)
+            } else {
+                return false
+            }
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+    }
+
+    useEffect( () => {
+        updateMenu();
+    }, []);
+
+    const remove_item = (id_to_remove)=>{
+        setItems(items => 
+                items.filter(item => item.array_id !== id_to_remove)
+            );
+    }
+
+    /**
+     * clears out the current order
+     */
+    const clear = () => {
+        setItems([])
+    }
+
+
+    /** CK
+     * Adds another item to the order state
+     * @param {int} OrderItemTypeID 
+     * @param {float} totalPrice 
+     * @param {JSON} itemList 
+     * @param {string} itemName 
+     */
+    const addItem = (OrderItemTypeID, totalPrice, itemList, itemName) => {
+        setItems(current => [
+            ...current, 
+            { 
+                array_id: currI, 
+                type_id: orderTypes.find(item => item.name === OrderItemTypeID).id,
+                name: OrderItemTypeID,
+                price: totalPrice,
+                items: itemList,
+            }
+        ]);
+    
+        // console.log("Item created with id ", currI, " items: ", itemList);
+        setCurr(currI + 1); // Increment the current item index
+    };
+
+    // const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     navigate('base');
+    // }, [navigate]);
+
+    /**helper function for right side of screen
+     * 
+     * @returns given a systate, returns the screen the user wants to see 
+     */
+    const Order = () => {
+        if (sysState === "Bowl"){
+            //bowl
+            return (&lt;BuildFood
+                numEntree={1}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
+                />)
+            
+        }
+        if (sysState === "Plate"){
+            //plate
+            return (&lt;BuildFood
+                 numEntree={2}
+                 menu={menu}
+                 addItem = {addItem}
+                 setSys = {setState}
+                 typeID = {sysState}
+                 typePrice = {orderTypes.find(item => item.name === sysState).base_price}
+                 />)
+        }
+        if (sysState === "Cub Meal"){
+            //cub meal
+            return (&lt;BuildFood
+                numEntree={1}
+                numSide={2}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                upMult={0.666}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
+                />)
+            
+        }
+        if (sysState === "Family Feast"){
+            //family feast
+            return (&lt;BuildFood
+                numEntree={3}
+                numSide={2}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
+                upMult={3}
+                />)
+        }
+        if (sysState === "Bigger Plate"){
+            //bigger plate
+            return (&lt;BuildFood
+                numEntree={3}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                typePrice = {orderTypes.find(item => item.name === sysState).base_price}
+                />)
+        }
+        if (sysState === "Drink"){
+            //Drink
+            return (&lt;SinglePick
+                orderType={"drink"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                />)
+        }
+        if (sysState === "Appetizer"){
+            //Appetizer
+            return (&lt;SinglePick
+                orderType={"appetizer"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                />)
+        }
+        if (sysState === "A La Carte"){
+            //A La Carte
+            return (&lt;>&lt;SinglePick
+                orderType={"entree"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                complete = {false}
+                />
+                &lt;SinglePick
+                orderType={"side"}
+                menu={menu}
+                addItem = {addItem}
+                setSys = {setState}
+                typeID = {sysState}
+                />
+                &lt;/>)
+        }
+        return (&lt;OrderButtons setSys={setState} orderTypes={orderTypes}/>)
+    }
+    
+    
+    return (
+        &lt;>
+            &lt;Time/>
+            &lt;div id="google_translate_element">&lt;/div>
+            {Object.keys(currWeather).length > 0 &amp;&amp; &lt;h4>&lt;span className="notranslate">{currWeather.current.temp.toFixed(0)} F&lt;/span> | {currWeather.current.weather[0].description.toUpperCase()}&lt;/h4>}
+            &lt;div className="CK-screenContainer">
+                &lt;CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
+            &lt;div className="CK-OrderContainer">{Order()}&lt;/div>
+            &lt;/div>
+        &lt;/>
+    );
+}
+
+// function WaterButton({ menu, addItem }){
+//     const id = 13
+//     console.log(id)
+//     return (
+//         &lt;button onClick={() => addItem(id)}>
+//             add water
+//         &lt;/button>
+//     )
+// }
+
+/** CK
+ *  creates the list of buttons to other screens on startup
+ * @param {JSON} {setSys, orderTypes}
+ * takes in a json of the sysstate setter and the JSON of ordertypes
+ * @returns 
+ */
+function OrderButtons({setSys, orderTypes}){
+    console.log("CONSTRUCTING BUTTONS WITH THE FOLLOWING TYPES:");
+    console.log(orderTypes);
+    const removeID = ["A La Carte (Side) (L)",
+                      "A La Carte (Side) (S)",
+                      "A La Carte (Entree) (S)",
+                      "A La Carte (Entree) (M)",
+                      "A La Carte (Entree) (L)"
+    ]
+    // console.log(orderTypes)
+
+    // const navigate = useNavigate();
+
+    /**CK
+     *  helper actionhandler function
+     * @param {int} id 
+     */
+    function buttonPressAction(id){
+        // {id: 1, name: 'Bowl', base_price: '8.30', price: NaN}
+        // {id: 2, name: 'Plate', base_price: '9.80', price: NaN}
+        // {id: 3, name: 'Cub Meal', base_price: '6.60', price: NaN}
+        // {id: 4, name: 'Family Feast', base_price: '43.00', price: NaN}
+        // {id: 5, name: 'Bigger Plate'
+        //console.log("change state: ", id)
+        setSys(id)
+    }
+
+    return(
+        &lt;ul className="CK-subMenuOptions">
+        {orderTypes.filter(type => !removeID.includes(type.name)).map((type) => (
+            &lt;div className='CK-subMenuOptionsItem' key={type.id}>
+                &lt;button className='CK-subMenuOptionsItemButton' onClick={() => buttonPressAction(type.name)}>
+                    &lt;div>{type.name}&lt;/div>
+                    &lt;div>${type.base_price}&lt;/div>
+                    &lt;/button>
+            &lt;/div>
+        ))}
+        {/* &lt;div className='CK-subMenuOptionsItem' key={8}>
+            &lt;button onClick={() => buttonPressAction("A La Carte")}>
+                &lt;div>A La Carte&lt;/div>
+            &lt;/button>
+        &lt;/div> */}
+        &lt;/ul>
+    );
+}
+
+/** CK
+ * 
+ * @param {int, JSON, function, int, int, int} input
+ * takes in a JSON for data
+ * @returns a "food card" HTML object with information on one food, and manages its own button functionality
+ */
+function FoodCard({id, menu, setOrd, ord, max, upMult}){
+    // console.log(menu)
+    const  currItem = menu.find(item => item.id === id)
+    const [clicked, setclick] = useState(0)
+    const [numExtra, setExtra] = useState(0)
+    /** CK
+     * helper function to return upcharge info conditionally
+     * @returns HTML about upcharge information
+     */
+    function isPrem(){
+        // console.log("0.00 === ", currItem.upcharge)
+        if(currItem.upcharge === "0.00"){
+            return (&lt;h5 className= "CK-FoodCard-Subtitle">normal item&lt;/h5>)
+        }
+        else{
+            return(
+                &lt;>
+                &lt;h5 className= "CK-FoodCard-Subtitle">premium item&lt;/h5>
+                &lt;div className= "CK-FoodCard-upchargeTag">{(currItem.upcharge * upMult).toFixed(2)}&lt;/div>
+                &lt;/>
+            )
+        }
+    }
+
+    /**
+     * handles button clicks-- adds an item on first click, removes all instances of itself on second
+     */
+    function buttonHandle(){
+        // console.log("click")
+        if (clicked === 0 &amp;&amp; ord.filter(item=> item.type===currItem.type).length &lt; max){
+            setOrd(current => [...current, {array_id: numExtra, alt_price: currItem.alt_price, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
+            setclick(1)
+        }
+        else{
+            // console.log(ord[0].name)
+            setExtra(0)
+            setOrd(items => items.filter(item => item.id !== currItem.id))
+            setclick(0)
+        }
+    }
+
+    /** CK
+     * helper function to redefine the tag so that it can be styled differently on click
+     * @returns HTML className tag
+     */
+    function getStatus(){
+        if (clicked === 1){
+            return "CK-clicked"
+        }
+        else{
+            return "CK-unclicked"
+        }
+    }
+
+    /**
+     * button helper to add one more
+     */
+    function addAnother(){
+        setOrd(current => [...current, {array_id: numExtra+1, alt_price: currItem.alt_price, id: currItem.id, name: currItem.name, upcharge: currItem.upcharge, type: currItem.type}])
+        setExtra(numExtra + 1)
+    }
+    /**
+     * button helper to remove one item
+     */
+    function killAnother(){
+        setOrd(current => current.filter(item => !(item.id === currItem.id &amp;&amp; item.array_id === numExtra)))
+        setExtra(numExtra-1)
+    }
+
+    /**
+     *  conditionally returns HTML add 1 button using action above
+     * @returns HTML button
+     */
+    function MoreButton(){
+        if (clicked===1 &amp;&amp; ord.filter(item=> item.type===currItem.type).length &lt; max){
+            return (&lt;div>&lt;button className="CK-addAnother" onClick={addAnother}>add another&lt;/button>&lt;/div>)
+        }
+    }
+
+    /**
+     * conditionally returns HTML remove 1 button
+     * @returns HTML remove button
+     */
+    function LessButton(){
+        if (numExtra > 0){
+            return (&lt;div>&lt;button className="CK-removeOne" onClick={killAnother}>remove 1&lt;/button>&lt;/div>)
+        }
+    }
+
+    /**
+     * helper to return the current amount of items
+     * @returns current amount of items
+     */
+    function howMuch(){
+        if(clicked===1){
+            return (&lt;div>{numExtra+1}&lt;/div>)
+        }
+    }
+    return(
+        &lt;div className="CK-FoodCard">
+        &lt;button className={getStatus()} onClick={() => buttonHandle()}>
+            &lt;h4>{currItem.name}&lt;/h4>
+            {isPrem()}
+        &lt;/button>
+        &lt;MoreButton/>
+        {howMuch()}
+        &lt;LessButton/>
+        &lt;/div>
+    )
+}
+
+/**
+ * 
+ * @param {int, int, JSON, function, function, int, float, int} param0 
+ * @returns HTML of all Entree and Side order options, with limitations for the number of entrees and sides.
+ * used with bowls, plates, bigger plates, cub meals, and family feasts
+ */
+function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePrice, upMult=1}){
+    // console.log(numEntree)
+    // console.log(menu)
+    const [currOrder,setOrder] = useState([])
+    // console.log("curr order: ", currOrder)
+
+    /**
+     * helper function to conditionally return s for entrees
+     * @returns conditional "s"
+     */
+    function Es(){
+        if (numEntree === 1){
+            return ("")
+        }
+        else{
+            return ("s")
+        }
+    }
+
+    /**
+     * helper function to conditionally return s for sides
+     * @returns conditional "s"
+     */
+    function Ss(){
+        if (numSide === 1){
+            return ("")
+        }
+        else{
+            return ("s")
+        }
+    }
+
+    /**
+     * helper function to add the current selected item to the order
+     */
+    function completeOrder(){
+        //console.log(typePrice)
+        const total = currOrder.reduce((sum, item) => {
+            //console.log("add: ", item.upcharge, sum)
+            return sum + (Number(item.upcharge) * Number(upMult));
+        }, Number(typePrice));
+        //console.log(total)
+        addItem(typeID, total, currOrder)
+        setSys("")
+    }
+
+    /**
+     * helper function to handle complete button
+     * @returns conditionally returns the complete button if all requirements are met
+     */
+    function CompleteButton(){
+        if (numEntree === currOrder.filter(item => item.type === "entree").length &amp;&amp; numSide === currOrder.filter(item => item.type === "side").length){
+            return (
+                &lt;button className= "CK-CompleteButton" onClick={completeOrder}>
+                    Complete
+                &lt;/button>
+            )
+        }
+        else {
+            return(
+                &lt;div className="CK-nonCompleteButton">
+                    Order incomplete
+                &lt;/div>
+            )
+        }
+    }
+
+    return (
+    &lt;div className = "CK-BuildFoodPage">
+        &lt;button onClick={() => setSys(-1)} className="CK-cancelOrder">Back&lt;/button>
+        &lt;h3>Entree&lt;/h3>
+        &lt;h5>Pick {numEntree} entree{Es()}&lt;/h5>
+        &lt;ul className="CK-entrees">
+            
+            {menu.filter(item => item.type === "entree").map((item) => (
+                &lt;li key={item.id}>
+                    &lt;FoodCard id={item.id} menu={menu} max={numEntree} setOrd={setOrder} ord={currOrder} upMult={upMult}/>
+                &lt;/li>
+            ))}
+        &lt;/ul>
+        &lt;h3>Side&lt;/h3>
+        &lt;h5>Pick {numSide} side{Ss()}&lt;/h5>
+        &lt;ul className="CK-sides">
+            {menu.filter(item => item.type === "side").map((item) => (
+                &lt;li key={item.id}>
+                    &lt;FoodCard id={item.id} menu={menu} max={numSide} setOrd={setOrder} ord={currOrder} />
+                &lt;/li>
+            ))}
+        &lt;/ul>
+        &lt;div>
+            &lt;CompleteButton/>
+        &lt;/div>
+        
+    &lt;/div>
+    )
+}
+
+/**
+ * allows picking of a La Carte items, drinks, etc
+ * @param {string, int, JSON, function, function} param0 
+ * @returns HTML of all foodcards for the ordertype passed in
+ */
+function SinglePick({orderType, typeID, menu, addItem, setSys, complete=true}){
+    const [currOrder,setOrder] = useState([])
+
+    /**
+     * function to add the current item to the order
+     */
+    function completeOrder(){
+        //console.log(currOrder)
+        currOrder.map(item=> (
+            addItem(typeID, item.alt_price, [item])
+        ))
+        setSys("")
+    }
+
+    function getCButton(){
+        if (complete)
+            return(
+                &lt;button className= "CK-CompleteButton" onClick={() => completeOrder()}>
+                    Done
+                &lt;/button>
+            )
+    }
+    return(
+    &lt;div className = "CK-singlePick">
+        &lt;ul className="CK-singlePickList CK-sides">
+            {menu.filter(item => item.type === orderType).map((item) => (
+                &lt;li key={item.id}>
+                    &lt;FoodCard id={item.id} menu={menu} setOrd={setOrder} ord={currOrder} max={1} upMult={1}/>
+                &lt;/li>
+            ))}
+        &lt;/ul>
+        &lt;div>
+            {getCButton()}
+        &lt;/div>
+    &lt;/div>
+    )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Kiosk.html">Kiosk</a></li><li><a href="module-Kitchen.html">Kitchen</a></li><li><a href="module-Manager.html">Manager</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Dec 04 2024 17:48:10 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
