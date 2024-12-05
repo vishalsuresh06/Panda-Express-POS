@@ -3,6 +3,7 @@
  */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiURL } from '../../config.js';
 import "./menu.css";
 /**
  * A React component for displaying menu sizes, a featured item, and a popular item.
@@ -68,10 +69,10 @@ const SizesFeaturedPopular = () => {
     const fetchItems = async () => {
       try {
         const featuredResponse = await axios.get(
-          "http://127.0.0.1:8000/api/food-items/?name=Apple%20Pie%20Roll"
+          `${apiURL}/api/food-items/?name=Apple%20Pie%20Roll`
         );
         const popularResponse = await axios.get(
-          "http://127.0.0.1:8000/api/food-items/?name=Orange%20Chicken"
+          `${apiURL}/api/food-items/?name=Orange%20Chicken`
         );
         setFeaturedItem(featuredResponse.data[0]);
         setPopularItem(popularResponse.data[0]);

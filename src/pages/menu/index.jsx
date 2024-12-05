@@ -6,6 +6,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Entrees from "./Entrees";
 import SidesDrinksAppetizers from "./SidesDrinksAppetizers";
 import SizesFeaturedPopular from "./SizesFeaturedPopular";
+import { apiURL } from '../../config.js';
 import axios from "axios";
 import "./menu.css";
 /**
@@ -40,7 +41,7 @@ const Index = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/food-items/");
+        const response = await axios.get(`${apiURL}/api/food-items/`);
         setMenuItems(response.data);
       } catch (err) {
         console.error("Error fetching menu items:", err);
@@ -112,7 +113,7 @@ const Index = () => {
         is_gluten_free: false,
         on_menu: true,
       });
-      const updatedMenu = await axios.get("http://127.0.0.1:8000/api/food-items/");
+      const updatedMenu = await axios.get(`${apiURL}/api/food-items/`);
       setMenuItems(updatedMenu.data);
     } catch (err) {
       console.error("Error adding item:", err.response?.data || err.message);
@@ -145,7 +146,7 @@ const Index = () => {
       setSuccessMessage("Item updated successfully!");
       setErrorMessage("");
       setEditingItem(null);
-      const updatedMenu = await axios.get("http://127.0.0.1:8000/api/food-items/");
+      const updatedMenu = await axios.get(`${apiURL}/api/food-items/`);
       setMenuItems(updatedMenu.data);
     } catch (err) {
       console.error("Error updating item:", err.response?.data || err.message);
