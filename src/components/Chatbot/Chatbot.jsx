@@ -3,6 +3,7 @@
  */
 
 import React, { useState } from "react";
+import { apiURL } from '../../config.js'
 import "./Chatbot.css"; // Optional: Create a CSS file for chatbot styling
 
 /**
@@ -35,7 +36,7 @@ const Chatbot = () => {
     const formattedQuery = `${userInput} from Panda Express`;
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/chatbot/", {
+      const response = await fetch(`${apiURL}/api/chatbot/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
