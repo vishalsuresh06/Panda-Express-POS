@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiURL, WEATHER_API_KEY } from '../../config.js';
 import CheckoutView from "./CheckoutView";
+import Chatbot from '@components/Chatbot/Chatbot';
 import "./kiosk.css"
 const WEATHER_REFRESH_MIN = 10
 
@@ -338,16 +339,33 @@ export default function Customers() {
     
     
     return (
-        <>
-            <Time/>
-            <div id="google_translate_element"></div>
-            {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
-            <div className="CK-screenContainer">
-                <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
+    <>
+        <Time />
+        <div id="google_translate_element"></div>
+        {Object.keys(currWeather).length > 0 && (
+            <h4>
+                <span className="notranslate">
+                    {currWeather.current.temp.toFixed(0)} F
+                </span> 
+                | {currWeather.current.weather[0].description.toUpperCase()}
+            </h4>
+        )}
+        <div className="CK-screenContainer">
+            <CheckoutView
+                ItemList={ItemList}
+                removeAll={clear}
+                checkout={check}
+                remove_Item={remove_item}
+            />
             <div className="CK-OrderContainer">{Order()}</div>
-            </div>
-        </>
-    );
+        </div>
+        {/* Chatbot Integration */}
+        <div className="chatbot-container">
+            <Chatbot menu={menu} />
+        </div>
+    </>
+);
+
 }
 
 // function WaterButton({ menu, addItem }){
