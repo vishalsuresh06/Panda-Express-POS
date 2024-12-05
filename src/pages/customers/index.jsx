@@ -334,9 +334,11 @@ export default function Customers() {
     
     return (
         <>
+            <div className="CK-topBar">
             <Time/>
             <div id="google_translate_element"></div>
             {Object.keys(currWeather).length > 0 && <h4><span className="notranslate">{currWeather.current.temp.toFixed(0)} F</span> | {currWeather.current.weather[0].description.toUpperCase()}</h4>}
+            </div>
             <div className="CK-screenContainer">
                 <CheckoutView ItemList = {ItemList} removeAll = {clear} checkout = {check} remove_Item = {remove_item}/>
             <div className="CK-OrderContainer">{Order()}</div>
