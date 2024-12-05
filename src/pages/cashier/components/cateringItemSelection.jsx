@@ -1,5 +1,6 @@
 /**
  * @module Cashier
+ * @description The `CateringItemSelection` component is used for selecting catering items based on the selected catering type.
  */
 
 import React, { useEffect, useState } from "react";
@@ -12,44 +13,42 @@ function CateringItemSelection() {
   const navigate = useNavigate();
   const { itemType } = location.state || {};
 
+  /**
+   * State variables
+   */
   const [menuItems, setMenuItems] = useState({
-    sides: [],
-    entrees: [],
-    apps: [],
+    sides: [], // Array of side items
+    entrees: [], // Array of entree items
+    apps: [], // Array of appetizer items
   });
 
   const [itemPrices, setItemPrices] = useState({
-    party_side: 0,
-    party_entree: 0,
-    party_app: 0,
-    bundle1: 0,
-    bundle2: 0,
-    bundle3: 0,
+    party_side: 0, // Price for party-sized side
+    party_entree: 0, // Price for party-sized entree
+    party_app: 0, // Price for party-sized appetizer
+    bundle1: 0, // Price for 12-16 person bundle
+    bundle2: 0, // Price for 18-22 person bundle
+    bundle3: 0, // Price for 26-30 person bundle
   });
 
   const [selection, setSelection] = useState({
-    type: "",
-    side1: "",
-    side2: "",
-    side3: "",
-    side4: "",
-    entree1: "",
-    entree2: "",
-    entree3: "",
-    entree4: "",
-    app: "",
-    price: 0,
+    type: "", // Type of catering order
+    side1: "", // Selected side 1
+    side2: "", // Selected side 2
+    side3: "", // Selected side 3
+    side4: "", // Selected side 4
+    entree1: "", // Selected entree 1
+    entree2: "", // Selected entree 2
+    entree3: "", // Selected entree 3
+    entree4: "", // Selected entree 4
+    app: "", // Selected appetizer
+    price: 0, // Total calculated price
   });
 
-  useEffect(() => {
-    setSelectionType(itemType);
-  }, [itemType]);
-
-  useEffect(() => {
-    fetchMenuItems();
-    fetchOrderTypes();
-  }, []);
-
+  /**
+   * @description Sets the selection type based on the provided type index.
+   * @param {number} type - index representing the catering type.
+   */
   const setSelectionType = (type) => {
     const types = [
       "Party Size Side",
@@ -62,6 +61,10 @@ function CateringItemSelection() {
     setSelection((prev) => ({ ...prev, type: types[type] || "" }));
   };
 
+  /**
+   * @description Fetches menu items from the API and groups them into categories.
+   * @async
+   */
   const fetchMenuItems = async () => {
     try {
       const response = await fetch(`${apiURL}/api/menu`);
@@ -80,6 +83,10 @@ function CateringItemSelection() {
     }
   };
 
+  /**
+   * @description Fetches order types and their base prices from the API.
+   * @async
+   */
   const fetchOrderTypes = async () => {
     try {
       const response = await fetch(`${apiURL}/api/kiosk_orders`);
@@ -116,6 +123,12 @@ function CateringItemSelection() {
     }
   };
 
+  /**
+   * @description Handles selection of menu items and updates the selection state.
+   * @param {string} type - Type of item being selected
+   * @param {object} item - Selected menu item.
+   * @param {string} [slot=""] - Slot name for the selection
+   */
   const handleSelection = (type, item, slot = "") => {
     setSelection((prev) => {
       if (type === "entrees" || type === "sides") {
@@ -132,11 +145,20 @@ function CateringItemSelection() {
     });
   };
 
+  /**
+   * @description Calculates the total price based on the selected type.
+   * @returns {string} - The calculated total price as a string.
+   */
   const calculatePrice = () => {
     const basePrice = getBasePrice(itemType);
     return Number(basePrice).toFixed(2);
   };
 
+  /**
+   * @description Gets the base price for the selected type.
+   * @param {number} type - Numeric index representing the catering type.
+   * @returns {number} - The base price for the catering type.
+   */
   const getBasePrice = (type) => {
     const prices = [
       itemPrices.party_side,
@@ -149,6 +171,9 @@ function CateringItemSelection() {
     return Number(prices[type]);
   };
 
+  /**
+   * @description Finalizes the selection and navigates to the cashier page.
+   */
   const handleConfirm = () => {
     const totalPrice = calculatePrice();
     navigate("/cashier", {
@@ -156,6 +181,13 @@ function CateringItemSelection() {
     });
   };
 
+  /**
+   * @description Renders buttons for the given items.
+   * @param {Array} items - List of menu items to render as buttons.
+   * @param {string} type - Type of items
+   * @param {string} [slot=""] - Slot name for selection tracking.
+   * @returns {JSX.Element[]} - Array of button components.
+   */
   const renderButtons = (items, type, slot = "") =>
     items.map((item, index) => (
       <div className="cshr_cateringRenderBtnContainer" key={index}>
@@ -172,6 +204,14 @@ function CateringItemSelection() {
       </div>
     ));
 
+  /**
+   * @description Renders a labeled section of buttons for item selection.
+   * @param {string} label - Label for the section.
+   * @param {Array} items - List of menu items for the section.
+   * @param {string} type - Type of items (e.g., "entrees", "sides").
+   * @param {string} [slot=""] - Slot name for selection tracking.
+   * @returns {JSX.Element} - Rendered section component.
+   */
   const renderSection = (label, items, type, slot = "") => (
     <div className="cshr_cateringRenderSectionContainer">
       <h1>{label}</h1>
@@ -179,41 +219,12 @@ function CateringItemSelection() {
     </div>
   );
 
-  const renderTypeSpecificItems = () => {
-    const renderConfirmButton = () => (
-      <button className="cshr_confirmBtn" onClick={handleConfirm}>
-        Confirm
-      </button>
-    );
-
-    switch (itemType) {
-      case 0:
-        return renderBundle(1, 0);
-      case 1:
-        return renderBundle(0, 1);
-      case 2:
-        return (
-          <div className="cshr_appContainer">
-            {renderSection(
-              "Select Your Appetizer",
-              menuItems.apps,
-              "apps",
-              "app"
-            )}
-            {renderConfirmButton()}
-          </div>
-        ); // Appetizer
-      case 3:
-        return renderBundle(2, 2);
-      case 4:
-        return renderBundle(3, 3);
-      case 5:
-        return renderBundle(4, 4);
-      default:
-        return null;
-    }
-  };
-
+  /**
+   * @description Renders a catering bundle with a given number of sides and entrees.
+   * @param {number} sideCount - Number of sides in the bundle.
+   * @param {number} entreeCount - Number of entrees in the bundle.
+   * @returns {JSX.Element} - Rendered bundle component.
+   */
   const renderBundle = (sideCount, entreeCount) => (
     <div className="cshr_bundleContainer">
       {[...Array(sideCount)].map((_, i) =>

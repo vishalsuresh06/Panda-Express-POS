@@ -34,8 +34,6 @@ function Cashier() {
 
   const { selection } = location.state || {};
 
-  useEffect(() => {});
-
   // Handle incoming selection data
   useEffect(() => {
     if (selection && selection.type) {
@@ -106,26 +104,31 @@ function Cashier() {
     });
   };
 
+  //Handles Item Selection Nagivation
   const handleNavigation = (itemType) => {
     navigate("/itemSelection", { state: { itemType } });
   };
 
+  //Handles Manager Navigation
   const handleManager = () => {
     if (isManager) {
       navigate("/manager");
     }
   };
 
+  //Handles Logout Navigation
   const handleLogout = () => {
     deleteCheckout();
     logout();
     navigate("/login");
   };
 
+  //Handles inventory navigation
   const handleInventory = () => {
     navigate("/manager/inventory", { state: { isManager } });
   };
 
+  //Handles Catering Navigation
   const handleCatering = () => {
     navigate("/catering");
   };
@@ -141,7 +144,7 @@ function Cashier() {
         type: togo ? "togo" : "here",
         total: total,
         employee: "kiosk",
-        orderItems: JSON.stringify(items),
+        orderItems: "",
       };
       try {
         let response = await fetch(`${apiURL}/api/kiosk/`, {

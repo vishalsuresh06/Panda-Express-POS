@@ -122,8 +122,8 @@ export default function Customers() {
 
       if (response.ok) {
         const fetchedMenu = await response.json();
-        console.log("FETCHED TYPES:");
-        console.log(fetchedMenu);
+        // console.log("FETCHED TYPES:")
+        // console.log(fetchedMenu);
         const menuWithNumbers = fetchedMenu.map((item) => ({
           ...item,
           id: Number(item.id),
@@ -350,8 +350,8 @@ export default function Customers() {
 // }
 
 function OrderButtons({ setSys, orderTypes }) {
-  console.log("CONSTRUCTING BUTTONS WITH THE FOLLOWING TYPES:");
-  console.log(orderTypes);
+  // console.log("CONSTRUCTING BUTTONS WITH THE FOLLOWING TYPES:");
+  // console.log(orderTypes);
   const removeID = [
     "A La Carte (Side) (L)",
     "A La Carte (Side) (S)",
