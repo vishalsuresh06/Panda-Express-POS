@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { apiURL } from '../../config.js';
 import "./menu.css";
 /**
  * A React component for displaying Sides, Drinks, and Appetizers.
