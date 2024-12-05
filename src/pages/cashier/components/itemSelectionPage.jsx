@@ -1,8 +1,19 @@
+/**
+ * @module Cashier
+ */
+
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { apiURL } from "../../../config";
 import "../stylesheets/itemSelection.css";
 
+/**
+ * ItemSelection Component
+ *
+ * This component handles the selection and price calculation of menu items based on the type of order.
+ *
+ * @component
+ */
 function ItemSelection() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,15 +47,21 @@ function ItemSelection() {
     price: 0,
   });
 
+  // Initialize the selection type based on the passed itemType
   useEffect(() => {
     setSelectionType(itemType);
   }, [itemType]);
 
+  // Fetch menu items and order types
   useEffect(() => {
     fetchMenuItems();
     fetchOrderTypes();
   }, []);
 
+  /**
+   * Sets the selection type based on the itemType index.
+   * @param {number} type - The index of the itemType.
+   */
   const setSelectionType = (type) => {
     const types = [
       "Bowl",
@@ -59,6 +76,10 @@ function ItemSelection() {
     setSelection((prev) => ({ ...prev, type: types[type] || "" }));
   };
 
+  /**
+   * Fetches menu items from the API and organizes them into categories.
+   * @async
+   */
   const fetchMenuItems = async () => {
     try {
       const response = await fetch(`${apiURL}/api/menu`);
@@ -78,6 +99,11 @@ function ItemSelection() {
     }
   };
 
+  /**
+   * Fetches order types and their base prices from the API.
+   *
+   * @async
+   */
   const fetchOrderTypes = async () => {
     try {
       const response = await fetch(`${apiURL}/api/kiosk_orders`);
@@ -111,6 +137,12 @@ function ItemSelection() {
     }
   };
 
+  /**
+   * Handles item selection for various categories.
+   * @param {string} type - The category of the item (e.g., sides, entrees).
+   * @param {Object} item - The selected item object.
+   * @param {string} [slot] - The specific slot to update (if applicable).
+   */
   const handleSelection = (type, item, slot = "") => {
     setSelection((prev) => {
       if (type === "entrees" || type === "sides") {
@@ -127,6 +159,11 @@ function ItemSelection() {
     });
   };
 
+  /**
+   * Calculates the total price of the selection.
+   * Includes base price, upcharges, drink price, and appetizer price.
+   * @returns {string} - The total price as a formatted string.
+   */
   const calculatePrice = () => {
     let basePrice = getBasePrice(itemType);
     let upcharge = calculateUpcharges();
@@ -136,6 +173,11 @@ function ItemSelection() {
     return Number(basePrice + upcharge + drinkPrice + appPrice).toFixed(2);
   };
 
+  /**
+   * Determines the base price of the selected item type.
+   * @param {number} type - The itemType index.
+   * @returns {number} - The base price.
+   */
   const getBasePrice = (type) => {
     const prices = [
       itemPrices.bowl,
@@ -150,6 +192,10 @@ function ItemSelection() {
     return Number(prices[type]);
   };
 
+  /**
+   * Calculates upcharges for selected entrees.
+   * @returns {number} - The total upcharges.
+   */
   const calculateUpcharges = () => {
     const entrees = [selection.entree1, selection.entree2, selection.entree3];
     return entrees.reduce((upcharge, entreeName) => {
@@ -158,6 +204,10 @@ function ItemSelection() {
     }, 0);
   };
 
+  /**
+   * Retrieves the price of the selected drink (if applicable).
+   * @returns {number} - The drink price.
+   */
   const getDrinkPrice = () => {
     if (selection.drink && itemType !== 3) {
       const drink = menuItems.drinks.find(
@@ -168,6 +218,10 @@ function ItemSelection() {
     return 0;
   };
 
+  /**
+   * Retrieves the price of the selected appetizer (if applicable).
+   * @returns {number} - The appetizer price.
+   */
   const getAppPrice = () => {
     if (selection.app) {
       const app = menuItems.apps.find((item) => item.name === selection.app);
@@ -176,6 +230,9 @@ function ItemSelection() {
     return 0;
   };
 
+  /**
+   * Handles confirmation of the selection and navigates back to the Cashier screen.
+   */
   const handleConfirm = () => {
     const totalPrice = calculatePrice();
     navigate("/cashier", {
@@ -183,6 +240,12 @@ function ItemSelection() {
     });
   };
 
+  /**
+   * Renders buttons for the items in a specific category.
+   * @param {Array} items - List of items to display.
+   * @param {string} type - The category of the items.
+   * @param {string} [slot] - The specific slot for multi-slot categories.
+   */
   const renderButtons = (items, type, slot = "") => {
     return items.map((item, index) => (
       <div className="cshr_renderBtnContainer">

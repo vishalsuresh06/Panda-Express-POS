@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { apiURL, WEATHER_API_KEY } from '../../config.js';
+import { useState, useEffect } from "react";
+import { apiURL, WEATHER_API_KEY } from "../../config.js";
 import CheckoutView from "./CheckoutView";
 import Chatbot from '@components/Chatbot/Chatbot';
 import "./kiosk.css"
@@ -21,10 +21,10 @@ function Time(){
             setTime(new Date().toLocaleTimeString());
         }, 1000);
 
-        return () => clearInterval(intervalID);
-    }, []);
+    return () => clearInterval(intervalID);
+  }, []);
 
-    return(<h4 className="notranslate">{currTime}</h4>)
+  return <h4 className="notranslate">{currTime}</h4>;
 }
 
 /** CK
@@ -81,115 +81,112 @@ export default function Customers() {
         } catch (error) { return false; }
     }
 
+    const total =
+      Object.values(ItemList)
+        .flat()
+        .reduce((sum, item) => {
+          return sum + Number(item.price);
+        }, 0) * 1.08;
 
-    var translateWidgetAdded = false;
-    const googleTranslateElementInit = () => {
-        if (!translateWidgetAdded) {
-            new window.google.translate.TranslateElement(
-                {
-                    pageLanguage: "en",
-                    autoDisplay: false,
-                    includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de", 
-                    layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-                },
-                "google_translate_element"
-            );
+    console.log(ItemList);
 
-            translateWidgetAdded = true;
-        }
+    const orderJSON = {
+      name: name,
+      type: togo ? "togo" : "here",
+      total: total,
+      employee: "kiosk",
+      orderItems: ItemList,
     };
+    try {
+      let response = await fetch(`${apiURL}/api/kiosk/`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderJSON),
+      });
 
-    useEffect(() => {
-        var addScript = document.createElement("script");
-        addScript.setAttribute(
-            "src",
-            "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        );
-        document.body.appendChild(addScript);
-        window.googleTranslateElementInit = googleTranslateElementInit;
-    }, []);
-
-
-    async function fetchWeather() {
-        try {
-            let response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&lon=-96.314445&units=imperial&appid=${WEATHER_API_KEY}`);
-            if (response.ok) {
-                const data = await response.json();
-                setWeather(data)
-            } else {
-                setWeather({})
-            }
-        } catch (error) {
-            console.log(error);
-            setWeather({});
-        }
+      clear();
+      return response.ok;
+    } catch (error) {
+      return false;
     }
+  };
 
-    useEffect(() => {
-        const intervalID = setInterval(() => {
-            fetchWeather();
-        }, WEATHER_REFRESH_MIN*60*1000);
-        
-        fetchWeather();
-        return () => clearInterval(intervalID);
-    }, []);    
+  var translateWidgetAdded = false;
+  const googleTranslateElementInit = () => {
+    if (!translateWidgetAdded) {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          autoDisplay: false,
+          includedLanguages: "en,es,zh,tl,vi,ar,fr,ko,ru,de",
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+        },
+        "google_translate_element"
+      );
 
-    async function updateOrders(){
-        try {
-            let response = await fetch(`${apiURL}/api/kiosk_orders/`);
-
-            if (response.ok) {
-                const fetchedMenu = await response.json();
-                console.log("FETCHED TYPES:")
-                console.log(fetchedMenu);
-                const menuWithNumbers = fetchedMenu.map(item => ({
-                    ...item,
-                    id: Number(item.id),
-                    price: parseFloat(item.Base_price)
-                }));
-                setOrderTypes(menuWithNumbers);
-            } else {
-                return false;
-            }
-        } catch (error) {
-            console.log(error);
-            return false
-        }
+      translateWidgetAdded = true;
     }
+  };
 
-    useEffect(() => {
-        updateOrders();
-    }, [])
+  useEffect(() => {
+    var addScript = document.createElement("script");
+    addScript.setAttribute(
+      "src",
+      "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    );
+    document.body.appendChild(addScript);
+    window.googleTranslateElementInit = googleTranslateElementInit;
+  }, []);
 
-    async function updateMenu(){
-        try {
-            let response = await fetch(`${apiURL}/api/kiosk/`);
-
-            if (response.ok) {
-                const fetchedMenu = await response.json()
-                const menuWithNumbers = fetchedMenu.map(item => ({
-                    ...item,
-                    id: Number(item.id),
-                    alt_price: parseFloat(item.alt_price)
-                }));
-                setMenu(menuWithNumbers)
-            } else {
-                return false
-            }
-        } catch (error) {
-            console.log(error);
-            return false
-        }
+  async function fetchWeather() {
+    try {
+      let response = await fetch(
+        `https://api.openweathermap.org/data/3.0/onecall?lat=30.601389&lon=-96.314445&units=imperial&appid=${WEATHER_API_KEY}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setWeather(data);
+      } else {
+        setWeather({});
+      }
+    } catch (error) {
+      console.log(error);
+      setWeather({});
     }
+  }
 
-    useEffect( () => {
-        updateMenu();
-    }, []);
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      fetchWeather();
+    }, WEATHER_REFRESH_MIN * 60 * 1000);
 
-    const remove_item = (id_to_remove)=>{
-        setItems(items => 
-                items.filter(item => item.array_id !== id_to_remove)
-            );
+    fetchWeather();
+    return () => clearInterval(intervalID);
+  }, []);
+
+  async function updateOrders() {
+    try {
+      let response = await fetch(`${apiURL}/api/kiosk_orders/`);
+
+      if (response.ok) {
+        const fetchedMenu = await response.json();
+        // console.log("FETCHED TYPES:")
+        // console.log(fetchedMenu);
+        const menuWithNumbers = fetchedMenu.map((item) => ({
+          ...item,
+          id: Number(item.id),
+          price: parseFloat(item.Base_price),
+        }));
+        setOrderTypes(menuWithNumbers);
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
     }
 
     /**
@@ -421,14 +418,15 @@ function OrderButtons({setSys, orderTypes}){
                     </button>
             </div>
         ))}
-        {/* <div className='CK-subMenuOptionsItem' key={8}>
+      {/* <div className='CK-subMenuOptionsItem' key={8}>
             <button onClick={() => buttonPressAction("A La Carte")}>
                 <div>A La Carte</div>
             </button>
         </div> */}
-        </ul>
-    );
+    </ul>
+  );
 }
+
 
 /** CK
  * 
@@ -476,7 +474,7 @@ function FoodCard({id, menu, setOrd, ord, max, upMult}){
             setclick(0)
         }
     }
-
+  }
     /** CK
      * helper function to redefine the tag so that it can be styled differently on click
      * @returns HTML className tag
@@ -534,18 +532,20 @@ function FoodCard({id, menu, setOrd, ord, max, upMult}){
             return (<div>{numExtra+1}</div>)
         }
     }
-    return(
-        <div className="CK-FoodCard">
-        <button className={getStatus()} onClick={() => buttonHandle()}>
-            <h4>{currItem.name}</h4>
-            {isPrem()}
-        </button>
-        <MoreButton/>
-        {howMuch()}
-        <LessButton/>
-        </div>
-    )
+  }
+  return (
+    <div className="CK-FoodCard">
+      <button className={getStatus()} onClick={() => buttonHandle()}>
+        <h4>{currItem.name}</h4>
+        {isPrem()}
+      </button>
+      <MoreButton />
+      {howMuch()}
+      <LessButton />
+    </div>
+  );
 }
+
 
 /**
  * 
@@ -647,7 +647,7 @@ function BuildFood({numEntree, numSide=1, menu, addItem, setSys, typeID, typePri
         </div>
         
     </div>
-    )
+  );
 }
 
 /**
@@ -690,5 +690,5 @@ function SinglePick({orderType, typeID, menu, addItem, setSys, complete=true}){
             {getCButton()}
         </div>
     </div>
-    )
+  );
 }

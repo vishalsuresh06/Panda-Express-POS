@@ -1,9 +1,19 @@
+/**
+ * @module Cashier
+ */
+
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/Auth";
 import "./stylesheets/catering.css";
 
-// Main Cashier Component
+/**
+ * Main Catering Component
+ *
+ * This component displays the catering options for the cashier and allows navigation to related views.
+ *
+ * @component
+ */
 function Catering() {
   // State Variables
   const [time, setTime] = useState(new Date().toLocaleTimeString());
@@ -62,6 +72,11 @@ function Catering() {
       />
 
       <div className="cshr_cateringButtonSection">
+        {/**
+         * Catering Buttons
+         *
+         * Displays buttons for different catering options.
+         */}
         {[
           "Party Size Side",
           "Party Size Entree",
@@ -83,7 +98,22 @@ function Catering() {
   );
 }
 
-// NavBar Component
+/**
+ * NavBar Component
+ *
+ * Displays the navigation bar for the Catering screen.
+ *
+ * @description
+ * - `employee` (string): The name of the currently logged-in employee.
+ * - `time` (string): The current time.
+ * - `isManager` (boolean): Indicates if the logged-in user is a manager.
+ * - `handleLogout` (function): Logs the user out and redirects to the login page.
+ * - `handleManager` (function): Navigates to the Manager page.
+ * - `handleInventory` (function): Navigates to the Inventory page.
+ * - `handleCashier` (function): Redirects to the Cashier screen.
+ *
+ * @component
+ */
 function NavBar({
   employee,
   time,
