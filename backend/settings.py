@@ -151,6 +151,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import django_heroku
 django_heroku.settings(locals())
 
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
 SITE_ID = 1
 
 AUTH_USER_MODEL = 'api.Employee'
