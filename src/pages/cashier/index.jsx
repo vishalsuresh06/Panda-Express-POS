@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { apiURL } from "../../config";
 import { logout } from "../../utils/Auth";
 import "./stylesheets/index.css";
 
@@ -47,6 +48,7 @@ function Cashier() {
         price: selection.price || 0,
         drink: selection.drink || "",
         app: selection.app || "",
+        id: selection.id || [],
       };
 
       const updatedItems = [...items, newItem];
@@ -120,7 +122,35 @@ function Cashier() {
   };
 
   const handleCheckout = () => {
-    deleteCheckout();
+    const ItemList = transformSelectionToPostData(items);
+    const name = "Cashier";
+    const togo = false;
+    if (ItemList?.length == 0) {
+      return;
+    }
+
+    const orderJSON = {
+      name: name,
+      type: togo ? "togo" : "here",
+      total: total,
+      employee: sessionStorage.getItem("name"),
+      orderItems: ItemList,
+    };
+    try {
+      let response = fetch(`${apiURL}/api/kiosk/`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderJSON),
+      });
+
+      deleteCheckout();
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
   };
 
   const deleteCheckout = () => {
@@ -154,6 +184,20 @@ function Cashier() {
       <OrderingSection handleNavigation={handleNavigation} />
     </div>
   );
+}
+
+function transformSelectionToPostData(selectionArray) {
+  let ItemList = [];
+
+  selectionArray?.forEach((element) => {
+    const items = element.id.map((id) => ({ id }));
+    ItemList.push({
+      name: element.type,
+      items: items,
+    });
+  });
+
+  return ItemList;
 }
 
 // NavBar Component
