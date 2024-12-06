@@ -34,6 +34,7 @@ function ItemSelection() {
     drink: "",
     app: "",
     price: 0,
+    id: [],
   });
 
   useEffect(() => {
@@ -113,16 +114,22 @@ function ItemSelection() {
 
   const handleSelection = (type, item, slot = "") => {
     setSelection((prev) => {
-      if (type === "entrees" || type === "sides") {
-        return {
-          ...prev,
-          [slot]: prev[slot] === item.name ? "" : item.name,
-        };
-      }
+      // Update the specific slot (side1, side2, entree1, etc.)
+      const updatedSlot = slot
+        ? { [slot]: prev[slot] === item.name ? "" : item.name }
+        : {};
 
+      // Add or remove the item's id in the `id` array
+      const updatedIds = prev.id.includes(item.id)
+        ? prev.id.filter((id) => id !== item.id)
+        : [...prev.id, item.id];
+
+      // Return the updated selection object
       return {
         ...prev,
-        [type]: prev[type] === item.name ? "" : item.name,
+        ...updatedSlot,
+        [type]: !slot && prev[type] === item.name ? "" : item.name,
+        id: updatedIds,
       };
     });
   };
