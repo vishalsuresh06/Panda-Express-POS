@@ -274,7 +274,7 @@ function MenuEdit() {
     }
 
     async function addMenu(data) {
-        const newMenu = { name: '? Chicken', type: "Entree", alt_price: 6.00, upcharge: 0, on_menu: true };
+        const newMenu = { name: '? Chicken', type: "entree", alt_price: 6.00, upcharge: 0.00, on_menu: true, calories: 400, is_spicy: false, is_premium: false, is_gluten_free: false };
         return modifyMenus(newMenu, "add");
     }
 
@@ -350,11 +350,11 @@ function InventoryEdit() {
 
     async function addInventory(data) {
         const newMenu = { name: '? Item', is_food: true, stock: 0, restock_threshold: 100, restock_amount: 100 };
-        return modifyInventory(newMenu, "add");
+        return modifyInventorys(newMenu, "add");
     }
 
     async function removeInventory(id) {
-        return modifyInventory(id, "delete")
+        return modifyInventorys(id, "delete")
     }
 
     async function modifyInventory(modifiedInventory) {
