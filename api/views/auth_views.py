@@ -24,6 +24,9 @@ def pinLogin(request):
     if not user:
         return JsonResponse({"success": False, "message": "ID or Pin is wrong"}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
+    if not user.is_active:
+        return JsonResponse({"success": False, "message": "ID or Pin is wrong"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
     token, created = Token.objects.get_or_create(user=user)
 
     employee = Employee.objects.get(id=id, pin=pin)

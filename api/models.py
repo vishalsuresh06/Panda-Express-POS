@@ -75,6 +75,10 @@ class Employee(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.name
 
+    def delete(self, *args, **kwargs):
+        self.is_active = False
+        self.save()
+
 class OrderItemType(models.Model):
     """
     A model representing a specific type of order item (e.g. bowl)
