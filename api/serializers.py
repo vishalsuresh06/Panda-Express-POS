@@ -50,3 +50,14 @@ class SettingSerializer(serializers.ModelSerializer):
         model = SettingParameter
         fields = ['key', 'value', 'default']
 
+class ZHourlySalesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZHourlySales
+        fields = ['hour', 'sales']
+
+class ZReportSerializer(serializers.ModelSerializer):
+    hourly_sales = ZHourlySalesSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ZReport
+        fields = ['id', "datetime_generated", "total_sales", "total_orders", "hourly_sales"]

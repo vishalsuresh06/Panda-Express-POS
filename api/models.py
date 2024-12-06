@@ -50,9 +50,6 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id}"
 
-
-
-
 class Employee(AbstractBaseUser, PermissionsMixin):
     """
     Model representing a single Panda Express employee
@@ -221,3 +218,21 @@ class SettingParameter(models.Model):
     value = models.TextField()
     default = models.TextField()
 
+class ZReport(models.Model):
+    """
+    A model representing manager generated z reports
+    """
+
+    datetime_started = models.DateTimeField(null=True);
+    datetime_generated = models.DateTimeField();
+    total_sales = models.DecimalField(default=0, decimal_places=2, max_digits=10);
+    total_orders = models.IntegerField(default=0);
+
+class ZHourlySales(models.Model):
+    """
+    A helper model used to store z report hourly sales data
+    """
+
+    zreport = models.ForeignKey('api.ZReport', on_delete=models.CASCADE)
+    hour = models.TimeField();
+    sales = models.DecimalField(default=0, decimal_places=2, max_digits=10);

@@ -31,6 +31,8 @@ ChartJS.register(
  * @module Manager
  */
 
+
+
 /**
  * A React context object used by the kitchen settings page to pass
  * the current settings to each subcomponent.
@@ -1023,16 +1025,13 @@ function ProductUsage() {
     )
 }
 
-/**
- * A component that summerizes that days total sales and total number of orders THUS FAR, 
- * and compiles the hourly sales THUS FAR.
- * @returns The X report HTML
- */
+
 function XReport() {
     const [loading, setLoading] = useState(false);
     const [chartData, setChartData] = useState(null);
     const [totalSales, setTotalSales] = useState(0);
     const [totalOrders, setTotalOrders] = useState(0);
+    const [startDate, setStartDate] = useState("");
 
     const fetchData = async () => {
         setLoading(true)
@@ -1056,13 +1055,14 @@ function XReport() {
                     data: [],
                 }
 
-                data.hourlySales.forEach((datapoint) => {
-                    newChartData.labels.push(datapoint.hour)
-                    newDataset.data.push(datapoint.sales)
-                }); 
+                for (const [hour, sales] of Object.entries(data.hourlySales)) {
+                    newChartData.labels.push(hour)
+                    newDataset.data.push(sales)
+                }
                 
                 setTotalSales(data.totalSales);
                 setTotalOrders(data.totalOrders);
+                setStartDate(data.startDate);
                 newChartData.datasets.push(newDataset)
             }
         } catch (error) {
@@ -1085,7 +1085,7 @@ function XReport() {
         <p>Orders So Far: {totalOrders}</p>
         <div className='mngr-salescol'>
                 {(chartData && !loading) ? (
-                    <Line data={chartData} />
+                    <Line data={chartData}/>
                 ) : (
                     <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
                 )}
@@ -1093,18 +1093,15 @@ function XReport() {
     </div>)
 }
 
-/**
- * A component that summerizes that days total sales, total number of orders, and hourly sales
- * together into a single report.
- * @returns The Z report HTML
- */
 function ZReport() {
     const [loading, setLoading] = useState(false);
     const [chartData, setChartData] = useState(null);
     const [totalSales, setTotalSales] = useState(0);
     const [totalOrders, setTotalOrders] = useState(0);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
-    const fetchData = async () => {
+    const generateReport = async () => {
         setLoading(true)
 
         let newChartData = {
@@ -1126,13 +1123,15 @@ function ZReport() {
                     data: [],
                 }
 
-                data.hourlySales.forEach((datapoint) => {
-                    newChartData.labels.push(datapoint.hour)
-                    newDataset.data.push(datapoint.sales)
-                }); 
+                for (const [hour, sales] of Object.entries(data.hourlySales)) {
+                    newChartData.labels.push(hour)
+                    newDataset.data.push(sales)
+                }
                 
                 setTotalSales(data.totalSales);
                 setTotalOrders(data.totalOrders);
+                setStartDate(data.startDate);
+                setEndDate(data.endDate);
                 newChartData.datasets.push(newDataset)
             }
         } catch (error) {
@@ -1143,23 +1142,22 @@ function ZReport() {
         setLoading(false)
     }
     
-    useEffect(() => {
-        fetchData();
-    }, [])
-
     return (<div className="mngr-zreport mngr-font">
         <h2>Z Report</h2>
-        <button onClick={fetchData}>Refresh</button>
+        <p>(WARNING: CLEARS X REPORT SALES NUMBERS)</p>
+        <button onClick={generateReport}>Generate Z Report</button>
         <br></br>
-        <p>Todays Sales ($): {Number(totalSales).toFixed(2)}</p>
-        <p>Total Orders: {totalOrders}</p>  
-        <div className='mngr-salescol'>
-                {(chartData && !loading) ? (
+        {(chartData) && (<>
+            {(loading) ? (
+                <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
+            ) : (<>
+                <p>Total Sales ($): {Number(totalSales).toFixed(2)}</p>
+                <p>Total Orders: {totalOrders}</p>  
+                <div className='mngr-salescol'>
                     <Line data={chartData} />
-                ) : (
-                    <OrbitProgress color="#eb5a16" size="medium" text="Loading" textColor="" />
-                )}
-        </div>
+                </div>
+            </>)}
+        </>)} 
     </div>)
 }
 
