@@ -143,9 +143,9 @@ class Command(BaseCommand):
             ("Party Size Side", 16.00),
             ("Party Size Entree", 41.00),
             ("Party Size Appetizer", 41.00),
-            ("Bundle One", 108.00),
-            ("Bundle Two", 154.00),
-            ("Bundle Three", 194.00),
+            ("12-16 Person Party Bundle", 108.00),
+            ("18-22 Person Party Bundle", 154.00),
+            ("26-30 Person Party Bundle", 194.00),
         ]
         
         for name, base_price in order_item_types:
