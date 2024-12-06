@@ -22,6 +22,9 @@ urlpatterns = [
 	  path("manager/sellstogether", manager_views.SellsTogetherView.as_view(), name="sellstogether"),
 	  path("manager/restock", manager_views.RestockView.as_view(), name="restock"),
       path("chatbot/", ChatBotView.as_view(), name="chatbot"),
+
+    path("cashier/",   cashier_views.CashierView.as_view(), name = "cashier_checkout"),
+
     
     path("kitchen/orders", kitchen_views.KitchenOrders.as_view(), name="kitchenorders"),
     path("kitchen/recentorders", kitchen_views.RecentOrdersView.as_view(), name="recentorders"),
