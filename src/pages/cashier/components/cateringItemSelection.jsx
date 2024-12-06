@@ -96,13 +96,16 @@ function CateringItemSelection() {
               ?.base_price || 0
           ),
           bundle1: Number(
-            data.find((item) => item.name === "Bundle One")?.base_price || 0
+            data.find((item) => item.name === "12-16 Person Party Bundle")
+              ?.base_price || 0
           ),
           bundle2: Number(
-            data.find((item) => item.name === "Bundle Two")?.base_price || 0
+            data.find((item) => item.name === "18-22 Person Party Bundle")
+              ?.base_price || 0
           ),
           bundle3: Number(
-            data.find((item) => item.name === "Bundle Three")?.base_price || 0
+            data.find((item) => item.name === "26-30 Person Party Bundle")
+              ?.base_price || 0
           ),
         });
       } else {
@@ -156,6 +159,7 @@ function CateringItemSelection() {
 
   const handleConfirm = () => {
     const totalPrice = calculatePrice();
+
     navigate("/cashier", {
       state: { selection: { ...selection, price: totalPrice } },
     });
