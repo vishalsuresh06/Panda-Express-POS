@@ -114,17 +114,72 @@ function ItemSelection() {
 
   const handleSelection = (type, item, slot = "") => {
     setSelection((prev) => {
-      // Update the specific slot (side1, side2, entree1, etc.)
+      // Special handling for sides in bowl, plate, bigger plate, and cub meal
+      if (type === "sides" && [0, 1, 2, 3].includes(itemType)) {
+        // If clicked item is already selected in side1, move to side2
+        if (prev.side1 === item.name) {
+          return {
+            ...prev,
+            side1: "",
+            side2: item.name,
+            id: prev.id.filter((id) => id !== item.id),
+          };
+        }
+
+        // If clicked item is already selected in side2, deselect
+        if (prev.side2 === item.name) {
+          return {
+            ...prev,
+            side2: "",
+            id: prev.id.filter((id) => id !== item.id),
+          };
+        }
+
+        // If side1 is empty, select in side1
+        if (!prev.side1) {
+          return {
+            ...prev,
+            side1: item.name,
+            id: [...prev.id, item.id],
+          };
+        }
+
+        // If side1 is filled, select in side2
+        if (!prev.side2) {
+          return {
+            ...prev,
+            side2: item.name,
+            id: [...prev.id, item.id],
+          };
+        }
+
+        // If both sides are filled, replace side2
+        return {
+          ...prev,
+          side2: item.name,
+          id: prev.id
+            .filter(
+              (id) =>
+                id !==
+                prev.id.find(
+                  (id) =>
+                    menuItems.sides.find((side) => side.name === prev.side2)
+                      ?.id === id
+                )
+            )
+            .concat(item.id),
+        };
+      }
+
+      // Existing logic for other types
       const updatedSlot = slot
         ? { [slot]: prev[slot] === item.name ? "" : item.name }
         : {};
 
-      // Add or remove the item's id in the `id` array
       const updatedIds = prev.id.includes(item.id)
         ? prev.id.filter((id) => id !== item.id)
         : [...prev.id, item.id];
 
-      // Return the updated selection object
       return {
         ...prev,
         ...updatedSlot,
@@ -191,25 +246,43 @@ function ItemSelection() {
   };
 
   const renderButtons = (items, type, slot = "") => {
-    return items.map((item, index) => (
-      <div className="cshr_renderBtnContainer">
-        <button
-          key={index}
-          className={`cshr_${type}Btn ${
-            (
-              slot
-                ? selection[slot] === item.name
-                : selection[type].includes(item.name)
-            )
-              ? "selected"
-              : ""
-          }`}
-          onClick={() => handleSelection(type, item, slot)}
-        >
-          {item.name}
-        </button>
-      </div>
-    ));
+    return items.map((item, index) => {
+      // Special handling for sides in bowl, plate, bigger plate, and cub meal
+      if (type === "sides" && [0, 1, 2, 3].includes(itemType)) {
+        const isSelected =
+          selection.side1 === item.name || selection.side2 === item.name;
+        return (
+          <div key={index} className="cshr_renderBtnContainer">
+            <button
+              className={`cshr_${type}Btn ${isSelected ? "selected" : ""}`}
+              onClick={() => handleSelection(type, item, slot)}
+            >
+              {item.name}
+            </button>
+          </div>
+        );
+      }
+
+      // Existing logic for other types
+      return (
+        <div key={index} className="cshr_renderBtnContainer">
+          <button
+            className={`cshr_${type}Btn ${
+              (
+                slot
+                  ? selection[slot] === item.name
+                  : selection[type].includes(item.name)
+              )
+                ? "selected"
+                : ""
+            }`}
+            onClick={() => handleSelection(type, item, slot)}
+          >
+            {item.name}
+          </button>
+        </div>
+      );
+    });
   };
 
   const renderSection = (label, items, type, slot = "") => (
@@ -245,7 +318,7 @@ function ItemSelection() {
   const renderBowl = () => (
     <div className="cshr_bowlContainer">
       <h1 className="cshr_bowlLabel">Bowl</h1>
-      {renderSection("Side", menuItems.sides, "sides", "side1")}
+      {renderSection("Side 1", menuItems.sides, "sides", "side1")}
       {renderSection("Entree", menuItems.entrees, "entrees", "entree1")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
         Confirm
@@ -256,7 +329,7 @@ function ItemSelection() {
   const renderPlate = () => (
     <div className="cshr_plateContainer">
       <h1 className="cshr_plateLabel">Plate</h1>
-      {renderSection("Side", menuItems.sides, "sides", "side1")}
+      {renderSection("Side 1", menuItems.sides, "sides", "side1")}
       {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>
@@ -268,7 +341,7 @@ function ItemSelection() {
   const renderBiggerPlate = () => (
     <div className="cshr_bPlateContainer">
       <h1 className="cshr_bPlateLabel">Bigger Plate</h1>
-      {renderSection("Side", menuItems.sides, "sides", "side1")}
+      {renderSection("Side 1", menuItems.sides, "sides", "side1")}
       {renderSection("Entree 1", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Entree 2", menuItems.entrees, "entrees", "entree2")}
       {renderSection("Entree 3", menuItems.entrees, "entrees", "entree3")}
@@ -281,7 +354,7 @@ function ItemSelection() {
   const renderCubMeal = () => (
     <div className="cshr_bowlContainer">
       <h1 className="cshr_bowlLabel">Cub Meal</h1>
-      {renderSection("Side", menuItems.sides, "sides", "side1")}
+      {renderSection("Side 1", menuItems.sides, "sides", "side1")}
       {renderSection("Entree", menuItems.entrees, "entrees", "entree1")}
       {renderSection("Drink", menuItems.drinks, "drink")}
       <button className="cshr_confirmBtn" onClick={handleConfirm}>

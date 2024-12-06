@@ -135,9 +135,10 @@ function Cashier() {
       total: total,
       employee: sessionStorage.getItem("name"),
       orderItems: ItemList,
+      status: "complete",
     };
     try {
-      let response = fetch(`${apiURL}/api/kiosk/`, {
+      let response = fetch(`${apiURL}/api/cashier/`, {
         method: "POST",
         headers: {
           Accept: "application/json",
