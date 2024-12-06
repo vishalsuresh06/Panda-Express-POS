@@ -35,6 +35,7 @@ function CateringItemSelection() {
     entree4: "",
     app: "",
     price: 0,
+    id: [],
   });
 
   useEffect(() => {
@@ -114,16 +115,24 @@ function CateringItemSelection() {
 
   const handleSelection = (type, item, slot = "") => {
     setSelection((prev) => {
+      const isSelected = prev.id.includes(item.id);
+
+      let updatedIds = isSelected
+        ? prev.id.filter((id) => id !== item.id)
+        : [...prev.id, item.id];
+
       if (type === "entrees" || type === "sides") {
         return {
           ...prev,
           [slot]: prev[slot] === item.name ? "" : item.name,
+          id: updatedIds,
         };
       }
 
       return {
         ...prev,
         app: item.name,
+        id: updatedIds,
       };
     });
   };
