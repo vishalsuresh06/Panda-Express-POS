@@ -346,19 +346,30 @@ class XZReports(APIView):
     Django view that handles all API requests involving querying that days sales numbers for X and Z reports
     """
 
-    def getSalesToday(self):
+    def getStartTime(self):
         """
-        Helper method that queries the database for the hourly sales of the current day.
+        Helper method which returns the latest of either: 
+        1) The start of the current day
+        2) The latest generated z report (if it exists)
         """
 
         timezone = pytz.timezone('America/Chicago')
         today = timezone.localize(datetime.now())
-        startOfDay= today.replace(hour=0, minute=0, second=0, microsecond=0)
-        currentTime = timezone.localize(datetime.now());
+        startOfToday =  today.replace(hour=0, minute=0, second=0, microsecond=0)
+        latestZReport = ZReport.objects.order_by('-datetime_generated').first()
 
-        return today, (
+        return startOfToday if latestZReport is None else max(startOfToday, latestZReport.datetime_generated)
+
+    def getSales(self):
+        """
+        Helper method that queries the database for the hourly sales of the current day.
+        """
+
+        startDate = self.getStartTime()
+        timezone = pytz.timezone('America/Chicago')
+        return startDate, (
             Order.objects.filter(
-                date_created__range=[startOfDay, currentTime],
+                date_created__range=[startDate, datetime.now()],
             )
             .annotate(hour=ExtractHour("date_created"))
             .values("hour")
@@ -374,18 +385,20 @@ class XZReports(APIView):
         Returns a JSON response with todays sales numbers and hourly sales numbers for an X report.
         """
 
-        today, results = self.getSalesToday()
+        timezone = pytz.timezone('America/Chicago')
+        startDate, results = self.getSales()
+        currentHour = datetime.now().hour
 
         response = {
-            "date": today,
+            "startDate": startDate.strftime("%c"),
             "totalSales": 0,
             "totalOrders": 0,
-            "hourlySales": [{"hour": hour, "sales":0} for hour in range(today.hour+1)]
+            "hourlySales": dict([(hour, 0) for hour in range(startDate.hour, currentHour+1)])
         }
         for result in results:
             response["totalSales"] += result["hourlySales"]
             response["totalOrders"] += result["hourlyOrders"]
-            response["hourlySales"][result["hour"]]["sales"] = float(result["hourlySales"])
+            response["hourlySales"][result["hour"]] = float(result["hourlySales"])
         
         return JsonResponse(response, status=status.HTTP_200_OK)
 
@@ -393,20 +406,37 @@ class XZReports(APIView):
         """
         Returns a JSON response with todays sales numbers and hourly sales numbers for an Z report.
         """
-
-        today, results = self.getSalesToday()
+        timezone = pytz.timezone('America/Chicago')
+        startDate, results = self.getSales()
+        currentHour = datetime.now().hour
 
         response = {
-            "date": today,
+            "startDate": startDate.strftime("%c"),
+            "endDate": datetime.now().strftime("%c"),
             "totalSales": 0,
             "totalOrders": 0,
-            "hourlySales": [{"hour": hour, "sales":0} for hour in range(24)]
+            "hourlySales": dict([(hour, 0) for hour in range(startDate.hour, currentHour+1)])
         }
         for result in results:
             response["totalSales"] += result["hourlySales"]
             response["totalOrders"] += result["hourlyOrders"]
-            response["hourlySales"][result["hour"]]["sales"] = float(result["hourlySales"])
+            response["hourlySales"][result["hour"]] = float(result["hourlySales"])
         
+        newReport = ZReport(
+            datetime_started = startDate,
+            datetime_generated = timezone.localize(datetime.now()),
+            total_sales = response["totalSales"],
+            total_orders = response["totalOrders"]
+        )
+        newReport.save()
+
+        # for hour, sales in response["hourlySales"].items():
+        #     ZHourlySales.objects.create(
+        #         zreport = newReport,
+        #         hour = hour,
+        #         sales = sales
+        #     )
+        print("\n\n\nNEW REPORT NEW REPORT: ", newReport.datetime_generated, datetime.now())
         return JsonResponse(response, status=status.HTTP_200_OK)
     
     def get(self, request):
@@ -414,18 +444,17 @@ class XZReports(APIView):
         Processes incoming API calls and returns the desired report type (X or Z).
         """
 
-        try:
-            reportType = request.GET.get("type")
-            if reportType == "x":
-                return self.generateXReport()
-            elif reportType == "z":
-                return self.generateZReport()
-            else:
-                raise Exception("Invalid Report Type")
+        
+        reportType = request.GET.get("type")
+        if reportType == "x":
+            return self.generateXReport()
+        elif reportType == "z":
+            return self.generateZReport()
+        else:
+            raise Exception("Invalid Report Type")
 
-        except Exception as e:
-            print(e)
-            return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
+    
+        return JsonResponse({"success":False}, status=status.HTTP_400_BAD_REQUEST)
 
 class OrderHistoryView(APIView):
     """
